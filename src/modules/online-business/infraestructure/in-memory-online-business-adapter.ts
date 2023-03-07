@@ -13,10 +13,7 @@ export class InMemoryOnlineBusinessRepository
     private businesses: OnlineBusiness[] = [];
 
     create(onlineBusiness: OnlineBusiness) {
-        const result = this.getByName(
-            new OnlineBusinessName(onlineBusiness.name),
-        );
-        if (result.status === GetResultStatus.OK) {
+        if (this.doesNameAlreadyExists(new OnlineBusinessName(onlineBusiness.name))) {
             return {
                 status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
             };
@@ -28,17 +25,17 @@ export class InMemoryOnlineBusinessRepository
     }
 
     getByName(name: OnlineBusinessName) {
-        const result = this.businesses.find((business) =>
-            business.hasName(name),
+        const result = this.businesses.filter((business) =>
+            business.includesName(name),
         );
-        if (result) {
+        if (result.length === 0) {
             return {
-                status: GetResultStatus.OK,
-                onlineBusiness: result,
+                status: GetResultStatus.NOT_FOUND,
             };
         }
         return {
-            status: GetResultStatus.NOT_FOUND,
+            status: GetResultStatus.OK,
+            onlineBusinesses: result,
         };
     }
 
@@ -53,5 +50,21 @@ export class InMemoryOnlineBusinessRepository
         return {
             status: GetResultStatus.NOT_FOUND,
         };
+    }
+
+    getAll() {
+        if (this.businesses.length === 0) {
+            return {
+                status: GetResultStatus.NOT_FOUND,
+            };
+        }
+        return {
+            status: GetResultStatus.OK,
+            onlineBusinesses: this.businesses,
+        };
+    }
+
+    private doesNameAlreadyExists(name: OnlineBusinessName) {
+        return this.businesses.some(business => business.hasName(name))
     }
 }

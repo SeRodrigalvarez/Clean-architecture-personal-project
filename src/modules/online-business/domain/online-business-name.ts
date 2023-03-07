@@ -1,7 +1,7 @@
 import { IsString, Length, validateSync } from 'class-validator';
 
-const NAME_MIN_LENGTH = 1;
-const NAME_MAX_LENGTH = 75;
+export const NAME_MIN_LENGTH = 1;
+export const NAME_MAX_LENGTH = 75;
 
 export class OnlineBusinessName {
     @IsString()
@@ -17,7 +17,7 @@ export class OnlineBusinessName {
         const result = validateSync(this);
         if (result.length != 0) {
             throw new Error(
-                `Invalid online business name: ${name}. Name length must be between ${NAME_MIN_LENGTH} and ${NAME_MAX_LENGTH}, both included`,
+                `Invalid online business name: ${this.name}. Name length must be between ${NAME_MIN_LENGTH} and ${NAME_MAX_LENGTH}, both included`,
             );
         }
     }
@@ -28,5 +28,9 @@ export class OnlineBusinessName {
 
     equals(name: OnlineBusinessName) {
         return this.name === name.value;
+    }
+
+    includes(name: OnlineBusinessName) {
+        return this.name.toLowerCase().includes(name.value.toLowerCase());
     }
 }

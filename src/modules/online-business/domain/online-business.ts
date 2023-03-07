@@ -37,6 +37,10 @@ export class OnlineBusiness {
         return this.bReviewsAmount.value;
     }
 
+    includesName(name: OnlineBusinessName) {
+        return this.bName.includes(name);
+    }
+
     hasName(name: OnlineBusinessName) {
         return this.bName.equals(name);
     }

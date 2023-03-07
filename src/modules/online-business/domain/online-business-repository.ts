@@ -10,9 +10,14 @@ export enum CreateResultStatus {
     BUSINESS_NAME_ALREADY_EXISTS,
 }
 
-export interface GetResult {
+export interface GetSingleResult {
     status: GetResultStatus;
     onlineBusiness?: OnlineBusiness;
+}
+
+export interface GetResult {
+    status: GetResultStatus;
+    onlineBusinesses?: OnlineBusiness[];
 }
 
 export enum GetResultStatus {
@@ -23,7 +28,8 @@ export enum GetResultStatus {
 export interface OnlineBusinessRepository {
     create(onlineBusiness: OnlineBusiness): CreateResult;
     getByName(name: OnlineBusinessName): GetResult;
-    getById(id: BusinessId): GetResult;
+    getById(id: BusinessId): GetSingleResult;
+    getAll(): GetResult;
 }
 
 export const ONLINE_BUSINESS_PORT = Symbol('ONLINE_BUSINESS_PORT');
