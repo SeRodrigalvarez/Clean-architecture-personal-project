@@ -5,13 +5,12 @@ import {
     OnlineBusinessCreatorResultStatus,
 } from 'src/modules/online-business/application';
 import {
+    NAME_MAX_LENGTH,
+    NAME_MIN_LENGTH,
     OnlineBusinessName,
     OnlineBusinessWebsite,
 } from 'src/modules/online-business/domain';
 import { BusinessEmail } from 'src/modules/shared/domain';
-
-const NAME_MIN_LENGTH = 1;
-const NAME_MAX_LENGTH = 75;
 
 export class CreateOnlineBusinessBody {
     @IsString()
@@ -41,7 +40,7 @@ export class CreateOnlineBusinessController {
             result.status ===
             OnlineBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS
         ) {
-            return new BadRequestException(
+            throw new BadRequestException(
                 `Business name ${body.name} already exists`,
             );
         }

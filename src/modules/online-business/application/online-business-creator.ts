@@ -29,7 +29,7 @@ export class OnlineBusinessCreator {
         name: OnlineBusinessName,
         website: OnlineBusinessWebsite,
         email: BusinessEmail,
-    ) {
+    ): OnlineBusinessCreatorResult {
         const business = new OnlineBusiness(name, website, email);
         const result = this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
