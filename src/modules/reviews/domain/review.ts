@@ -14,7 +14,7 @@ export class Review {
     }
 
     get id() {
-        return this.rId;
+        return this.rId.value;
     }
 
     get businessId() {
@@ -38,5 +38,9 @@ export class Review {
             this.rBusinessId.equals(review.rBusinessId) &&
             this.rUsername.equals(review.rUsername)
         );
+    }
+
+    hasBusinessId(id: Id) {
+        return this.rBusinessId.equals(id);
     }
 }

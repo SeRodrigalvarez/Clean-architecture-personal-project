@@ -1,5 +1,5 @@
 import { Id } from 'src/modules/shared/domain';
-import { CreateResultStatus, Review } from '../domain';
+import { CreateResultStatus, GetResultStatus, Review } from '../domain';
 import { ReviewRepository } from '../domain';
 
 export class InMemoryReviewAdapter implements ReviewRepository {
@@ -16,8 +16,21 @@ export class InMemoryReviewAdapter implements ReviewRepository {
             status: CreateResultStatus.OK,
         };
     }
-    getByBusinessId(id: Id): GetResult {
-        throw new Error('Method not implemented.');
+    getByBusinessId(id: Id) {
+        const result = this.reviews.filter((review) =>
+            review.hasBusinessId(id),
+        );
+
+        if (result.length === 0) {
+            return {
+                status: GetResultStatus.NOT_FOUND,
+            };
+        }
+
+        return {
+            status: GetResultStatus.OK,
+            reviews: result,
+        };
     }
 
     private isDuplicatedReview(checkReview: Review) {
