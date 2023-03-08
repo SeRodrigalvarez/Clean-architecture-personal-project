@@ -1,4 +1,4 @@
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 import { Review } from '.';
 
 export interface GetResult {
@@ -14,7 +14,7 @@ export enum GetResultStatus {
 
 export interface ReviewRepository {
     create(review: Review): void;
-    getByBusinessId(id: BusinessId): GetResult;
+    getByBusinessId(id: Id): GetResult;
 }
 
 export const REVIEW_REPOSITORY_PORT = Symbol('REVIEW_REPOSITORY_PORT');

@@ -1,5 +1,5 @@
 import { OnlineBusiness, OnlineBusinessName } from './';
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 
 export interface CreateResult {
     status: CreateResultStatus;
@@ -30,7 +30,7 @@ export enum GetResultStatus {
 export interface OnlineBusinessRepository {
     create(onlineBusiness: OnlineBusiness): CreateResult;
     getByName(name: OnlineBusinessName): GetResult;
-    getById(id: BusinessId): GetSingleResult;
+    getById(id: Id): GetSingleResult;
     getAll(): GetResult;
 }
 

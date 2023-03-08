@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { IsUUID, validateSync } from 'class-validator';
 
-export class ReviewId {
+export class Id {
     @IsUUID()
     private id: string;
 
@@ -18,7 +18,7 @@ export class ReviewId {
         const result = validateSync(object);
         if (result.length != 0) {
             throw new Error(
-                `Invalid review id: ${uuid}. Id must be a valid UUID`,
+                `Invalid UUID id: ${uuid}. Id must be a valid UUID`,
             );
         }
         return object;
@@ -26,5 +26,9 @@ export class ReviewId {
 
     get value() {
         return this.id;
+    }
+
+    equals(id: Id) {
+        return this.id === id.value;
     }
 }

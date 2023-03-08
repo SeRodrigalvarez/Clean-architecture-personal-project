@@ -1,16 +1,16 @@
-import { BusinessId } from 'src/modules/shared/domain';
-import { ReviewId, ReviewRating, ReviewText, Username } from './';
+import { Id } from 'src/modules/shared/domain';
+import { ReviewRating, ReviewText, Username } from './';
 
 export class Review {
-    private rId: ReviewId;
+    private rId: Id;
 
     constructor(
-        private rBusinessId: BusinessId,
+        private rBusinessId: Id,
         private rText: ReviewText,
         private rRating: ReviewRating,
         private rUsername: Username,
     ) {
-        this.rId = ReviewId.createId();
+        this.rId = Id.createId();
     }
 
     get id() {

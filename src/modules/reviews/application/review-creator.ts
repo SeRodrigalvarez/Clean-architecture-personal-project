@@ -3,7 +3,7 @@ import {
     OnlineBusinessRepository,
     ONLINE_BUSINESS_PORT,
 } from 'src/modules/online-business/domain';
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 import {
     Review,
     ReviewRating,
@@ -34,7 +34,7 @@ export class ReviewCreator {
     ) {}
 
     execute(
-        businessId: BusinessId,
+        businessId: Id,
         text: ReviewText,
         rating: ReviewRating,
         username: Username,

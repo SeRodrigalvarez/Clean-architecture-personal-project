@@ -1,4 +1,4 @@
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 import {
     OnlineBusiness,
     OnlineBusinessName,
@@ -41,7 +41,7 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getById(id: BusinessId) {
+    getById(id: Id) {
         const result = this.businesses.find((business) => business.hasId(id));
         if (result) {
             return {

@@ -21,7 +21,7 @@ import {
     USERNAME_MAX_LENGTH,
     USERNAME_MIN_LENGTH,
 } from 'src/modules/reviews/domain';
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 
 export class CreateReviewBody {
     @IsUUID()
@@ -48,7 +48,7 @@ export class CreateReviewController {
     @Post()
     execute(@Body() body: CreateReviewBody) {
         const result = this.reviewCreator.execute(
-            BusinessId.createIdFrom(body.businessId),
+            Id.createIdFrom(body.businessId),
             new ReviewText(body.text),
             new ReviewRating(body.rating),
             new Username(body.username),

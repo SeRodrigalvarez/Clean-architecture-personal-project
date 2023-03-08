@@ -1,12 +1,12 @@
 import {
     BusinessEmail,
-    BusinessId,
+    Id,
     BusinessReviewsAmount,
 } from 'src/modules/shared/domain';
 import { OnlineBusinessName, OnlineBusinessWebsite } from './';
 
 export class OnlineBusiness {
-    private bId: BusinessId;
+    private bId: Id;
     private bReviewsAmount: BusinessReviewsAmount;
 
     constructor(
@@ -14,7 +14,7 @@ export class OnlineBusiness {
         private bWebsite: OnlineBusinessWebsite,
         private bEmail: BusinessEmail,
     ) {
-        this.bId = BusinessId.createId();
+        this.bId = Id.createId();
     }
 
     get id() {
@@ -45,7 +45,7 @@ export class OnlineBusiness {
         return this.bName.equals(name);
     }
 
-    hasId(id: BusinessId) {
+    hasId(id: Id) {
         return this.bId.equals(id);
     }
 }

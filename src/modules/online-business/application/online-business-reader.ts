@@ -1,5 +1,5 @@
 import { Get, Inject, Injectable } from '@nestjs/common';
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
     OnlineBusiness,
@@ -26,10 +26,7 @@ export class OnlineBusinessReader {
         private repository: OnlineBusinessRepository,
     ) {}
 
-    execute(
-        id?: BusinessId,
-        name?: OnlineBusinessName,
-    ): OnlineBusinessReaderResult {
+    execute(id?: Id, name?: OnlineBusinessName): OnlineBusinessReaderResult {
         if (id) {
             const result = this.repository.getById(id);
             if (result.status === GetResultStatus.GENERIC_ERROR) {

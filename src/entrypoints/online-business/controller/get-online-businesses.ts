@@ -16,7 +16,7 @@ import {
     OnlineBusiness,
     OnlineBusinessName,
 } from 'src/modules/online-business/domain';
-import { BusinessId } from 'src/modules/shared/domain';
+import { Id } from 'src/modules/shared/domain';
 
 export class QueryName {
     @IsOptional()
@@ -35,7 +35,7 @@ export class GetOnlineBusinessByNameController {
 
     @Get()
     execute(@Query() query: QueryName) {
-        const id = query.id ? BusinessId.createIdFrom(query.id) : undefined;
+        const id = query.id ? Id.createIdFrom(query.id) : undefined;
         const name = query.name
             ? new OnlineBusinessName(query.name)
             : undefined;
