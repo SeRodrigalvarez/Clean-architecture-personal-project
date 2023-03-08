@@ -34,14 +34,14 @@ export class OnlineBusinessReader {
                     status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
                 };
             }
-            if (result.status === GetResultStatus.OK) {
+            if (result.status === GetResultStatus.NOT_FOUND) {
                 return {
-                    status: OnlineBusinessReaderResultStatus.OK,
-                    onlineBusinesses: [result.onlineBusiness],
+                    status: OnlineBusinessReaderResultStatus.NOT_FOUND,
                 };
             }
             return {
-                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+                status: OnlineBusinessReaderResultStatus.OK,
+                onlineBusinesses: [result.onlineBusiness],
             };
         }
 
