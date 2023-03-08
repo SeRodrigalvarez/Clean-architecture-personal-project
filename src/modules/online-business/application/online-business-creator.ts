@@ -16,7 +16,7 @@ export interface OnlineBusinessCreatorResult {
 export enum OnlineBusinessCreatorResultStatus {
     OK,
     BUSINESS_NAME_ALREADY_EXISTS,
-    GENERIC_ERROR
+    GENERIC_ERROR,
 }
 
 @Injectable()
@@ -40,8 +40,8 @@ export class OnlineBusinessCreator {
         }
         if (result.status === CreateResultStatus.GENERIC_ERROR) {
             return {
-                status: OnlineBusinessCreatorResultStatus.GENERIC_ERROR
-            }
+                status: OnlineBusinessCreatorResultStatus.GENERIC_ERROR,
+            };
         }
         return {
             status: OnlineBusinessCreatorResultStatus.OK,

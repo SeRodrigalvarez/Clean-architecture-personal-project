@@ -1,4 +1,10 @@
-import { Controller, Post, Body, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Body,
+    BadRequestException,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { IsEmail, IsString, IsUrl, Length } from 'class-validator';
 import {
     OnlineBusinessCreator,
@@ -44,11 +50,8 @@ export class CreateOnlineBusinessController {
                 `Business name ${body.name} already exists`,
             );
         }
-        if (
-            result.status ===
-            OnlineBusinessCreatorResultStatus.GENERIC_ERROR
-        ) {
-            throw new InternalServerErrorException()
+        if (result.status === OnlineBusinessCreatorResultStatus.GENERIC_ERROR) {
+            throw new InternalServerErrorException();
         }
     }
 }

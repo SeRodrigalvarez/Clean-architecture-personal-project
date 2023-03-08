@@ -7,13 +7,15 @@ import {
     GetResultStatus,
 } from '../domain';
 
-export class InMemoryOnlineBusinessAdapter
-    implements OnlineBusinessRepository
-{
+export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
     private businesses: OnlineBusiness[] = [];
 
     create(onlineBusiness: OnlineBusiness) {
-        if (this.doesNameAlreadyExists(new OnlineBusinessName(onlineBusiness.name))) {
+        if (
+            this.doesNameAlreadyExists(
+                new OnlineBusinessName(onlineBusiness.name),
+            )
+        ) {
             return {
                 status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
             };
@@ -65,6 +67,6 @@ export class InMemoryOnlineBusinessAdapter
     }
 
     private doesNameAlreadyExists(name: OnlineBusinessName) {
-        return this.businesses.some(business => business.hasName(name))
+        return this.businesses.some((business) => business.hasName(name));
     }
 }

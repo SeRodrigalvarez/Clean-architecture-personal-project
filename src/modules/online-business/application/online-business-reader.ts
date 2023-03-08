@@ -1,17 +1,22 @@
-import { Get, Inject, Injectable } from "@nestjs/common";
-import { BusinessId } from "src/modules/shared/domain";
-import { GetResultStatus, OnlineBusiness, OnlineBusinessName, OnlineBusinessRepository, ONLINE_BUSINESS_PORT } from "../domain";
-
+import { Get, Inject, Injectable } from '@nestjs/common';
+import { BusinessId } from 'src/modules/shared/domain';
+import {
+    GetResultStatus,
+    OnlineBusiness,
+    OnlineBusinessName,
+    OnlineBusinessRepository,
+    ONLINE_BUSINESS_PORT,
+} from '../domain';
 
 export interface OnlineBusinessReaderResult {
-    status: OnlineBusinessReaderResultStatus
-    onlineBusinesses?: OnlineBusiness[]
+    status: OnlineBusinessReaderResultStatus;
+    onlineBusinesses?: OnlineBusiness[];
 }
 
 export enum OnlineBusinessReaderResultStatus {
     OK,
     NOT_FOUND,
-    GENERIC_ERROR
+    GENERIC_ERROR,
 }
 
 @Injectable()
@@ -23,45 +28,45 @@ export class OnlineBusinessReader {
 
     execute(
         id?: BusinessId,
-        name?: OnlineBusinessName
+        name?: OnlineBusinessName,
     ): OnlineBusinessReaderResult {
         if (id) {
             const result = this.repository.getById(id);
             if (result.status === GetResultStatus.GENERIC_ERROR) {
                 return {
-                    status: OnlineBusinessReaderResultStatus.GENERIC_ERROR
-                }
+                    status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
+                };
             }
             if (result.status === GetResultStatus.OK) {
                 return {
                     status: OnlineBusinessReaderResultStatus.OK,
-                    onlineBusinesses: [result.onlineBusiness]
-                }
+                    onlineBusinesses: [result.onlineBusiness],
+                };
             }
             return {
-                status: OnlineBusinessReaderResultStatus.NOT_FOUND
-            }
+                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+            };
         }
 
-        let result
+        let result;
         if (name) {
             result = this.repository.getByName(name);
         } else {
-            result = this.repository.getAll()
+            result = this.repository.getAll();
         }
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
-                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR
-            }
+                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
+            };
         }
         if (result.status === GetResultStatus.OK) {
             return {
                 status: OnlineBusinessReaderResultStatus.OK,
-                onlineBusinesses: result.onlineBusinesses
-            }
+                onlineBusinesses: result.onlineBusinesses,
+            };
         }
         return {
-            status: OnlineBusinessReaderResultStatus.NOT_FOUND
-        }
+            status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+        };
     }
 }
