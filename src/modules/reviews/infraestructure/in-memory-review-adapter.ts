@@ -1,6 +1,6 @@
 import { Id } from 'src/modules/shared/domain';
 import { CreateResultStatus, Review } from '../domain';
-import { GetResult, ReviewRepository } from '../domain';
+import { ReviewRepository } from '../domain';
 
 export class InMemoryReviewAdapter implements ReviewRepository {
     private reviews: Review[] = [];

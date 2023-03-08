@@ -1,4 +1,4 @@
-import { Get, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Id } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
