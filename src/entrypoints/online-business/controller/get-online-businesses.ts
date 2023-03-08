@@ -18,7 +18,7 @@ import {
 } from 'src/modules/online-business/domain';
 import { Id } from 'src/modules/shared/domain';
 
-export class QueryName {
+export class GetOnlineBusinessQueryParams {
     @IsOptional()
     @IsString()
     @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
@@ -30,11 +30,11 @@ export class QueryName {
 }
 
 @Controller('business/online')
-export class GetOnlineBusinessByNameController {
+export class GetOnlineBusinessController {
     constructor(private onlineBusinessReader: OnlineBusinessReader) {}
 
     @Get()
-    execute(@Query() query: QueryName) {
+    execute(@Query() query: GetOnlineBusinessQueryParams) {
         const id = query.id ? Id.createIdFrom(query.id) : undefined;
         const name = query.name
             ? new OnlineBusinessName(query.name)

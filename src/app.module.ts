@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
     CreateOnlineBusinessController,
-    GetOnlineBusinessByNameController,
+    GetOnlineBusinessController,
 } from './entrypoints/online-business/controller';
 import { CreateReviewController } from './entrypoints/reviews/controller';
 import {
@@ -18,7 +18,7 @@ import { InMemoryReviewAdapter } from './modules/reviews/infraestructure';
     imports: [],
     controllers: [
         CreateOnlineBusinessController,
-        GetOnlineBusinessByNameController,
+        GetOnlineBusinessController,
         CreateReviewController,
     ],
     providers: [
