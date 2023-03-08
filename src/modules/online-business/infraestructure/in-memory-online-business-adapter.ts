@@ -7,7 +7,7 @@ import {
     GetResultStatus,
 } from '../domain';
 
-export class InMemoryOnlineBusinessRepository
+export class InMemoryOnlineBusinessAdapter
     implements OnlineBusinessRepository
 {
     private businesses: OnlineBusiness[] = [];

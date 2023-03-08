@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
+import { Controller, Get, InternalServerErrorException, NotFoundException, Query } from "@nestjs/common";
 import { IsString, IsUUID, Length, IsOptional } from "class-validator";
 import { OnlineBusinessReader, OnlineBusinessReaderResultStatus } from "src/modules/online-business/application";
 import { NAME_MAX_LENGTH, NAME_MIN_LENGTH, OnlineBusiness, OnlineBusinessName } from "src/modules/online-business/domain";
@@ -24,6 +24,13 @@ export class GetOnlineBusinessByNameController {
         const id = query.id ? BusinessId.createIdFrom(query.id) : undefined
         const name = query.name ? new OnlineBusinessName(query.name) : undefined
         const result = this.onlineBusinessReader.execute(id, name)
+
+        if (
+            result.status ===
+            OnlineBusinessReaderResultStatus.GENERIC_ERROR
+        ) {
+            throw new InternalServerErrorException()
+        }
         
         if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
             throw new NotFoundException('No result found with the given filters')

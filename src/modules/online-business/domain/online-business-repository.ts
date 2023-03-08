@@ -8,6 +8,7 @@ export interface CreateResult {
 export enum CreateResultStatus {
     OK,
     BUSINESS_NAME_ALREADY_EXISTS,
+    GENERIC_ERROR
 }
 
 export interface GetSingleResult {
@@ -23,6 +24,7 @@ export interface GetResult {
 export enum GetResultStatus {
     OK,
     NOT_FOUND,
+    GENERIC_ERROR
 }
 
 export interface OnlineBusinessRepository {

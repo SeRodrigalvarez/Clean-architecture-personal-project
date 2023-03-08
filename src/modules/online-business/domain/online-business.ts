@@ -9,7 +9,7 @@ export class OnlineBusiness {
     private bId: BusinessId;
     private bReviewsAmount: BusinessReviewsAmount;
 
-    public constructor(
+    constructor(
         private bName: OnlineBusinessName,
         private bWebsite: OnlineBusinessWebsite,
         private bEmail: BusinessEmail,

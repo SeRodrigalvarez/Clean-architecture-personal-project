@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Get, Inject, Injectable } from "@nestjs/common";
 import { BusinessId } from "src/modules/shared/domain";
 import { GetResultStatus, OnlineBusiness, OnlineBusinessName, OnlineBusinessRepository, ONLINE_BUSINESS_PORT } from "../domain";
 
@@ -10,7 +10,8 @@ export interface OnlineBusinessReaderResult {
 
 export enum OnlineBusinessReaderResultStatus {
     OK,
-    NOT_FOUND
+    NOT_FOUND,
+    GENERIC_ERROR
 }
 
 @Injectable()
@@ -26,6 +27,11 @@ export class OnlineBusinessReader {
     ): OnlineBusinessReaderResult {
         if (id) {
             const result = this.repository.getById(id);
+            if (result.status === GetResultStatus.GENERIC_ERROR) {
+                return {
+                    status: OnlineBusinessReaderResultStatus.GENERIC_ERROR
+                }
+            }
             if (result.status === GetResultStatus.OK) {
                 return {
                     status: OnlineBusinessReaderResultStatus.OK,
@@ -42,6 +48,11 @@ export class OnlineBusinessReader {
             result = this.repository.getByName(name);
         } else {
             result = this.repository.getAll()
+        }
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
+            return {
+                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR
+            }
         }
         if (result.status === GetResultStatus.OK) {
             return {
