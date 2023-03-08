@@ -5,6 +5,7 @@ import {
 } from 'src/modules/online-business/domain';
 import { Id } from 'src/modules/shared/domain';
 import {
+    CreateResultStatus,
     Review,
     ReviewRating,
     ReviewRepository,
@@ -21,6 +22,7 @@ export interface ReviewCreatorResult {
 export enum ReviewCreatorResultStatus {
     OK,
     NON_EXISTANT_BUSINESS_ID,
+    DUPLICATED_REVIEW,
     GENERIC_ERROR,
 }
 
@@ -39,20 +41,30 @@ export class ReviewCreator {
         rating: ReviewRating,
         username: Username,
     ): ReviewCreatorResult {
-        const result = this.onlineBusiness.getById(businessId);
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        const getResult = this.onlineBusiness.getById(businessId);
+        if (getResult.status === GetResultStatus.GENERIC_ERROR) {
             return {
                 status: ReviewCreatorResultStatus.GENERIC_ERROR,
             };
         }
-        if (result.status === GetResultStatus.NOT_FOUND) {
+        if (getResult.status === GetResultStatus.NOT_FOUND) {
             return {
                 status: ReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
             };
         }
-        this.reviewRepository.create(
+        const result = this.reviewRepository.create(
             new Review(businessId, text, rating, username),
         );
+        if (result.status === CreateResultStatus.DUPLICATED_REVIEW) {
+            return {
+                status: ReviewCreatorResultStatus.DUPLICATED_REVIEW,
+            };
+        }
+        if (result.status === CreateResultStatus.GENERIC_ERROR) {
+            return {
+                status: ReviewCreatorResultStatus.GENERIC_ERROR,
+            };
+        }
         return {
             status: ReviewCreatorResultStatus.OK,
         };

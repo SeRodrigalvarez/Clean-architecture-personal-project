@@ -25,4 +25,8 @@ export class Username {
     get value() {
         return this.username;
     }
+
+    equals(username: Username) {
+        return this.username === username.value;
+    }
 }

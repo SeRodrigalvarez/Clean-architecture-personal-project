@@ -32,4 +32,11 @@ export class Review {
     get username() {
         return this.rUsername.value;
     }
+
+    equals(review: Review) {
+        return (
+            this.rBusinessId.equals(review.rBusinessId) &&
+            this.rUsername.equals(review.rUsername)
+        );
+    }
 }

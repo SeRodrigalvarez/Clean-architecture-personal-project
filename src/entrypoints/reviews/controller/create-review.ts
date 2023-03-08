@@ -65,5 +65,10 @@ export class CreateReviewController {
                 `There is no business with id ${body.businessId}`,
             );
         }
+        if (result.status === ReviewCreatorResultStatus.DUPLICATED_REVIEW) {
+            throw new BadRequestException(
+                `There is already a review from user ${body.username} for the business with id ${body.businessId}`,
+            );
+        }
     }
 }
