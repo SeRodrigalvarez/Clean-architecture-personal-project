@@ -10,6 +10,11 @@ NoFakes Code Challenge with [Nest](https://github.com/nestjs/nest).
 $ npm install
 ```
 
+```bash
+# run once to install husky if you are going to commit something 
+$ npm prepare
+```
+
 ## Running the app
 
 ```bash
