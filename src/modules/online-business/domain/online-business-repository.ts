@@ -27,11 +27,22 @@ export enum GetResultStatus {
     GENERIC_ERROR,
 }
 
+export interface UpdateResult {
+    status: UpdateResultStatus;
+}
+
+export enum UpdateResultStatus {
+    OK,
+    NOT_FOUND,
+    GENERIC_ERROR,
+}
+
 export interface OnlineBusinessRepository {
     create(onlineBusiness: OnlineBusiness): CreateResult;
     getByName(name: OnlineBusinessName): GetResult;
     getById(id: Id): GetSingleResult;
     getAll(): GetResult;
+    increaseReviewAmount(id: Id): UpdateResult;
 }
 
 export const ONLINE_BUSINESS_PORT = Symbol('ONLINE_BUSINESS_PORT');

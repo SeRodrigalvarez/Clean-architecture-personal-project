@@ -5,6 +5,8 @@ import {
     OnlineBusinessRepository,
     CreateResultStatus,
     GetResultStatus,
+    UpdateResult,
+    UpdateResultStatus,
 } from '../domain';
 
 export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
@@ -63,6 +65,19 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         return {
             status: GetResultStatus.OK,
             onlineBusinesses: this.businesses,
+        };
+    }
+
+    increaseReviewAmount(id: Id): UpdateResult {
+        const result = this.getById(id);
+        if (result.status === GetResultStatus.NOT_FOUND) {
+            return {
+                status: UpdateResultStatus.NOT_FOUND,
+            };
+        }
+        result.onlineBusiness.increaseReviewAmount();
+        return {
+            status: UpdateResultStatus.OK,
         };
     }
 

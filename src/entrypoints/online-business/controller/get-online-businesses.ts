@@ -59,6 +59,7 @@ export class GetOnlineBusinessController {
             name: business.name,
             website: business.website,
             email: business.email,
+            reviewAmount: business.reviewsAmount,
         }));
     }
 }

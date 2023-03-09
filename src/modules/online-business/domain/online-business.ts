@@ -15,6 +15,7 @@ export class OnlineBusiness {
         private bEmail: BusinessEmail,
     ) {
         this.bId = Id.createId();
+        this.bReviewsAmount = new BusinessReviewsAmount();
     }
 
     get id() {
@@ -35,6 +36,14 @@ export class OnlineBusiness {
 
     get reviewsAmount() {
         return this.bReviewsAmount.value;
+    }
+
+    increaseReviewAmount() {
+        this.bReviewsAmount.increase();
+    }
+
+    decreaseReviewAmount() {
+        this.bReviewsAmount.decrease();
     }
 
     includesName(name: OnlineBusinessName) {

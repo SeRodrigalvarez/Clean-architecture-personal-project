@@ -32,7 +32,7 @@ export class ReviewCreator {
         @Inject(REVIEW_REPOSITORY_PORT)
         private reviewRepository: ReviewRepository,
         @Inject(ONLINE_BUSINESS_PORT)
-        private onlineBusiness: OnlineBusinessRepository,
+        private onlineBusinessRepository: OnlineBusinessRepository,
     ) {}
 
     execute(
@@ -41,7 +41,7 @@ export class ReviewCreator {
         rating: ReviewRating,
         username: Username,
     ): ReviewCreatorResult {
-        const getResult = this.onlineBusiness.getById(businessId);
+        const getResult = this.onlineBusinessRepository.getById(businessId);
         if (getResult.status === GetResultStatus.GENERIC_ERROR) {
             return {
                 status: ReviewCreatorResultStatus.GENERIC_ERROR,
@@ -52,19 +52,20 @@ export class ReviewCreator {
                 status: ReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
             };
         }
-        const result = this.reviewRepository.create(
+        const createResult = this.reviewRepository.create(
             new Review(businessId, text, rating, username),
         );
-        if (result.status === CreateResultStatus.DUPLICATED_REVIEW) {
+        if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {
                 status: ReviewCreatorResultStatus.DUPLICATED_REVIEW,
             };
         }
-        if (result.status === CreateResultStatus.GENERIC_ERROR) {
+        if (createResult.status === CreateResultStatus.GENERIC_ERROR) {
             return {
                 status: ReviewCreatorResultStatus.GENERIC_ERROR,
             };
         }
+        this.onlineBusinessRepository.increaseReviewAmount(businessId);
         return {
             status: ReviewCreatorResultStatus.OK,
         };
