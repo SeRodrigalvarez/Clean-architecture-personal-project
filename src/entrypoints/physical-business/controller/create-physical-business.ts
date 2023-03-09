@@ -5,7 +5,7 @@ import {
     BadRequestException,
     InternalServerErrorException,
 } from '@nestjs/common';
-import { IsISO31661Alpha3, IsString, Length } from 'class-validator';
+import { IsEmail, IsISO31661Alpha3, IsString, Length } from 'class-validator';
 import {
     PhysicalBusinessCreator,
     PhysicalBusinessCreatorResultStatus,
@@ -25,6 +25,7 @@ import {
     PhysicalBusinessAddress,
     PhysicalBusinessPhone,
 } from 'src/modules/physical-business/domain';
+import { BusinessEmail } from 'src/modules/shared/domain';
 
 export class CreatePhysicalBusinessBody {
     @IsString()
@@ -49,6 +50,9 @@ export class CreatePhysicalBusinessBody {
     @IsString()
     @Length(PHONE_MIN_LENGTH, PHONE_MAX_LENGTH)
     phone: string;
+
+    @IsEmail()
+    email: string;
 }
 
 @Controller('business/physical')
@@ -66,6 +70,7 @@ export class CreatePhysicalBusinessController {
                 body.country,
             ),
             new PhysicalBusinessPhone(body.phone),
+            new BusinessEmail(body.email),
         );
 
         if (

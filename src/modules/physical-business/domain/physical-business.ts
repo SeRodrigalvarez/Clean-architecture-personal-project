@@ -1,4 +1,8 @@
-import { BusinessReviewsAmount, Id } from 'src/modules/shared/domain';
+import {
+    BusinessEmail,
+    BusinessReviewsAmount,
+    Id,
+} from 'src/modules/shared/domain';
 import {
     PhysicalBusinessAddress,
     PhysicalBusinessName,
@@ -13,6 +17,7 @@ export class PhysicalBusiness {
         private bName: PhysicalBusinessName,
         private bAddress: PhysicalBusinessAddress,
         private bPhone: PhysicalBusinessPhone,
+        private bEmail: BusinessEmail,
     ) {
         this.bId = Id.createId();
         this.bReviewsAmount = new BusinessReviewsAmount();
@@ -32,6 +37,10 @@ export class PhysicalBusiness {
 
     get phone() {
         return this.bPhone.value;
+    }
+
+    get email() {
+        return this.bEmail.value;
     }
 
     get reviewsAmount() {

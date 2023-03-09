@@ -61,6 +61,7 @@ export class GetPhysicalBusinessController {
             name: business.name,
             address: business.address,
             phone: business.phone,
+            email: business.email,
             reviewAmount: business.reviewsAmount,
         }));
     }

@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { BusinessEmail } from 'src/modules/shared/domain';
 import {
     CreateResultStatus,
     PhysicalBusiness,
@@ -30,8 +31,9 @@ export class PhysicalBusinessCreator {
         name: PhysicalBusinessName,
         address: PhysicalBusinessAddress,
         phone: PhysicalBusinessPhone,
+        email: BusinessEmail,
     ): PhysicalBusinessCreatorResult {
-        const business = new PhysicalBusiness(name, address, phone);
+        const business = new PhysicalBusiness(name, address, phone, email);
         const result = this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
             return {
