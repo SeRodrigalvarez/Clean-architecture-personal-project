@@ -1,4 +1,4 @@
-import { OnlineBusiness, OnlineBusinessName } from './';
+import { OnlineBusiness } from './';
 import { Id } from 'src/modules/shared/domain';
 
 export interface CreateResult {

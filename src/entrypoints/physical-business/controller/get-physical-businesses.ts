@@ -11,10 +11,7 @@ import {
     PhysicalBusinessReader,
     PhysicalBusinessReaderResultStatus,
 } from 'src/modules/physical-business/application';
-import {
-    PhysicalBusiness,
-    PhysicalBusinessName,
-} from 'src/modules/physical-business/domain';
+import { PhysicalBusiness } from 'src/modules/physical-business/domain';
 import { Id } from 'src/modules/shared/domain';
 
 export class FilterPhysicalBusinessesQuery {

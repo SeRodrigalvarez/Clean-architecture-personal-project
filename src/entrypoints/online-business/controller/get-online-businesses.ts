@@ -11,11 +11,7 @@ import {
     OnlineBusinessReader,
     OnlineBusinessReaderResultStatus,
 } from 'src/modules/online-business/application';
-import {
-    OnlineBusiness,
-    OnlineBusinessName,
-    LINT_STAGED_TEST,
-} from 'src/modules/online-business/domain';
+import { OnlineBusiness } from 'src/modules/online-business/domain';
 import { Id } from 'src/modules/shared/domain';
 
 export class FilterOnlineBusinessesQuery {

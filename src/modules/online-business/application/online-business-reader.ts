@@ -3,7 +3,6 @@ import { Id } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
     OnlineBusiness,
-    OnlineBusinessName,
     OnlineBusinessRepository,
     ONLINE_BUSINESS_PORT,
 } from '../domain';

@@ -3,7 +3,6 @@ import { Id } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
     PhysicalBusiness,
-    PhysicalBusinessName,
     PhysicalBusinessRepository,
     PHYSICAL_BUSINESS_PORT,
 } from '../domain';

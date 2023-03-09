@@ -1,4 +1,4 @@
-import { PhysicalBusiness, PhysicalBusinessName } from './';
+import { PhysicalBusiness } from './';
 import { Id } from 'src/modules/shared/domain';
 
 export interface CreateResult {
