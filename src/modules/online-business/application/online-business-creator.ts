@@ -11,6 +11,7 @@ import {
 
 export interface OnlineBusinessCreatorResult {
     status: OnlineBusinessCreatorResultStatus;
+    id?: string;
 }
 
 export enum OnlineBusinessCreatorResultStatus {
@@ -45,6 +46,7 @@ export class OnlineBusinessCreator {
         }
         return {
             status: OnlineBusinessCreatorResultStatus.OK,
+            id: business.id,
         };
     }
 }

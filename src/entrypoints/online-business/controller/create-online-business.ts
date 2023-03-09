@@ -53,5 +53,8 @@ export class CreateOnlineBusinessController {
         if (result.status === OnlineBusinessCreatorResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
+        return {
+            id: result.id,
+        };
     }
 }

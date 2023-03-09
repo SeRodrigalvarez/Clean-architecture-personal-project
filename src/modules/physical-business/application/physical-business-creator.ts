@@ -12,6 +12,7 @@ import {
 
 export interface PhysicalBusinessCreatorResult {
     status: PhysicalBusinessCreatorResultStatus;
+    id?: string;
 }
 
 export enum PhysicalBusinessCreatorResultStatus {
@@ -47,6 +48,7 @@ export class PhysicalBusinessCreator {
         }
         return {
             status: PhysicalBusinessCreatorResultStatus.OK,
+            id: business.id,
         };
     }
 }

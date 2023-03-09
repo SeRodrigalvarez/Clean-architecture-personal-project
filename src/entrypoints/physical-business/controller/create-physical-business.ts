@@ -86,5 +86,8 @@ export class CreatePhysicalBusinessController {
         ) {
             throw new InternalServerErrorException();
         }
+        return {
+            id: result.id,
+        };
     }
 }
