@@ -14,6 +14,7 @@ import {
 import {
     OnlineBusiness,
     OnlineBusinessName,
+    LINT_STAGED_TEST,
 } from 'src/modules/online-business/domain';
 import { Id } from 'src/modules/shared/domain';
 
