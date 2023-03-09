@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { IsInt, IsString, IsUUID, Length, Max, Min } from 'class-validator';
 import {
-    ReviewCreator,
-    ReviewCreatorResultStatus,
+    PhysicalBusinessReviewCreator,
+    PhysicalBusinessReviewCreatorResultStatus,
 } from 'src/modules/reviews/application';
 import {
     RATING_MAX_VALUE,
@@ -23,7 +23,7 @@ import {
 } from 'src/modules/reviews/domain';
 import { Id } from 'src/modules/shared/domain';
 
-export class CreateReviewBody {
+export class CreatePhysicalBusinessReviewBody {
     @IsUUID()
     businessId: string;
 
@@ -41,12 +41,12 @@ export class CreateReviewBody {
     username: string;
 }
 
-@Controller('review')
-export class CreateReviewController {
-    constructor(private reviewCreator: ReviewCreator) {}
+@Controller('business/physical/review')
+export class CreatePhysicalBusinessReviewController {
+    constructor(private reviewCreator: PhysicalBusinessReviewCreator) {}
 
     @Post()
-    execute(@Body() body: CreateReviewBody) {
+    execute(@Body() body: CreatePhysicalBusinessReviewBody) {
         const result = this.reviewCreator.execute(
             Id.createIdFrom(body.businessId),
             new ReviewText(body.text),
@@ -54,18 +54,25 @@ export class CreateReviewController {
             new Username(body.username),
         );
 
-        if (result.status === ReviewCreatorResultStatus.GENERIC_ERROR) {
+        if (
+            result.status ===
+            PhysicalBusinessReviewCreatorResultStatus.GENERIC_ERROR
+        ) {
             throw new InternalServerErrorException();
         }
 
         if (
-            result.status === ReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
+            result.status ===
+            PhysicalBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
         ) {
             throw new BadRequestException(
                 `There is no business with id ${body.businessId}`,
             );
         }
-        if (result.status === ReviewCreatorResultStatus.DUPLICATED_REVIEW) {
+        if (
+            result.status ===
+            PhysicalBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW
+        ) {
             throw new BadRequestException(
                 `There is already a review from user ${body.username} for the business with id ${body.businessId}`,
             );

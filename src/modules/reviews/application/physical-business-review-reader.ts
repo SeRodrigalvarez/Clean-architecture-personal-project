@@ -7,39 +7,39 @@ import {
     REVIEW_REPOSITORY_PORT,
 } from '../domain';
 
-export interface ReviewReaderResult {
-    status: ReviewReaderResultStatus;
+export interface PhysicalBusinessReviewReaderResult {
+    status: PhysicalBusinessReviewReaderResultStatus;
     reviews?: Review[];
 }
 
-export enum ReviewReaderResultStatus {
+export enum PhysicalBusinessReviewReaderResultStatus {
     OK,
     NOT_FOUND,
     GENERIC_ERROR,
 }
 
 @Injectable()
-export class ReviewReader {
+export class PhysicalBusinessReviewReader {
     constructor(
         @Inject(REVIEW_REPOSITORY_PORT)
         private repository: ReviewRepository,
     ) {}
 
-    execute(id: Id): ReviewReaderResult {
+    execute(id: Id): PhysicalBusinessReviewReaderResult {
         const result = this.repository.getByBusinessId(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
-                status: ReviewReaderResultStatus.GENERIC_ERROR,
+                status: PhysicalBusinessReviewReaderResultStatus.GENERIC_ERROR,
             };
         }
         if (result.status === GetResultStatus.NOT_FOUND) {
             return {
-                status: ReviewReaderResultStatus.NOT_FOUND,
+                status: PhysicalBusinessReviewReaderResultStatus.NOT_FOUND,
             };
         }
         return {
-            status: ReviewReaderResultStatus.OK,
+            status: PhysicalBusinessReviewReaderResultStatus.OK,
             reviews: result.reviews,
         };
     }

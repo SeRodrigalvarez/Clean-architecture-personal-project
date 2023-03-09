@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-    OnlineBusinessRepository,
-    ONLINE_BUSINESS_PORT,
-} from 'src/modules/online-business/domain';
+    PhysicalBusinessRepository,
+    PHYSICAL_BUSINESS_PORT,
+} from 'src/modules/physical-business/domain';
 import { Id } from 'src/modules/shared/domain';
 import {
     CreateResultStatus,
@@ -13,13 +13,13 @@ import {
     REVIEW_REPOSITORY_PORT,
     Username,
 } from '../domain';
-import { GetResultStatus } from 'src/modules/online-business/domain';
+import { GetResultStatus } from 'src/modules/physical-business/domain';
 
-export interface ReviewCreatorResult {
-    status: ReviewCreatorResultStatus;
+export interface PhysicalBusinessReviewCreatorResult {
+    status: PhysicalBusinessReviewCreatorResultStatus;
 }
 
-export enum ReviewCreatorResultStatus {
+export enum PhysicalBusinessReviewCreatorResultStatus {
     OK,
     NON_EXISTANT_BUSINESS_ID,
     DUPLICATED_REVIEW,
@@ -27,12 +27,12 @@ export enum ReviewCreatorResultStatus {
 }
 
 @Injectable()
-export class ReviewCreator {
+export class PhysicalBusinessReviewCreator {
     constructor(
         @Inject(REVIEW_REPOSITORY_PORT)
         private reviewRepository: ReviewRepository,
-        @Inject(ONLINE_BUSINESS_PORT)
-        private onlineBusinessRepository: OnlineBusinessRepository,
+        @Inject(PHYSICAL_BUSINESS_PORT)
+        private physicalBusinessRepository: PhysicalBusinessRepository,
     ) {}
 
     execute(
@@ -40,16 +40,16 @@ export class ReviewCreator {
         text: ReviewText,
         rating: ReviewRating,
         username: Username,
-    ): ReviewCreatorResult {
-        const getResult = this.onlineBusinessRepository.getById(businessId);
+    ): PhysicalBusinessReviewCreatorResult {
+        const getResult = this.physicalBusinessRepository.getById(businessId);
         if (getResult.status === GetResultStatus.GENERIC_ERROR) {
             return {
-                status: ReviewCreatorResultStatus.GENERIC_ERROR,
+                status: PhysicalBusinessReviewCreatorResultStatus.GENERIC_ERROR,
             };
         }
         if (getResult.status === GetResultStatus.NOT_FOUND) {
             return {
-                status: ReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
+                status: PhysicalBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
             };
         }
         const createResult = this.reviewRepository.create(
@@ -57,17 +57,17 @@ export class ReviewCreator {
         );
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {
-                status: ReviewCreatorResultStatus.DUPLICATED_REVIEW,
+                status: PhysicalBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW,
             };
         }
         if (createResult.status === CreateResultStatus.GENERIC_ERROR) {
             return {
-                status: ReviewCreatorResultStatus.GENERIC_ERROR,
+                status: PhysicalBusinessReviewCreatorResultStatus.GENERIC_ERROR,
             };
         }
-        this.onlineBusinessRepository.increaseReviewAmount(businessId);
+        this.physicalBusinessRepository.increaseReviewAmount(businessId);
         return {
-            status: ReviewCreatorResultStatus.OK,
+            status: PhysicalBusinessReviewCreatorResultStatus.OK,
         };
     }
 }

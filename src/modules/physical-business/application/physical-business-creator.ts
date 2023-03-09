@@ -1,0 +1,50 @@
+import { Inject, Injectable } from '@nestjs/common';
+import {
+    CreateResultStatus,
+    PhysicalBusiness,
+    PhysicalBusinessAddress,
+    PhysicalBusinessName,
+    PhysicalBusinessPhone,
+    PhysicalBusinessRepository,
+    PHYSICAL_BUSINESS_PORT,
+} from '../domain';
+
+export interface PhysicalBusinessCreatorResult {
+    status: PhysicalBusinessCreatorResultStatus;
+}
+
+export enum PhysicalBusinessCreatorResultStatus {
+    OK,
+    BUSINESS_NAME_ALREADY_EXISTS,
+    GENERIC_ERROR,
+}
+
+@Injectable()
+export class PhysicalBusinessCreator {
+    constructor(
+        @Inject(PHYSICAL_BUSINESS_PORT)
+        private repository: PhysicalBusinessRepository,
+    ) {}
+
+    execute(
+        name: PhysicalBusinessName,
+        address: PhysicalBusinessAddress,
+        phone: PhysicalBusinessPhone,
+    ): PhysicalBusinessCreatorResult {
+        const business = new PhysicalBusiness(name, address, phone);
+        const result = this.repository.create(business);
+        if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
+            return {
+                status: PhysicalBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+            };
+        }
+        if (result.status === CreateResultStatus.GENERIC_ERROR) {
+            return {
+                status: PhysicalBusinessCreatorResultStatus.GENERIC_ERROR,
+            };
+        }
+        return {
+            status: PhysicalBusinessCreatorResultStatus.OK,
+        };
+    }
+}

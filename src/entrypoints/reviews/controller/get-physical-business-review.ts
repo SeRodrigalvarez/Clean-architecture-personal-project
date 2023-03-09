@@ -7,30 +7,35 @@ import {
 } from '@nestjs/common';
 import { IsUUID } from 'class-validator';
 import {
-    ReviewReader,
-    ReviewReaderResultStatus,
+    PhysicalBusinessReviewReader,
+    PhysicalBusinessReviewReaderResultStatus,
 } from 'src/modules/reviews/application';
 import { Review } from 'src/modules/reviews/domain';
 import { Id } from 'src/modules/shared/domain';
 
-export class GetReviewParam {
+export class GetPhysicalBusinesssReviewParam {
     @IsUUID()
     id: string;
 }
 
-@Controller('review')
-export class GetReviewController {
-    constructor(private reviewReader: ReviewReader) {}
+@Controller('business/physical/review')
+export class GetPhysicalBusinessReviewController {
+    constructor(private reviewReader: PhysicalBusinessReviewReader) {}
 
     @Get(':id')
-    execute(@Param() param: GetReviewParam) {
+    execute(@Param() param: GetPhysicalBusinesssReviewParam) {
         const result = this.reviewReader.execute(Id.createIdFrom(param.id));
 
-        if (result.status === ReviewReaderResultStatus.GENERIC_ERROR) {
+        if (
+            result.status ===
+            PhysicalBusinessReviewReaderResultStatus.GENERIC_ERROR
+        ) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === ReviewReaderResultStatus.NOT_FOUND) {
+        if (
+            result.status === PhysicalBusinessReviewReaderResultStatus.NOT_FOUND
+        ) {
             throw new NotFoundException(
                 `No reviews for the business with id ${param.id}`,
             );
