@@ -1,16 +1,16 @@
 export class BusinessReviewsAmount {
-    private amount: bigint;
+    private amount: number;
 
     constructor() {
-        this.amount = 0n;
+        this.amount = 0;
     }
 
     public increase() {
-        this.amount += 1n;
+        this.amount += 1;
     }
 
     public decrease() {
-        this.amount -= 1n;
+        this.amount -= 1;
     }
 
     get value() {
