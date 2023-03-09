@@ -30,7 +30,7 @@ export class PhysicalBusinessName {
         return this.name === name.value;
     }
 
-    includes(name: PhysicalBusinessName) {
-        return this.name.toLowerCase().includes(name.value.toLowerCase());
+    includes(value: string) {
+        return this.name.toLowerCase().includes(value.toLowerCase());
     }
 }

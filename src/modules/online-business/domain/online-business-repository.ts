@@ -39,7 +39,7 @@ export enum UpdateResultStatus {
 
 export interface OnlineBusinessRepository {
     create(onlineBusiness: OnlineBusiness): CreateResult;
-    getByName(name: OnlineBusinessName): GetResult;
+    getByNameOrWebsite(value: string): GetResult;
     getById(id: Id): GetSingleResult;
     getAll(): GetResult;
     increaseReviewAmount(id: Id): UpdateResult;

@@ -30,9 +30,10 @@ export class InMemoryPhysicalBusinessAdapter
         };
     }
 
-    getByName(name: PhysicalBusinessName) {
-        const result = this.businesses.filter((business) =>
-            business.includesName(name),
+    getByNameOrAddress(value: string) {
+        const result = this.businesses.filter(
+            (business) =>
+                business.includesName(value) || business.includesAddress(value),
         );
         if (result.length === 0) {
             return {

@@ -28,9 +28,10 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getByName(name: OnlineBusinessName) {
-        const result = this.businesses.filter((business) =>
-            business.includesName(name),
+    getByNameOrWebsite(value: string) {
+        const result = this.businesses.filter(
+            (business) =>
+                business.includesName(value) || business.includesWebsite(value),
         );
         if (result.length === 0) {
             return {

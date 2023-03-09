@@ -53,6 +53,10 @@ export class PhysicalBusinessAddress {
     }
 
     toString() {
-        return `${this.street}, ${this.postalCode} ${this.city}, ${this.country} `;
+        return `${this.street}, ${this.postalCode} ${this.city}, ${this.country}`;
+    }
+
+    includes(value: string) {
+        return this.toString().toLowerCase().includes(value.toLowerCase());
     }
 }

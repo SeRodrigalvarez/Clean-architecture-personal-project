@@ -21,4 +21,8 @@ export class OnlineBusinessWebsite {
     get value() {
         return this.website;
     }
+
+    includes(value: string) {
+        return this.website.toLowerCase().includes(value.toLowerCase());
+    }
 }

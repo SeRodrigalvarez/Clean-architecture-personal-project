@@ -39,7 +39,7 @@ export enum UpdateResultStatus {
 
 export interface PhysicalBusinessRepository {
     create(physicalBusiness: PhysicalBusiness): CreateResult;
-    getByName(name: PhysicalBusinessName): GetResult;
+    getByNameOrAddress(value: string): GetResult;
     getById(id: Id): GetSingleResult;
     getAll(): GetResult;
     increaseReviewAmount(id: Id): UpdateResult;

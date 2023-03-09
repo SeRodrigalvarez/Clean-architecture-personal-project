@@ -8,9 +8,14 @@ import {
     ONLINE_BUSINESS_PORT,
 } from '../domain';
 
-export interface OnlineBusinessReaderResult {
+export interface FilterOnlineBusinessesResult {
     status: OnlineBusinessReaderResultStatus;
     onlineBusinesses?: OnlineBusiness[];
+}
+
+export interface GetOnlineBusinessByIdResult {
+    status: OnlineBusinessReaderResultStatus;
+    onlineBusiness?: OnlineBusiness;
 }
 
 export enum OnlineBusinessReaderResultStatus {
@@ -26,28 +31,10 @@ export class OnlineBusinessReader {
         private repository: OnlineBusinessRepository,
     ) {}
 
-    execute(id?: Id, name?: OnlineBusinessName): OnlineBusinessReaderResult {
-        if (id) {
-            const result = this.repository.getById(id);
-            if (result.status === GetResultStatus.GENERIC_ERROR) {
-                return {
-                    status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
-                };
-            }
-            if (result.status === GetResultStatus.NOT_FOUND) {
-                return {
-                    status: OnlineBusinessReaderResultStatus.NOT_FOUND,
-                };
-            }
-            return {
-                status: OnlineBusinessReaderResultStatus.OK,
-                onlineBusinesses: [result.onlineBusiness],
-            };
-        }
-
+    filter(value?: string): FilterOnlineBusinessesResult {
         let result;
-        if (name) {
-            result = this.repository.getByName(name);
+        if (value) {
+            result = this.repository.getByNameOrWebsite(value);
         } else {
             result = this.repository.getAll();
         }
@@ -56,14 +43,35 @@ export class OnlineBusinessReader {
                 status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
             };
         }
-        if (result.status === GetResultStatus.OK) {
+        if (result.status === GetResultStatus.NOT_FOUND) {
             return {
-                status: OnlineBusinessReaderResultStatus.OK,
-                onlineBusinesses: result.onlineBusinesses,
+                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
             };
         }
         return {
-            status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+            status: OnlineBusinessReaderResultStatus.OK,
+            onlineBusinesses: result.onlineBusinesses,
+        };
+    }
+
+    getById(id: Id): GetOnlineBusinessByIdResult {
+        const result = this.repository.getById(id);
+
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
+            return {
+                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
+            };
+        }
+
+        if (result.status === GetResultStatus.NOT_FOUND) {
+            return {
+                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+            };
+        }
+
+        return {
+            status: OnlineBusinessReaderResultStatus.OK,
+            onlineBusiness: result.onlineBusiness,
         };
     }
 }

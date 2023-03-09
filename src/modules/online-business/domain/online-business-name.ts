@@ -30,7 +30,7 @@ export class OnlineBusinessName {
         return this.name === name.value;
     }
 
-    includes(name: OnlineBusinessName) {
-        return this.name.toLowerCase().includes(name.value.toLowerCase());
+    includes(value: string) {
+        return this.name.toLowerCase().includes(value.toLowerCase());
     }
 }

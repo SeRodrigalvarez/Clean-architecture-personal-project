@@ -46,8 +46,12 @@ export class OnlineBusiness {
         this.bReviewsAmount.decrease();
     }
 
-    includesName(name: OnlineBusinessName) {
-        return this.bName.includes(name);
+    includesName(value: string) {
+        return this.bName.includes(value);
+    }
+
+    includesWebsite(value: string) {
+        return this.bWebsite.includes(value);
     }
 
     hasName(name: OnlineBusinessName) {

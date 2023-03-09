@@ -3,28 +3,27 @@ import {
     Get,
     InternalServerErrorException,
     NotFoundException,
+    Param,
     Query,
 } from '@nestjs/common';
-import { IsString, IsUUID, Length, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsUUID } from 'class-validator';
 import {
     PhysicalBusinessReader,
     PhysicalBusinessReaderResultStatus,
 } from 'src/modules/physical-business/application';
 import {
-    NAME_MAX_LENGTH,
-    NAME_MIN_LENGTH,
     PhysicalBusiness,
     PhysicalBusinessName,
 } from 'src/modules/physical-business/domain';
 import { Id } from 'src/modules/shared/domain';
 
-export class GetPhysicalBusinessQueryParams {
+export class FilterPhysicalBusinessesQuery {
     @IsOptional()
     @IsString()
-    @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
-    name: string;
+    filter: string;
+}
 
-    @IsOptional()
+export class GetPhysicalBusinesssParam {
     @IsUUID()
     id: string;
 }
@@ -34,12 +33,8 @@ export class GetPhysicalBusinessController {
     constructor(private physicalBusinessReader: PhysicalBusinessReader) {}
 
     @Get()
-    execute(@Query() query: GetPhysicalBusinessQueryParams) {
-        const id = query.id ? Id.createIdFrom(query.id) : undefined;
-        const name = query.name
-            ? new PhysicalBusinessName(query.name)
-            : undefined;
-        const result = this.physicalBusinessReader.execute(id, name);
+    filter(@Query() query: FilterPhysicalBusinessesQuery) {
+        const result = this.physicalBusinessReader.filter(query.filter);
 
         if (
             result.status === PhysicalBusinessReaderResultStatus.GENERIC_ERROR
@@ -49,10 +44,40 @@ export class GetPhysicalBusinessController {
 
         if (result.status === PhysicalBusinessReaderResultStatus.NOT_FOUND) {
             throw new NotFoundException(
-                'No result found with the given filters',
+                'No physical business found with the given filters',
             );
         }
         return this.domainToJsonMapper(result.physicalBusinesses);
+    }
+
+    @Get(':id')
+    getById(@Param() param: GetPhysicalBusinesssParam) {
+        const result = this.physicalBusinessReader.getById(
+            Id.createIdFrom(param.id),
+        );
+
+        if (
+            result.status === PhysicalBusinessReaderResultStatus.GENERIC_ERROR
+        ) {
+            throw new InternalServerErrorException();
+        }
+
+        if (result.status === PhysicalBusinessReaderResultStatus.NOT_FOUND) {
+            throw new NotFoundException(
+                `No physical business with id: ${param.id}`,
+            );
+        }
+
+        const business = result.physicalBusiness;
+
+        return {
+            id: business.id,
+            name: business.name,
+            address: business.address,
+            phone: business.phone,
+            email: business.email,
+            reviewAmount: business.reviewsAmount,
+        };
     }
 
     private domainToJsonMapper(physicalBusinesses: PhysicalBusiness[]) {
@@ -60,9 +85,6 @@ export class GetPhysicalBusinessController {
             id: business.id,
             name: business.name,
             address: business.address,
-            phone: business.phone,
-            email: business.email,
-            reviewAmount: business.reviewsAmount,
         }));
     }
 }

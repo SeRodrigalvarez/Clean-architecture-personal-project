@@ -8,9 +8,14 @@ import {
     PHYSICAL_BUSINESS_PORT,
 } from '../domain';
 
-export interface PhysicalBusinessReaderResult {
+export interface FilterPhysicalBusinessesResult {
     status: PhysicalBusinessReaderResultStatus;
     physicalBusinesses?: PhysicalBusiness[];
+}
+
+export interface GetPhysicalBusinessByIdResult {
+    status: PhysicalBusinessReaderResultStatus;
+    physicalBusiness?: PhysicalBusiness;
 }
 
 export enum PhysicalBusinessReaderResultStatus {
@@ -26,31 +31,10 @@ export class PhysicalBusinessReader {
         private repository: PhysicalBusinessRepository,
     ) {}
 
-    execute(
-        id?: Id,
-        name?: PhysicalBusinessName,
-    ): PhysicalBusinessReaderResult {
-        if (id) {
-            const result = this.repository.getById(id);
-            if (result.status === GetResultStatus.GENERIC_ERROR) {
-                return {
-                    status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
-                };
-            }
-            if (result.status === GetResultStatus.NOT_FOUND) {
-                return {
-                    status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
-                };
-            }
-            return {
-                status: PhysicalBusinessReaderResultStatus.OK,
-                physicalBusinesses: [result.physicalBusiness],
-            };
-        }
-
+    filter(value?: string): FilterPhysicalBusinessesResult {
         let result;
-        if (name) {
-            result = this.repository.getByName(name);
+        if (value) {
+            result = this.repository.getByNameOrAddress(value);
         } else {
             result = this.repository.getAll();
         }
@@ -59,14 +43,35 @@ export class PhysicalBusinessReader {
                 status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
             };
         }
-        if (result.status === GetResultStatus.OK) {
+        if (result.status === GetResultStatus.NOT_FOUND) {
             return {
-                status: PhysicalBusinessReaderResultStatus.OK,
-                physicalBusinesses: result.physicalBusinesses,
+                status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
             };
         }
         return {
-            status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
+            status: PhysicalBusinessReaderResultStatus.OK,
+            physicalBusinesses: result.physicalBusinesses,
+        };
+    }
+
+    getById(id: Id): GetPhysicalBusinessByIdResult {
+        const result = this.repository.getById(id);
+
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
+            return {
+                status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
+            };
+        }
+
+        if (result.status === GetResultStatus.NOT_FOUND) {
+            return {
+                status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
+            };
+        }
+
+        return {
+            status: PhysicalBusinessReaderResultStatus.OK,
+            physicalBusiness: result.physicalBusiness,
         };
     }
 }

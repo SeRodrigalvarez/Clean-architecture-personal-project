@@ -55,8 +55,12 @@ export class PhysicalBusiness {
         this.bReviewsAmount.decrease();
     }
 
-    includesName(name: PhysicalBusinessName) {
-        return this.bName.includes(name);
+    includesName(value: string) {
+        return this.bName.includes(value);
+    }
+
+    includesAddress(value: string) {
+        return this.bAddress.includes(value);
     }
 
     hasName(name: PhysicalBusinessName) {
