@@ -77,6 +77,8 @@ export class GetOnlineBusinessController {
             id: business.id,
             name: business.name,
             website: business.website,
+            email: business.email,
+            reviewAmount: business.reviewsAmount,
         }));
     }
 }
