@@ -40,6 +40,10 @@ export class Review {
         );
     }
 
+    hasId(id: Id) {
+        return this.rId.equals(id);
+    }
+
     hasBusinessId(id: Id) {
         return this.rBusinessId.equals(id);
     }

@@ -32,6 +32,20 @@ export class InMemoryReviewAdapter implements ReviewRepository {
             reviews: result,
         };
     }
+    getById(id: Id) {
+        const result = this.reviews.find((review) => review.hasId(id));
+
+        if (!result) {
+            return {
+                status: GetResultStatus.NOT_FOUND,
+            };
+        }
+
+        return {
+            status: GetResultStatus.OK,
+            review: result,
+        };
+    }
 
     private isDuplicatedReview(checkReview: Review) {
         return this.reviews.find((review) => review.equals(checkReview));

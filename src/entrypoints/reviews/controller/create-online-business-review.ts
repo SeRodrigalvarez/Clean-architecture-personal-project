@@ -3,6 +3,7 @@ import {
     Body,
     Controller,
     InternalServerErrorException,
+    Param,
     Post,
 } from '@nestjs/common';
 import { IsInt, IsString, IsUUID, Length, Max, Min } from 'class-validator';
@@ -23,10 +24,12 @@ import {
 } from 'src/modules/reviews/domain';
 import { Id } from 'src/modules/shared/domain';
 
-export class CreateOnlineBusinessReviewBody {
+export class CreateOnlineBusinessReviewParam {
     @IsUUID()
     businessId: string;
+}
 
+export class CreateOnlineBusinessReviewBody {
     @IsString()
     @Length(TEXT_MIN_LENGTH, TEXT_MAX_LENGTH)
     text: string;
@@ -41,14 +44,17 @@ export class CreateOnlineBusinessReviewBody {
     username: string;
 }
 
-@Controller('business/online/review')
+@Controller('business/online')
 export class CreateOnlineBusinessReviewController {
     constructor(private reviewCreator: OnlineBusinessReviewCreator) {}
 
-    @Post()
-    execute(@Body() body: CreateOnlineBusinessReviewBody) {
+    @Post(':businessId/review')
+    execute(
+        @Param() param: CreateOnlineBusinessReviewParam,
+        @Body() body: CreateOnlineBusinessReviewBody,
+    ) {
         const result = this.reviewCreator.execute(
-            Id.createIdFrom(body.businessId),
+            Id.createIdFrom(param.businessId),
             new ReviewText(body.text),
             new ReviewRating(body.rating),
             new Username(body.username),
@@ -66,7 +72,7 @@ export class CreateOnlineBusinessReviewController {
             OnlineBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
         ) {
             throw new BadRequestException(
-                `There is no business with id ${body.businessId}`,
+                `There is no business with id ${param.businessId}`,
             );
         }
         if (
@@ -74,8 +80,11 @@ export class CreateOnlineBusinessReviewController {
             OnlineBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW
         ) {
             throw new BadRequestException(
-                `There is already a review from user ${body.username} for the business with id ${body.businessId}`,
+                `There is already a review from user ${body.username} for the business with id ${param.businessId}`,
             );
         }
+        return {
+            id: result.id,
+        };
     }
 }

@@ -18,13 +18,15 @@ export class GetOnlineBusinesssReviewParam {
     id: string;
 }
 
-@Controller('business/online/review')
+@Controller('business/online')
 export class GetOnlineBusinessReviewController {
     constructor(private reviewReader: OnlineBusinessReviewReader) {}
 
-    @Get(':id')
-    execute(@Param() param: GetOnlineBusinesssReviewParam) {
-        const result = this.reviewReader.execute(Id.createIdFrom(param.id));
+    @Get(':id/review')
+    getByBusinessId(@Param() param: GetOnlineBusinesssReviewParam) {
+        const result = this.reviewReader.getByBusinessId(
+            Id.createIdFrom(param.id),
+        );
 
         if (
             result.status ===
@@ -42,6 +44,36 @@ export class GetOnlineBusinessReviewController {
         }
 
         return this.domainToJsonMapper(result.reviews);
+    }
+
+    @Get('review/:id')
+    getById(@Param() param: GetOnlineBusinesssReviewParam) {
+        const result = this.reviewReader.getById(Id.createIdFrom(param.id));
+
+        if (
+            result.status ===
+            OnlineBusinessReviewReaderResultStatus.GENERIC_ERROR
+        ) {
+            throw new InternalServerErrorException();
+        }
+
+        if (
+            result.status === OnlineBusinessReviewReaderResultStatus.NOT_FOUND
+        ) {
+            throw new NotFoundException(
+                `No reviews for the business with id ${param.id}`,
+            );
+        }
+
+        const review = result.review;
+
+        return {
+            id: review.id,
+            businessId: review.businessId,
+            text: review.text,
+            rating: review.rating,
+            username: review.username,
+        };
     }
 
     private domainToJsonMapper(reviews: Review[]) {

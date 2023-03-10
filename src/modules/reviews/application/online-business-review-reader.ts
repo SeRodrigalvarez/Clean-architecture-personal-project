@@ -7,9 +7,14 @@ import {
     REVIEW_REPOSITORY_PORT,
 } from '../domain';
 
-export interface OnlineBusinessReviewReaderResult {
+export interface GetOnlineBusinessReviewByBusinessIdResult {
     status: OnlineBusinessReviewReaderResultStatus;
     reviews?: Review[];
+}
+
+export interface GetOnlineBusinessReviewByIdResult {
+    status: OnlineBusinessReviewReaderResultStatus;
+    review?: Review;
 }
 
 export enum OnlineBusinessReviewReaderResultStatus {
@@ -25,7 +30,7 @@ export class OnlineBusinessReviewReader {
         private repository: ReviewRepository,
     ) {}
 
-    execute(id: Id): OnlineBusinessReviewReaderResult {
+    getByBusinessId(id: Id): GetOnlineBusinessReviewByBusinessIdResult {
         const result = this.repository.getByBusinessId(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
@@ -41,6 +46,25 @@ export class OnlineBusinessReviewReader {
         return {
             status: OnlineBusinessReviewReaderResultStatus.OK,
             reviews: result.reviews,
+        };
+    }
+
+    getById(id: Id): GetOnlineBusinessReviewByIdResult {
+        const result = this.repository.getById(id);
+
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
+            return {
+                status: OnlineBusinessReviewReaderResultStatus.GENERIC_ERROR,
+            };
+        }
+        if (result.status === GetResultStatus.NOT_FOUND) {
+            return {
+                status: OnlineBusinessReviewReaderResultStatus.NOT_FOUND,
+            };
+        }
+        return {
+            status: OnlineBusinessReviewReaderResultStatus.OK,
+            review: result.review,
         };
     }
 }

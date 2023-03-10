@@ -17,6 +17,7 @@ import { GetResultStatus } from 'src/modules/physical-business/domain';
 
 export interface PhysicalBusinessReviewCreatorResult {
     status: PhysicalBusinessReviewCreatorResultStatus;
+    id?: string;
 }
 
 export enum PhysicalBusinessReviewCreatorResultStatus {
@@ -52,9 +53,8 @@ export class PhysicalBusinessReviewCreator {
                 status: PhysicalBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
             };
         }
-        const createResult = this.reviewRepository.create(
-            new Review(businessId, text, rating, username),
-        );
+        const review = new Review(businessId, text, rating, username);
+        const createResult = this.reviewRepository.create(review);
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {
                 status: PhysicalBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW,
@@ -68,6 +68,7 @@ export class PhysicalBusinessReviewCreator {
         this.physicalBusinessRepository.increaseReviewAmount(businessId);
         return {
             status: PhysicalBusinessReviewCreatorResultStatus.OK,
+            id: review.id,
         };
     }
 }

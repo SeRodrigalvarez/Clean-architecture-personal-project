@@ -16,6 +16,11 @@ export interface GetResult {
     reviews?: Review[];
 }
 
+export interface GetSingleResult {
+    status: GetResultStatus;
+    review?: Review;
+}
+
 export enum GetResultStatus {
     OK,
     NOT_FOUND,
@@ -25,6 +30,7 @@ export enum GetResultStatus {
 export interface ReviewRepository {
     create(review: Review): CreateResult;
     getByBusinessId(id: Id): GetResult;
+    getById(id: Id): GetSingleResult;
 }
 
 export const REVIEW_REPOSITORY_PORT = Symbol('REVIEW_REPOSITORY_PORT');

@@ -18,13 +18,15 @@ export class GetPhysicalBusinesssReviewParam {
     id: string;
 }
 
-@Controller('business/physical/review')
+@Controller('business/physical')
 export class GetPhysicalBusinessReviewController {
     constructor(private reviewReader: PhysicalBusinessReviewReader) {}
 
-    @Get(':id')
-    execute(@Param() param: GetPhysicalBusinesssReviewParam) {
-        const result = this.reviewReader.execute(Id.createIdFrom(param.id));
+    @Get(':id/review')
+    getByBusinessId(@Param() param: GetPhysicalBusinesssReviewParam) {
+        const result = this.reviewReader.getByBusinessId(
+            Id.createIdFrom(param.id),
+        );
 
         if (
             result.status ===
@@ -42,6 +44,36 @@ export class GetPhysicalBusinessReviewController {
         }
 
         return this.domainToJsonMapper(result.reviews);
+    }
+
+    @Get('review/:id')
+    getById(@Param() param: GetPhysicalBusinesssReviewParam) {
+        const result = this.reviewReader.getById(Id.createIdFrom(param.id));
+
+        if (
+            result.status ===
+            PhysicalBusinessReviewReaderResultStatus.GENERIC_ERROR
+        ) {
+            throw new InternalServerErrorException();
+        }
+
+        if (
+            result.status === PhysicalBusinessReviewReaderResultStatus.NOT_FOUND
+        ) {
+            throw new NotFoundException(
+                `No reviews for the business with id ${param.id}`,
+            );
+        }
+
+        const review = result.review;
+
+        return {
+            id: review.id,
+            businessId: review.businessId,
+            text: review.text,
+            rating: review.rating,
+            username: review.username,
+        };
     }
 
     private domainToJsonMapper(reviews: Review[]) {

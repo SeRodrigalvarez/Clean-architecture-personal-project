@@ -17,6 +17,7 @@ import { GetResultStatus } from 'src/modules/online-business/domain';
 
 export interface OnlineBusinessReviewCreatorResult {
     status: OnlineBusinessReviewCreatorResultStatus;
+    id?: string;
 }
 
 export enum OnlineBusinessReviewCreatorResultStatus {
@@ -52,9 +53,8 @@ export class OnlineBusinessReviewCreator {
                 status: OnlineBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
             };
         }
-        const createResult = this.reviewRepository.create(
-            new Review(businessId, text, rating, username),
-        );
+        const review = new Review(businessId, text, rating, username);
+        const createResult = this.reviewRepository.create(review);
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {
                 status: OnlineBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW,
@@ -68,6 +68,7 @@ export class OnlineBusinessReviewCreator {
         this.onlineBusinessRepository.increaseReviewAmount(businessId);
         return {
             status: OnlineBusinessReviewCreatorResultStatus.OK,
+            id: review.id,
         };
     }
 }
