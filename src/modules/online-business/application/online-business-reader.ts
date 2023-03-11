@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
+    GetResult,
     GetResultStatus,
     OnlineBusiness,
     OnlineBusinessRepository,
@@ -30,20 +31,20 @@ export class OnlineBusinessReader {
         private repository: OnlineBusinessRepository,
     ) {}
 
-    filter(
+    async filter(
         pageNumber: PageNumber,
         pageSize: PageSize,
         value?: string,
-    ): FilterOnlineBusinessesResult {
-        let result;
+    ): Promise<FilterOnlineBusinessesResult> {
+        let result: GetResult;
         if (value) {
-            result = this.repository.getByNameOrWebsite(
+            result = await this.repository.getByNameOrWebsite(
                 value,
                 pageNumber,
                 pageSize,
             );
         } else {
-            result = this.repository.getAll(pageNumber, pageSize);
+            result = await this.repository.getAll(pageNumber, pageSize);
         }
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
@@ -61,8 +62,8 @@ export class OnlineBusinessReader {
         };
     }
 
-    getById(id: Id): GetOnlineBusinessByIdResult {
-        const result = this.repository.getById(id);
+    async getById(id: Id): Promise<GetOnlineBusinessByIdResult> {
+        const result = await this.repository.getById(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {

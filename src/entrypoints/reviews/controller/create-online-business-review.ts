@@ -49,11 +49,11 @@ export class CreateOnlineBusinessReviewController {
     constructor(private reviewCreator: OnlineBusinessReviewCreator) {}
 
     @Post(':businessId/review')
-    execute(
+    async execute(
         @Param() param: CreateOnlineBusinessReviewParam,
         @Body() body: CreateOnlineBusinessReviewBody,
     ) {
-        const result = this.reviewCreator.execute(
+        const result = await this.reviewCreator.execute(
             Id.createIdFrom(param.businessId),
             new ReviewText(body.text),
             new ReviewRating(body.rating),

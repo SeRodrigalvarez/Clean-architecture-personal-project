@@ -49,14 +49,14 @@ export class GetOnlineBusinessController {
     constructor(private onlineBusinessReader: OnlineBusinessReader) {}
 
     @Get()
-    filter(@Query() query: FilterOnlineBusinessesQuery) {
+    async filter(@Query() query: FilterOnlineBusinessesQuery) {
         const pageNumber = query.pageNumber
             ? PageNumber.createPageNumber(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
             ? PageSize.createPageSize(Number(query.pageSize))
             : PageSize.createMaxPageSize();
-        const result = this.onlineBusinessReader.filter(
+        const result = await this.onlineBusinessReader.filter(
             pageNumber,
             pageSize,
             query.filter,
@@ -75,8 +75,8 @@ export class GetOnlineBusinessController {
     }
 
     @Get(':id')
-    getById(@Param() param: GetOnlineBusinesssParam) {
-        const result = this.onlineBusinessReader.getById(
+    async getById(@Param() param: GetOnlineBusinesssParam) {
+        const result = await this.onlineBusinessReader.getById(
             Id.createIdFrom(param.id),
         );
 

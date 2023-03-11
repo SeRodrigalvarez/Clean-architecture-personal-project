@@ -30,11 +30,11 @@ export class PhysicalBusinessReader {
         private repository: PhysicalBusinessRepository,
     ) {}
 
-    filter(
+    async filter(
         pageNumber: PageNumber,
         pageSize: PageSize,
         value?: string,
-    ): FilterPhysicalBusinessesResult {
+    ): Promise<FilterPhysicalBusinessesResult> {
         let result;
         if (value) {
             result = this.repository.getByNameOrAddress(
@@ -43,7 +43,7 @@ export class PhysicalBusinessReader {
                 pageSize,
             );
         } else {
-            result = this.repository.getAll(pageNumber, pageSize);
+            result = await this.repository.getAll(pageNumber, pageSize);
         }
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
@@ -61,8 +61,8 @@ export class PhysicalBusinessReader {
         };
     }
 
-    getById(id: Id): GetPhysicalBusinessByIdResult {
-        const result = this.repository.getById(id);
+    async getById(id: Id): Promise<GetPhysicalBusinessByIdResult> {
+        const result = await this.repository.getById(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {

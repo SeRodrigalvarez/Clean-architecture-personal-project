@@ -27,13 +27,13 @@ export class OnlineBusinessCreator {
         private repository: OnlineBusinessRepository,
     ) {}
 
-    execute(
+    async execute(
         name: OnlineBusinessName,
         website: OnlineBusinessWebsite,
         email: BusinessEmail,
-    ): OnlineBusinessCreatorResult {
+    ): Promise<OnlineBusinessCreatorResult> {
         const business = new OnlineBusiness(name, website, email);
-        const result = this.repository.create(business);
+        const result = await this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
             return {
                 status: OnlineBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS,

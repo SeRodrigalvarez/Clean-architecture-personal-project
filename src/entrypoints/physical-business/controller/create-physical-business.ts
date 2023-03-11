@@ -60,8 +60,8 @@ export class CreatePhysicalBusinessController {
     constructor(private physicalBusinessCreator: PhysicalBusinessCreator) {}
 
     @Post()
-    execute(@Body() body: CreatePhysicalBusinessBody) {
-        const result = this.physicalBusinessCreator.execute(
+    async execute(@Body() body: CreatePhysicalBusinessBody) {
+        const result = await this.physicalBusinessCreator.execute(
             new PhysicalBusinessName(body.name),
             new PhysicalBusinessAddress(
                 body.street,

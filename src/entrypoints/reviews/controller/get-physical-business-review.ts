@@ -46,7 +46,7 @@ export class GetPhysicalBusinessReviewController {
     constructor(private reviewReader: PhysicalBusinessReviewReader) {}
 
     @Get(':id/review')
-    getByBusinessId(
+    async getByBusinessId(
         @Param() param: GetPhysicalBusinesssReviewParam,
         @Query() query: GetPhysicalBusinesssReviewQuery,
     ) {
@@ -56,7 +56,7 @@ export class GetPhysicalBusinessReviewController {
         const pageSize = query.pageSize
             ? PageSize.createPageSize(Number(query.pageSize))
             : PageSize.createMaxPageSize();
-        const result = this.reviewReader.getByBusinessId(
+        const result = await this.reviewReader.getByBusinessId(
             Id.createIdFrom(param.id),
             pageNumber,
             pageSize,
@@ -81,8 +81,10 @@ export class GetPhysicalBusinessReviewController {
     }
 
     @Get('review/:id')
-    getById(@Param() param: GetPhysicalBusinesssReviewParam) {
-        const result = this.reviewReader.getById(Id.createIdFrom(param.id));
+    async getById(@Param() param: GetPhysicalBusinesssReviewParam) {
+        const result = await this.reviewReader.getById(
+            Id.createIdFrom(param.id),
+        );
 
         if (
             result.status ===

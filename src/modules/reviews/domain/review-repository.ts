@@ -28,13 +28,13 @@ export enum GetResultStatus {
 }
 
 export interface ReviewRepository {
-    create(review: Review): CreateResult;
+    create(review: Review): Promise<CreateResult>;
     getByBusinessId(
         id: Id,
         pageNumber: PageNumber,
         pageSize: PageSize,
-    ): GetResult;
-    getById(id: Id): GetSingleResult;
+    ): Promise<GetResult>;
+    getById(id: Id): Promise<GetSingleResult>;
 }
 
 export const REVIEW_REPOSITORY_PORT = Symbol('REVIEW_REPOSITORY_PORT');

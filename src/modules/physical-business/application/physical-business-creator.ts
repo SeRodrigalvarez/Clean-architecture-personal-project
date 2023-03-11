@@ -28,14 +28,14 @@ export class PhysicalBusinessCreator {
         private repository: PhysicalBusinessRepository,
     ) {}
 
-    execute(
+    async execute(
         name: PhysicalBusinessName,
         address: PhysicalBusinessAddress,
         phone: PhysicalBusinessPhone,
         email: BusinessEmail,
-    ): PhysicalBusinessCreatorResult {
+    ): Promise<PhysicalBusinessCreatorResult> {
         const business = new PhysicalBusiness(name, address, phone, email);
-        const result = this.repository.create(business);
+        const result = await this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
             return {
                 status: PhysicalBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS,

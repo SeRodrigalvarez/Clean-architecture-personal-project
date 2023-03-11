@@ -36,13 +36,15 @@ export class PhysicalBusinessReviewCreator {
         private physicalBusinessRepository: PhysicalBusinessRepository,
     ) {}
 
-    execute(
+    async execute(
         businessId: Id,
         text: ReviewText,
         rating: ReviewRating,
         username: Username,
-    ): PhysicalBusinessReviewCreatorResult {
-        const getResult = this.physicalBusinessRepository.getById(businessId);
+    ): Promise<PhysicalBusinessReviewCreatorResult> {
+        const getResult = await this.physicalBusinessRepository.getById(
+            businessId,
+        );
         if (getResult.status === GetResultStatus.GENERIC_ERROR) {
             return {
                 status: PhysicalBusinessReviewCreatorResultStatus.GENERIC_ERROR,
@@ -54,7 +56,7 @@ export class PhysicalBusinessReviewCreator {
             };
         }
         const review = new Review(businessId, text, rating, username);
-        const createResult = this.reviewRepository.create(review);
+        const createResult = await this.reviewRepository.create(review);
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {
                 status: PhysicalBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW,

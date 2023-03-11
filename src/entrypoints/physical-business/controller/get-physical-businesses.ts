@@ -49,14 +49,14 @@ export class GetPhysicalBusinessController {
     constructor(private physicalBusinessReader: PhysicalBusinessReader) {}
 
     @Get()
-    filter(@Query() query: FilterPhysicalBusinessesQuery) {
+    async filter(@Query() query: FilterPhysicalBusinessesQuery) {
         const pageNumber = query.pageNumber
             ? PageNumber.createPageNumber(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
             ? PageSize.createPageSize(Number(query.pageSize))
             : PageSize.createMaxPageSize();
-        const result = this.physicalBusinessReader.filter(
+        const result = await this.physicalBusinessReader.filter(
             pageNumber,
             pageSize,
             query.filter,
@@ -77,8 +77,8 @@ export class GetPhysicalBusinessController {
     }
 
     @Get(':id')
-    getById(@Param() param: GetPhysicalBusinesssParam) {
-        const result = this.physicalBusinessReader.getById(
+    async getById(@Param() param: GetPhysicalBusinesssParam) {
+        const result = await this.physicalBusinessReader.getById(
             Id.createIdFrom(param.id),
         );
 

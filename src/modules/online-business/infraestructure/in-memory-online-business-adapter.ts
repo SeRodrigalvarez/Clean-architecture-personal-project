@@ -5,14 +5,13 @@ import {
     OnlineBusinessRepository,
     CreateResultStatus,
     GetResultStatus,
-    UpdateResult,
     UpdateResultStatus,
 } from '../domain';
 
 export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
     private businesses: OnlineBusiness[] = [];
 
-    create(onlineBusiness: OnlineBusiness) {
+    async create(onlineBusiness: OnlineBusiness) {
         if (
             this.doesNameAlreadyExists(
                 new OnlineBusinessName(onlineBusiness.name),
@@ -28,7 +27,7 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getByNameOrWebsite(
+    async getByNameOrWebsite(
         value: string,
         pageNumber: PageNumber,
         pageSize: PageSize,
@@ -53,7 +52,7 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getById(id: Id) {
+    async getById(id: Id) {
         const result = this.businesses.find((business) => business.hasId(id));
         if (result) {
             return {
@@ -66,7 +65,7 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getAll(pageNumber: PageNumber, pageSize: PageSize) {
+    async getAll(pageNumber: PageNumber, pageSize: PageSize) {
         const start = pageNumber.value * pageSize.value;
         const end = start + pageSize.value;
         const result = this.businesses.slice(start, end);
@@ -81,8 +80,8 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    increaseReviewAmount(id: Id): UpdateResult {
-        const result = this.getById(id);
+    async increaseReviewAmount(id: Id) {
+        const result = await this.getById(id);
         if (result.status === GetResultStatus.NOT_FOUND) {
             return {
                 status: UpdateResultStatus.NOT_FOUND,

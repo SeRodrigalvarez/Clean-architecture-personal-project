@@ -30,12 +30,12 @@ export class OnlineBusinessReviewReader {
         private repository: ReviewRepository,
     ) {}
 
-    getByBusinessId(
+    async getByBusinessId(
         id: Id,
         pageNumber: PageNumber,
         pageSize: PageSize,
-    ): GetOnlineBusinessReviewByBusinessIdResult {
-        const result = this.repository.getByBusinessId(
+    ): Promise<GetOnlineBusinessReviewByBusinessIdResult> {
+        const result = await this.repository.getByBusinessId(
             id,
             pageNumber,
             pageSize,
@@ -57,8 +57,8 @@ export class OnlineBusinessReviewReader {
         };
     }
 
-    getById(id: Id): GetOnlineBusinessReviewByIdResult {
-        const result = this.repository.getById(id);
+    async getById(id: Id): Promise<GetOnlineBusinessReviewByIdResult> {
+        const result = await this.repository.getById(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {

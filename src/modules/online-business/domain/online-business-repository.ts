@@ -38,15 +38,15 @@ export enum UpdateResultStatus {
 }
 
 export interface OnlineBusinessRepository {
-    create(onlineBusiness: OnlineBusiness): CreateResult;
+    create(onlineBusiness: OnlineBusiness): Promise<CreateResult>;
     getByNameOrWebsite(
         value: string,
         pageNumber: PageNumber,
         pageSize: PageSize,
-    ): GetResult;
-    getById(id: Id): GetSingleResult;
-    getAll(pageNumber: PageNumber, pageSize: PageSize): GetResult;
-    increaseReviewAmount(id: Id): UpdateResult;
+    ): Promise<GetResult>;
+    getById(id: Id): Promise<GetSingleResult>;
+    getAll(pageNumber: PageNumber, pageSize: PageSize): Promise<GetResult>;
+    increaseReviewAmount(id: Id): Promise<UpdateResult>;
 }
 
 export const ONLINE_BUSINESS_PORT = Symbol('ONLINE_BUSINESS_PORT');

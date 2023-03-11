@@ -38,15 +38,15 @@ export enum UpdateResultStatus {
 }
 
 export interface PhysicalBusinessRepository {
-    create(physicalBusiness: PhysicalBusiness): CreateResult;
+    create(physicalBusiness: PhysicalBusiness): Promise<CreateResult>;
     getByNameOrAddress(
         value: string,
         pageNumber: PageNumber,
         pageSize: PageSize,
-    ): GetResult;
-    getById(id: Id): GetSingleResult;
-    getAll(pageNumber: PageNumber, pageSize: PageSize): GetResult;
-    increaseReviewAmount(id: Id): UpdateResult;
+    ): Promise<GetResult>;
+    getById(id: Id): Promise<GetSingleResult>;
+    getAll(pageNumber: PageNumber, pageSize: PageSize): Promise<GetResult>;
+    increaseReviewAmount(id: Id): Promise<UpdateResult>;
 }
 
 export const PHYSICAL_BUSINESS_PORT = Symbol('PHYSICAL_BUSINESS_PORT');

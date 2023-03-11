@@ -36,13 +36,15 @@ export class OnlineBusinessReviewCreator {
         private onlineBusinessRepository: OnlineBusinessRepository,
     ) {}
 
-    execute(
+    async execute(
         businessId: Id,
         text: ReviewText,
         rating: ReviewRating,
         username: Username,
-    ): OnlineBusinessReviewCreatorResult {
-        const getResult = this.onlineBusinessRepository.getById(businessId);
+    ): Promise<OnlineBusinessReviewCreatorResult> {
+        const getResult = await this.onlineBusinessRepository.getById(
+            businessId,
+        );
         if (getResult.status === GetResultStatus.GENERIC_ERROR) {
             return {
                 status: OnlineBusinessReviewCreatorResultStatus.GENERIC_ERROR,
@@ -54,7 +56,7 @@ export class OnlineBusinessReviewCreator {
             };
         }
         const review = new Review(businessId, text, rating, username);
-        const createResult = this.reviewRepository.create(review);
+        const createResult = await this.reviewRepository.create(review);
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {
                 status: OnlineBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW,

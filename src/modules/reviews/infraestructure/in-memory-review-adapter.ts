@@ -5,7 +5,7 @@ import { ReviewRepository } from '../domain';
 export class InMemoryReviewAdapter implements ReviewRepository {
     private reviews: Review[] = [];
 
-    create(review: Review) {
+    async create(review: Review) {
         if (this.isDuplicatedReview(review)) {
             return {
                 status: CreateResultStatus.DUPLICATED_REVIEW,
@@ -16,7 +16,7 @@ export class InMemoryReviewAdapter implements ReviewRepository {
             status: CreateResultStatus.OK,
         };
     }
-    getByBusinessId(id: Id, pageNumber: PageNumber, pageSize: PageSize) {
+    async getByBusinessId(id: Id, pageNumber: PageNumber, pageSize: PageSize) {
         const start = pageNumber.value * pageSize.value;
         const end = start + pageSize.value;
         const result = this.reviews
@@ -34,7 +34,7 @@ export class InMemoryReviewAdapter implements ReviewRepository {
             reviews: result,
         };
     }
-    getById(id: Id) {
+    async getById(id: Id) {
         const result = this.reviews.find((review) => review.hasId(id));
 
         if (!result) {

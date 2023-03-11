@@ -35,8 +35,8 @@ export class CreateOnlineBusinessController {
     constructor(private onlineBusinessCreator: OnlineBusinessCreator) {}
 
     @Post()
-    execute(@Body() body: CreateOnlineBusinessBody) {
-        const result = this.onlineBusinessCreator.execute(
+    async execute(@Body() body: CreateOnlineBusinessBody) {
+        const result = await this.onlineBusinessCreator.execute(
             new OnlineBusinessName(body.name),
             new OnlineBusinessWebsite(body.website),
             new BusinessEmail(body.email),
