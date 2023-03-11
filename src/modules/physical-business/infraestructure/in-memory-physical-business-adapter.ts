@@ -1,4 +1,4 @@
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     PhysicalBusiness,
     PhysicalBusinessName,
@@ -30,11 +30,20 @@ export class InMemoryPhysicalBusinessAdapter
         };
     }
 
-    getByNameOrAddress(value: string) {
-        const result = this.businesses.filter(
-            (business) =>
-                business.includesName(value) || business.includesAddress(value),
-        );
+    getByNameOrAddress(
+        value: string,
+        pageNumber: PageNumber,
+        pageSize: PageSize,
+    ) {
+        const start = pageNumber.value * pageSize.value;
+        const end = start + pageSize.value;
+        const result = this.businesses
+            .filter(
+                (business) =>
+                    business.includesName(value) ||
+                    business.includesAddress(value),
+            )
+            .slice(start, end);
         if (result.length === 0) {
             return {
                 status: GetResultStatus.NOT_FOUND,
@@ -59,7 +68,10 @@ export class InMemoryPhysicalBusinessAdapter
         };
     }
 
-    getAll() {
+    getAll(pageNumber: PageNumber, pageSize: PageSize) {
+        const start = pageNumber.value * pageSize.value;
+        const end = start + pageSize.value;
+        const result = this.businesses.slice(start, end);
         if (this.businesses.length === 0) {
             return {
                 status: GetResultStatus.NOT_FOUND,
@@ -67,7 +79,7 @@ export class InMemoryPhysicalBusinessAdapter
         }
         return {
             status: GetResultStatus.OK,
-            physicalBusinesses: this.businesses,
+            physicalBusinesses: result,
         };
     }
 

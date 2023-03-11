@@ -18,7 +18,7 @@ export class ReviewRating {
         const result = validateSync(this);
         if (result.length != 0) {
             throw new Error(
-                `Invalid review rating: ${this.rating}. Name length must be between ${RATING_MIN_VALUE} and ${RATING_MAX_VALUE}, both included`,
+                `Invalid review rating: ${this.rating}. Review rating must be an integer greater than or equal to ${RATING_MIN_VALUE} and lower than or equal to ${RATING_MAX_VALUE}`,
             );
         }
     }

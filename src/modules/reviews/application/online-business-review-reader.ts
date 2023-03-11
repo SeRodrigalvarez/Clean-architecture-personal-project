@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
     Review,
@@ -30,8 +30,16 @@ export class OnlineBusinessReviewReader {
         private repository: ReviewRepository,
     ) {}
 
-    getByBusinessId(id: Id): GetOnlineBusinessReviewByBusinessIdResult {
-        const result = this.repository.getByBusinessId(id);
+    getByBusinessId(
+        id: Id,
+        pageNumber: PageNumber,
+        pageSize: PageSize,
+    ): GetOnlineBusinessReviewByBusinessIdResult {
+        const result = this.repository.getByBusinessId(
+            id,
+            pageNumber,
+            pageSize,
+        );
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {

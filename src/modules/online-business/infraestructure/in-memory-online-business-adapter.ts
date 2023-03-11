@@ -1,4 +1,4 @@
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     OnlineBusiness,
     OnlineBusinessName,
@@ -28,11 +28,20 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getByNameOrWebsite(value: string) {
-        const result = this.businesses.filter(
-            (business) =>
-                business.includesName(value) || business.includesWebsite(value),
-        );
+    getByNameOrWebsite(
+        value: string,
+        pageNumber: PageNumber,
+        pageSize: PageSize,
+    ) {
+        const start = pageNumber.value * pageSize.value;
+        const end = start + pageSize.value;
+        const result = this.businesses
+            .filter(
+                (business) =>
+                    business.includesName(value) ||
+                    business.includesWebsite(value),
+            )
+            .slice(start, end);
         if (result.length === 0) {
             return {
                 status: GetResultStatus.NOT_FOUND,
@@ -57,7 +66,10 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    getAll() {
+    getAll(pageNumber: PageNumber, pageSize: PageSize) {
+        const start = pageNumber.value * pageSize.value;
+        const end = start + pageSize.value;
+        const result = this.businesses.slice(start, end);
         if (this.businesses.length === 0) {
             return {
                 status: GetResultStatus.NOT_FOUND,
@@ -65,7 +77,7 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         }
         return {
             status: GetResultStatus.OK,
-            onlineBusinesses: this.businesses,
+            onlineBusinesses: result,
         };
     }
 

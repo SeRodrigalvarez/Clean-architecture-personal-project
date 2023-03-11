@@ -15,13 +15,17 @@ export class Id {
 
     static createIdFrom(uuid: string) {
         const object = new this(uuid);
+        Id.guard(object);
+        return object;
+    }
+
+    private static guard(object: Id) {
         const result = validateSync(object);
         if (result.length != 0) {
             throw new Error(
-                `Invalid UUID id: ${uuid}. Id must be a valid UUID`,
+                `Invalid UUID id: ${object.value}. Id must be a valid UUID`,
             );
         }
-        return object;
     }
 
     get value() {

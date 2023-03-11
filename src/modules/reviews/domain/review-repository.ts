@@ -1,4 +1,4 @@
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import { Review } from '.';
 
 export interface CreateResult {
@@ -29,7 +29,11 @@ export enum GetResultStatus {
 
 export interface ReviewRepository {
     create(review: Review): CreateResult;
-    getByBusinessId(id: Id): GetResult;
+    getByBusinessId(
+        id: Id,
+        pageNumber: PageNumber,
+        pageSize: PageSize,
+    ): GetResult;
     getById(id: Id): GetSingleResult;
 }
 

@@ -4,18 +4,41 @@ import {
     InternalServerErrorException,
     NotFoundException,
     Param,
+    Query,
 } from '@nestjs/common';
-import { IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import {
     OnlineBusinessReviewReader,
     OnlineBusinessReviewReaderResultStatus,
 } from 'src/modules/reviews/application';
 import { Review } from 'src/modules/reviews/domain';
-import { Id } from 'src/modules/shared/domain';
+import {
+    Id,
+    PageSize,
+    PageNumber,
+    PAGE_NUMBER_MIN_VALUE,
+    PAGE_SIZE_MAX_VALUE,
+    PAGE_SIZE_MIN_VALUE,
+} from 'src/modules/shared/domain';
 
 export class GetOnlineBusinesssReviewParam {
     @IsUUID()
     id: string;
+}
+
+export class GetOnlineBusinesssReviewQuery {
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(PAGE_NUMBER_MIN_VALUE)
+    pageNumber: string;
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(PAGE_SIZE_MIN_VALUE)
+    @Max(PAGE_SIZE_MAX_VALUE)
+    pageSize: string;
 }
 
 @Controller('business/online')
@@ -23,9 +46,20 @@ export class GetOnlineBusinessReviewController {
     constructor(private reviewReader: OnlineBusinessReviewReader) {}
 
     @Get(':id/review')
-    getByBusinessId(@Param() param: GetOnlineBusinesssReviewParam) {
+    getByBusinessId(
+        @Param() param: GetOnlineBusinesssReviewParam,
+        @Query() query: GetOnlineBusinesssReviewQuery,
+    ) {
+        const pageNumber = query.pageNumber
+            ? PageNumber.createPageNumber(Number(query.pageNumber))
+            : PageNumber.createMinPageNumber();
+        const pageSize = query.pageSize
+            ? PageSize.createPageSize(Number(query.pageSize))
+            : PageSize.createMaxPageSize();
         const result = this.reviewReader.getByBusinessId(
             Id.createIdFrom(param.id),
+            pageNumber,
+            pageSize,
         );
 
         if (

@@ -1,4 +1,4 @@
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import { CreateResultStatus, GetResultStatus, Review } from '../domain';
 import { ReviewRepository } from '../domain';
 
@@ -16,10 +16,12 @@ export class InMemoryReviewAdapter implements ReviewRepository {
             status: CreateResultStatus.OK,
         };
     }
-    getByBusinessId(id: Id) {
-        const result = this.reviews.filter((review) =>
-            review.hasBusinessId(id),
-        );
+    getByBusinessId(id: Id, pageNumber: PageNumber, pageSize: PageSize) {
+        const start = pageNumber.value * pageSize.value;
+        const end = start + pageSize.value;
+        const result = this.reviews
+            .filter((review) => review.hasBusinessId(id))
+            .slice(start, end);
 
         if (result.length === 0) {
             return {

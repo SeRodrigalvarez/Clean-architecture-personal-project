@@ -6,18 +6,37 @@ import {
     Param,
     Query,
 } from '@nestjs/common';
-import { IsString, IsOptional, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsUUID, IsInt, Max, Min } from 'class-validator';
 import {
     PhysicalBusinessReader,
     PhysicalBusinessReaderResultStatus,
 } from 'src/modules/physical-business/application';
 import { PhysicalBusiness } from 'src/modules/physical-business/domain';
-import { Id } from 'src/modules/shared/domain';
+import {
+    Id,
+    PageSize,
+    PageNumber,
+    PAGE_NUMBER_MIN_VALUE,
+    PAGE_SIZE_MAX_VALUE,
+    PAGE_SIZE_MIN_VALUE,
+} from 'src/modules/shared/domain';
 
 export class FilterPhysicalBusinessesQuery {
     @IsOptional()
     @IsString()
     filter: string;
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(PAGE_NUMBER_MIN_VALUE)
+    pageNumber: string;
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(PAGE_SIZE_MIN_VALUE)
+    @Max(PAGE_SIZE_MAX_VALUE)
+    pageSize: string;
 }
 
 export class GetPhysicalBusinesssParam {
@@ -31,7 +50,17 @@ export class GetPhysicalBusinessController {
 
     @Get()
     filter(@Query() query: FilterPhysicalBusinessesQuery) {
-        const result = this.physicalBusinessReader.filter(query.filter);
+        const pageNumber = query.pageNumber
+            ? PageNumber.createPageNumber(Number(query.pageNumber))
+            : PageNumber.createMinPageNumber();
+        const pageSize = query.pageSize
+            ? PageSize.createPageSize(Number(query.pageSize))
+            : PageSize.createMaxPageSize();
+        const result = this.physicalBusinessReader.filter(
+            pageNumber,
+            pageSize,
+            query.filter,
+        );
 
         if (
             result.status === PhysicalBusinessReaderResultStatus.GENERIC_ERROR

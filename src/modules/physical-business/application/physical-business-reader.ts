@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
     PhysicalBusiness,
@@ -30,12 +30,20 @@ export class PhysicalBusinessReader {
         private repository: PhysicalBusinessRepository,
     ) {}
 
-    filter(value?: string): FilterPhysicalBusinessesResult {
+    filter(
+        pageNumber: PageNumber,
+        pageSize: PageSize,
+        value?: string,
+    ): FilterPhysicalBusinessesResult {
         let result;
         if (value) {
-            result = this.repository.getByNameOrAddress(value);
+            result = this.repository.getByNameOrAddress(
+                value,
+                pageNumber,
+                pageSize,
+            );
         } else {
-            result = this.repository.getAll();
+            result = this.repository.getAll(pageNumber, pageSize);
         }
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {

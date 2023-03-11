@@ -1,5 +1,5 @@
 import { OnlineBusiness } from './';
-import { Id } from 'src/modules/shared/domain';
+import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 
 export interface CreateResult {
     status: CreateResultStatus;
@@ -39,9 +39,13 @@ export enum UpdateResultStatus {
 
 export interface OnlineBusinessRepository {
     create(onlineBusiness: OnlineBusiness): CreateResult;
-    getByNameOrWebsite(value: string): GetResult;
+    getByNameOrWebsite(
+        value: string,
+        pageNumber: PageNumber,
+        pageSize: PageSize,
+    ): GetResult;
     getById(id: Id): GetSingleResult;
-    getAll(): GetResult;
+    getAll(pageNumber: PageNumber, pageSize: PageSize): GetResult;
     increaseReviewAmount(id: Id): UpdateResult;
 }
 

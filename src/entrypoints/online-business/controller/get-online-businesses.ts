@@ -6,18 +6,37 @@ import {
     Param,
     Query,
 } from '@nestjs/common';
-import { IsString, IsOptional, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsUUID, IsInt, Max, Min } from 'class-validator';
 import {
     OnlineBusinessReader,
     OnlineBusinessReaderResultStatus,
 } from 'src/modules/online-business/application';
 import { OnlineBusiness } from 'src/modules/online-business/domain';
-import { Id } from 'src/modules/shared/domain';
+import {
+    Id,
+    PageSize,
+    PageNumber,
+    PAGE_NUMBER_MIN_VALUE,
+    PAGE_SIZE_MAX_VALUE,
+    PAGE_SIZE_MIN_VALUE,
+} from 'src/modules/shared/domain';
 
 export class FilterOnlineBusinessesQuery {
     @IsOptional()
     @IsString()
     filter: string;
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(PAGE_NUMBER_MIN_VALUE)
+    pageNumber: string;
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(PAGE_SIZE_MIN_VALUE)
+    @Max(PAGE_SIZE_MAX_VALUE)
+    pageSize: string;
 }
 
 export class GetOnlineBusinesssParam {
@@ -31,7 +50,17 @@ export class GetOnlineBusinessController {
 
     @Get()
     filter(@Query() query: FilterOnlineBusinessesQuery) {
-        const result = this.onlineBusinessReader.filter(query.filter);
+        const pageNumber = query.pageNumber
+            ? PageNumber.createPageNumber(Number(query.pageNumber))
+            : PageNumber.createMinPageNumber();
+        const pageSize = query.pageSize
+            ? PageSize.createPageSize(Number(query.pageSize))
+            : PageSize.createMaxPageSize();
+        const result = this.onlineBusinessReader.filter(
+            pageNumber,
+            pageSize,
+            query.filter,
+        );
 
         if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
