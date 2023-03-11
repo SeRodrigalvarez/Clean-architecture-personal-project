@@ -23,7 +23,6 @@ export class PageNumber {
 
     private static guard(object: PageNumber) {
         const result = validateSync(object);
-        console.log(result);
         if (result.length != 0) {
             throw new Error(
                 `Invalid page number: ${object.value}. Page number must be an integer greater than or equal to ${PAGE_NUMBER_MIN_VALUE}`,
