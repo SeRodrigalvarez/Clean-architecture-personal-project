@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import {
     CreateOnlineBusinessController,
     GetOnlineBusinessController,
@@ -18,13 +19,13 @@ import {
     OnlineBusinessReader,
 } from './modules/online-business/application';
 import { ONLINE_BUSINESS_PORT } from './modules/online-business/domain';
-import { InMemoryOnlineBusinessAdapter } from './modules/online-business/infraestructure';
+import { MongoOnlineBusinessAdapter } from './modules/online-business/infraestructure';
 import {
     PhysicalBusinessCreator,
     PhysicalBusinessReader,
 } from './modules/physical-business/application';
 import { PHYSICAL_BUSINESS_PORT } from './modules/physical-business/domain';
-import { InMemoryPhysicalBusinessAdapter } from './modules/physical-business/infraestructure';
+import { MongoPhysicalBusinessAdapter } from './modules/physical-business/infraestructure';
 import {
     OnlineBusinessReviewCreator,
     OnlineBusinessReviewReader,
@@ -32,10 +33,11 @@ import {
     PhysicalBusinessReviewReader,
 } from './modules/reviews/application';
 import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
-import { InMemoryReviewAdapter } from './modules/reviews/infraestructure';
+import { MongoReviewAdapter } from './modules/reviews/infraestructure';
+import { MongoDatabaseConnection } from './modules/shared/infraestructure/mongo-database-connection';
 
 @Module({
-    imports: [],
+    imports: [ConfigModule.forRoot()],
     controllers: [
         CreateOnlineBusinessController,
         CreateOnlineBusinessReviewController,
@@ -55,17 +57,18 @@ import { InMemoryReviewAdapter } from './modules/reviews/infraestructure';
         PhysicalBusinessReader,
         OnlineBusinessReviewReader,
         PhysicalBusinessReviewReader,
+        MongoDatabaseConnection,
         {
             provide: ONLINE_BUSINESS_PORT,
-            useClass: InMemoryOnlineBusinessAdapter,
+            useClass: MongoOnlineBusinessAdapter,
         },
         {
             provide: PHYSICAL_BUSINESS_PORT,
-            useClass: InMemoryPhysicalBusinessAdapter,
+            useClass: MongoPhysicalBusinessAdapter,
         },
         {
             provide: REVIEW_REPOSITORY_PORT,
-            useClass: InMemoryReviewAdapter,
+            useClass: MongoReviewAdapter,
         },
     ],
 })
