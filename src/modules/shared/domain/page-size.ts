@@ -17,7 +17,7 @@ export class PageSize {
         return new this(PAGE_SIZE_MAX_VALUE);
     }
 
-    static createPageSize(pageSize: number) {
+    static createFrom(pageSize: number) {
         const object = new this(pageSize);
         PageSize.guard(object);
         return object;

@@ -10,17 +10,40 @@ import {
 } from './';
 
 export class PhysicalBusiness {
-    private bId: Id;
-    private bReviewsAmount: BusinessReviewsAmount;
-
-    constructor(
+    private constructor(
+        private bId: Id,
         private bName: PhysicalBusinessName,
         private bAddress: PhysicalBusinessAddress,
         private bPhone: PhysicalBusinessPhone,
         private bEmail: BusinessEmail,
+        private bReviewsAmount: BusinessReviewsAmount,
+    ) {}
+
+    static createNew(
+        bName: PhysicalBusinessName,
+        bAddress: PhysicalBusinessAddress,
+        bPhone: PhysicalBusinessPhone,
+        bEmail: BusinessEmail,
     ) {
-        this.bId = Id.createId();
-        this.bReviewsAmount = new BusinessReviewsAmount();
+        return new this(
+            Id.createNew(),
+            bName,
+            bAddress,
+            bPhone,
+            bEmail,
+            BusinessReviewsAmount.createNew(),
+        );
+    }
+
+    static createFrom(
+        bId: Id,
+        bName: PhysicalBusinessName,
+        bAddress: PhysicalBusinessAddress,
+        bPhone: PhysicalBusinessPhone,
+        bEmail: BusinessEmail,
+        bReviewsAmount: BusinessReviewsAmount,
+    ) {
+        return new this(bId, bName, bAddress, bPhone, bEmail, bReviewsAmount);
     }
 
     get id() {
@@ -32,6 +55,10 @@ export class PhysicalBusiness {
     }
 
     get address() {
+        return this.bAddress.values;
+    }
+
+    get addressString() {
         return this.bAddress.toString();
     }
 

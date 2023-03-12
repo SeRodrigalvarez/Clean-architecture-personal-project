@@ -59,4 +59,13 @@ export class PhysicalBusinessAddress {
     includes(value: string) {
         return this.toString().toLowerCase().includes(value.toLowerCase());
     }
+
+    get values() {
+        return {
+            street: this.street,
+            city: this.city,
+            postalCode: this.postalCode,
+            country: this.country,
+        };
+    }
 }

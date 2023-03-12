@@ -55,7 +55,7 @@ export class PhysicalBusinessReviewCreator {
                 status: PhysicalBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,
             };
         }
-        const review = new Review(businessId, text, rating, username);
+        const review = Review.createNew(businessId, text, rating, username);
         const createResult = await this.reviewRepository.create(review);
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {

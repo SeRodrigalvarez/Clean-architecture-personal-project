@@ -6,16 +6,36 @@ import {
 import { OnlineBusinessName, OnlineBusinessWebsite } from './';
 
 export class OnlineBusiness {
-    private bId: Id;
-    private bReviewsAmount: BusinessReviewsAmount;
-
-    constructor(
+    private constructor(
+        private bId: Id,
         private bName: OnlineBusinessName,
         private bWebsite: OnlineBusinessWebsite,
         private bEmail: BusinessEmail,
+        private bReviewsAmount: BusinessReviewsAmount,
+    ) {}
+
+    static createNew(
+        bName: OnlineBusinessName,
+        bWebsite: OnlineBusinessWebsite,
+        bEmail: BusinessEmail,
     ) {
-        this.bId = Id.createId();
-        this.bReviewsAmount = new BusinessReviewsAmount();
+        return new this(
+            Id.createNew(),
+            bName,
+            bWebsite,
+            bEmail,
+            BusinessReviewsAmount.createNew(),
+        );
+    }
+
+    static createFrom(
+        bId: Id,
+        bName: OnlineBusinessName,
+        bWebsite: OnlineBusinessWebsite,
+        bEmail: BusinessEmail,
+        bReviewsAmount: BusinessReviewsAmount,
+    ) {
+        return new this(bId, bName, bWebsite, bEmail, bReviewsAmount);
     }
 
     get id() {

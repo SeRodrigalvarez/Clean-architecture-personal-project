@@ -51,10 +51,10 @@ export class GetPhysicalBusinessController {
     @Get()
     async filter(@Query() query: FilterPhysicalBusinessesQuery) {
         const pageNumber = query.pageNumber
-            ? PageNumber.createPageNumber(Number(query.pageNumber))
+            ? PageNumber.createFrom(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
-            ? PageSize.createPageSize(Number(query.pageSize))
+            ? PageSize.createFrom(Number(query.pageSize))
             : PageSize.createMaxPageSize();
         const result = await this.physicalBusinessReader.filter(
             pageNumber,
@@ -79,7 +79,7 @@ export class GetPhysicalBusinessController {
     @Get(':id')
     async getById(@Param() param: GetPhysicalBusinesssParam) {
         const result = await this.physicalBusinessReader.getById(
-            Id.createIdFrom(param.id),
+            Id.createFrom(param.id),
         );
 
         if (
@@ -99,7 +99,7 @@ export class GetPhysicalBusinessController {
         return {
             id: business.id,
             name: business.name,
-            address: business.address,
+            address: business.addressString,
             phone: business.phone,
             email: business.email,
             reviewAmount: business.reviewsAmount,
@@ -110,7 +110,7 @@ export class GetPhysicalBusinessController {
         return physicalBusinesses.map((business) => ({
             id: business.id,
             name: business.name,
-            address: business.address,
+            address: business.addressString,
             email: business.email,
             reviewAmount: business.reviewsAmount,
         }));

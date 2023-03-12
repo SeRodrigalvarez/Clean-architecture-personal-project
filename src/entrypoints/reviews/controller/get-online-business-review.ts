@@ -51,13 +51,13 @@ export class GetOnlineBusinessReviewController {
         @Query() query: GetOnlineBusinesssReviewQuery,
     ) {
         const pageNumber = query.pageNumber
-            ? PageNumber.createPageNumber(Number(query.pageNumber))
+            ? PageNumber.createFrom(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
-            ? PageSize.createPageSize(Number(query.pageSize))
+            ? PageSize.createFrom(Number(query.pageSize))
             : PageSize.createMaxPageSize();
         const result = await this.reviewReader.getByBusinessId(
-            Id.createIdFrom(param.id),
+            Id.createFrom(param.id),
             pageNumber,
             pageSize,
         );
@@ -82,9 +82,7 @@ export class GetOnlineBusinessReviewController {
 
     @Get('review/:id')
     async getById(@Param() param: GetOnlineBusinesssReviewParam) {
-        const result = await this.reviewReader.getById(
-            Id.createIdFrom(param.id),
-        );
+        const result = await this.reviewReader.getById(Id.createFrom(param.id));
 
         if (
             result.status ===

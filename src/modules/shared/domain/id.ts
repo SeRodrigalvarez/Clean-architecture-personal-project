@@ -9,11 +9,11 @@ export class Id {
         this.id = uuid;
     }
 
-    static createId() {
+    static createNew() {
         return new this(randomUUID());
     }
 
-    static createIdFrom(uuid: string) {
+    static createFrom(uuid: string) {
         const object = new this(uuid);
         Id.guard(object);
         return object;

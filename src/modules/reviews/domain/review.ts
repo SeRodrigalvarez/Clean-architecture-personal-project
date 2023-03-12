@@ -2,15 +2,31 @@ import { Id } from 'src/modules/shared/domain';
 import { ReviewRating, ReviewText, Username } from './';
 
 export class Review {
-    private rId: Id;
-
-    constructor(
+    private constructor(
+        private rId: Id,
         private rBusinessId: Id,
         private rText: ReviewText,
         private rRating: ReviewRating,
         private rUsername: Username,
+    ) {}
+
+    static createNew(
+        rBusinessId: Id,
+        rText: ReviewText,
+        rRating: ReviewRating,
+        rUsername: Username,
     ) {
-        this.rId = Id.createId();
+        return new this(Id.createNew(), rBusinessId, rText, rRating, rUsername);
+    }
+
+    static createFrom(
+        rId: Id,
+        rBusinessId: Id,
+        rText: ReviewText,
+        rRating: ReviewRating,
+        rUsername: Username,
+    ) {
+        return new this(rId, rBusinessId, rText, rRating, rUsername);
     }
 
     get id() {

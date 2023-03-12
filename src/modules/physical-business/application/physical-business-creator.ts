@@ -34,7 +34,12 @@ export class PhysicalBusinessCreator {
         phone: PhysicalBusinessPhone,
         email: BusinessEmail,
     ): Promise<PhysicalBusinessCreatorResult> {
-        const business = new PhysicalBusiness(name, address, phone, email);
+        const business = PhysicalBusiness.createNew(
+            name,
+            address,
+            phone,
+            email,
+        );
         const result = await this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
             return {

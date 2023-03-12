@@ -54,7 +54,7 @@ export class CreateOnlineBusinessReviewController {
         @Body() body: CreateOnlineBusinessReviewBody,
     ) {
         const result = await this.reviewCreator.execute(
-            Id.createIdFrom(param.businessId),
+            Id.createFrom(param.businessId),
             new ReviewText(body.text),
             new ReviewRating(body.rating),
             new Username(body.username),

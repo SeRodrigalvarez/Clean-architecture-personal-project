@@ -15,7 +15,7 @@ export class PageNumber {
         return new this(PAGE_NUMBER_MIN_VALUE);
     }
 
-    static createPageNumber(pageNum: number) {
+    static createFrom(pageNum: number) {
         const object = new this(pageNum);
         PageNumber.guard(object);
         return object;

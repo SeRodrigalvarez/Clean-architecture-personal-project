@@ -51,10 +51,10 @@ export class GetOnlineBusinessController {
     @Get()
     async filter(@Query() query: FilterOnlineBusinessesQuery) {
         const pageNumber = query.pageNumber
-            ? PageNumber.createPageNumber(Number(query.pageNumber))
+            ? PageNumber.createFrom(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
-            ? PageSize.createPageSize(Number(query.pageSize))
+            ? PageSize.createFrom(Number(query.pageSize))
             : PageSize.createMaxPageSize();
         const result = await this.onlineBusinessReader.filter(
             pageNumber,
@@ -77,7 +77,7 @@ export class GetOnlineBusinessController {
     @Get(':id')
     async getById(@Param() param: GetOnlineBusinesssParam) {
         const result = await this.onlineBusinessReader.getById(
-            Id.createIdFrom(param.id),
+            Id.createFrom(param.id),
         );
 
         if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {

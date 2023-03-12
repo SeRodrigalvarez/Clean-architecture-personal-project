@@ -32,7 +32,7 @@ export class OnlineBusinessCreator {
         website: OnlineBusinessWebsite,
         email: BusinessEmail,
     ): Promise<OnlineBusinessCreatorResult> {
-        const business = new OnlineBusiness(name, website, email);
+        const business = OnlineBusiness.createNew(name, website, email);
         const result = await this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS) {
             return {
