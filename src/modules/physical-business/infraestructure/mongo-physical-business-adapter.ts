@@ -84,10 +84,10 @@ export class MongoPhysicalBusinessAdapter
             const cursor = await this.collection
                 .find({
                     $or: [
-                        { name: /value/i },
-                        { 'address.street': /value/i },
-                        { 'address.city': /value/i },
-                        { 'address.postalCode': /value/i },
+                        { name: new RegExp(value, 'i') },
+                        { 'address.street': new RegExp(value, 'i') },
+                        { 'address.city': new RegExp(value, 'i') },
+                        { 'address.postalCode': new RegExp(value, 'i') },
                     ],
                 })
                 .skip(pageNumber.value * pageSize.value)

@@ -73,7 +73,12 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
     ): Promise<GetResult> {
         try {
             const cursor = await this.collection
-                .find({ $or: [{ name: /value/i }, { website: /value/i }] })
+                .find({
+                    $or: [
+                        { name: new RegExp(value, 'i') },
+                        { website: new RegExp(value, 'i') },
+                    ],
+                })
                 .skip(pageNumber.value * pageSize.value)
                 .limit(pageNumber.value);
             const array = await cursor.toArray();

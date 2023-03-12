@@ -125,6 +125,9 @@ export class MongoReviewAdapter implements ReviewRepository {
     }
 
     private async isDuplicatedReview(review: Review) {
-        return !!(await this.collection.findOne({ username: review.username }));
+        return !!(await this.collection.findOne({
+            username: review.username,
+            businessId: review.businessId,
+        }));
     }
 }

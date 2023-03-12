@@ -37,7 +37,7 @@ export class PhysicalBusinessReader {
     ): Promise<FilterPhysicalBusinessesResult> {
         let result;
         if (value) {
-            result = this.repository.getByNameOrAddress(
+            result = await this.repository.getByNameOrAddress(
                 value,
                 pageNumber,
                 pageSize,
