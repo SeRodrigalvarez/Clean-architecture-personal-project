@@ -2,7 +2,7 @@
 
 ## Description
 
-[NoFakes Code Challenge](https://nofakes.notion.site/NoFakes-Backend-Challenge-c64335c58e934680996e45072e9b6894) with [Nest](https://github.com/nestjs/nest) using Hexagonal Architecture.
+[NoFakes Code Challenge](https://nofakes.notion.site/NoFakes-Backend-Challenge-c64335c58e934680996e45072e9b6894) with [Nest](https://github.com/nestjs/nest) using Hexagonal Architecture and SOLID.
 
 ## Installation
 
@@ -15,10 +15,14 @@ $ npm install
 $ npm prepare
 ```
 
+## Database
+
 ```bash
 # start mongodb database 
 $ docker compose up
 ```
+
+The web interface can be accessed at `http://localhost:8081/`
 
 ## Running the app
 
@@ -38,8 +42,9 @@ $ npm run start:prod
 `No-Fakes.postman_collection.json` contains all the REST requests.
 
 ## Missing tasks
+
 - Add unit, integration and e2e tests
-- Use Criteria pattern in get repository methods to avoid method explosion
+- Use Criteria pattern in the get repository methods to avoid method explosion
 - Create update and delete endpoints
 - Use a logger
 - Improve businesses duplication control (name check is not enough)
