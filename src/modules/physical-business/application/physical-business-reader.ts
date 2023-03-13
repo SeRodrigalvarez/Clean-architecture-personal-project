@@ -1,4 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
+import {
+    ReviewRepository,
+    REVIEW_REPOSITORY_PORT,
+} from 'src/modules/reviews/domain';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
@@ -7,6 +11,16 @@ import {
     PHYSICAL_BUSINESS_PORT,
 } from '../domain';
 
+export interface ReaderPhysicalBusiness {
+    id: string;
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    reviewsAmount: number;
+    averageRating: number;
+}
+
 export interface FilterPhysicalBusinessesResult {
     status: PhysicalBusinessReaderResultStatus;
     physicalBusinesses?: PhysicalBusiness[];
@@ -14,7 +28,7 @@ export interface FilterPhysicalBusinessesResult {
 
 export interface GetPhysicalBusinessByIdResult {
     status: PhysicalBusinessReaderResultStatus;
-    physicalBusiness?: PhysicalBusiness;
+    physicalBusiness?: ReaderPhysicalBusiness;
 }
 
 export enum PhysicalBusinessReaderResultStatus {
@@ -27,7 +41,9 @@ export enum PhysicalBusinessReaderResultStatus {
 export class PhysicalBusinessReader {
     constructor(
         @Inject(PHYSICAL_BUSINESS_PORT)
-        private repository: PhysicalBusinessRepository,
+        private onlineBusinessRepository: PhysicalBusinessRepository,
+        @Inject(REVIEW_REPOSITORY_PORT)
+        private reviewRepository: ReviewRepository,
     ) {}
 
     async filter(
@@ -37,13 +53,16 @@ export class PhysicalBusinessReader {
     ): Promise<FilterPhysicalBusinessesResult> {
         let result;
         if (value) {
-            result = await this.repository.getByNameOrAddress(
+            result = await this.onlineBusinessRepository.getByNameOrAddress(
                 value,
                 pageNumber,
                 pageSize,
             );
         } else {
-            result = await this.repository.getAll(pageNumber, pageSize);
+            result = await this.onlineBusinessRepository.getAll(
+                pageNumber,
+                pageSize,
+            );
         }
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
@@ -62,7 +81,7 @@ export class PhysicalBusinessReader {
     }
 
     async getById(id: Id): Promise<GetPhysicalBusinessByIdResult> {
-        const result = await this.repository.getById(id);
+        const result = await this.onlineBusinessRepository.getById(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
@@ -76,9 +95,21 @@ export class PhysicalBusinessReader {
             };
         }
 
+        const business = result.physicalBusiness;
+        const averageRating =
+            await this.reviewRepository.getAverageRatingByBusinessId(id);
+
         return {
             status: PhysicalBusinessReaderResultStatus.OK,
-            physicalBusiness: result.physicalBusiness,
+            physicalBusiness: {
+                id: business.id,
+                name: business.name,
+                address: business.addressString,
+                email: business.email,
+                phone: business.phone,
+                reviewsAmount: business.reviewsAmount,
+                averageRating,
+            },
         };
     }
 }

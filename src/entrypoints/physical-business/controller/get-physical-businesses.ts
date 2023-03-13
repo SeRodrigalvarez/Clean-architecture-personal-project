@@ -99,10 +99,11 @@ export class GetPhysicalBusinessController {
         return {
             id: business.id,
             name: business.name,
-            address: business.addressString,
+            address: business.address,
             phone: business.phone,
             email: business.email,
             reviewAmount: business.reviewsAmount,
+            averageRating: business.averageRating,
         };
     }
 

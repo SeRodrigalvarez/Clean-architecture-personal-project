@@ -98,6 +98,7 @@ export class GetOnlineBusinessController {
             website: business.website,
             email: business.email,
             reviewAmount: business.reviewsAmount,
+            averageRating: business.averageRating,
         };
     }
 

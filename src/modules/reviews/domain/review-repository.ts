@@ -35,6 +35,7 @@ export interface ReviewRepository {
         pageSize: PageSize,
     ): Promise<GetResult>;
     getById(id: Id): Promise<GetSingleResult>;
+    getAverageRatingByBusinessId(id: Id): Promise<number>;
 }
 
 export const REVIEW_REPOSITORY_PORT = Symbol('REVIEW_REPOSITORY_PORT');

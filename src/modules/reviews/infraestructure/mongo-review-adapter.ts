@@ -104,6 +104,32 @@ export class MongoReviewAdapter implements ReviewRepository {
         }
     }
 
+    async getAverageRatingByBusinessId(id: Id): Promise<number> {
+        const cursor = this.collection.aggregate([
+            {
+                $match: { businessId: id.value },
+            },
+            {
+                $group: {
+                    _id: 'averageRating',
+                    averageRating: { $avg: '$rating' },
+                },
+            },
+            {
+                $project: {
+                    averageRating: {
+                        $round: ['$averageRating', 1],
+                    },
+                },
+            },
+        ]);
+        if (await cursor.hasNext()) {
+            const result = await cursor.next();
+            return result.averageRating;
+        }
+        return 0.0;
+    }
+
     private domainToDocument(review: Review): ReviewDocument {
         return {
             id: review.id,
