@@ -48,6 +48,10 @@ export class InMemoryReviewAdapter implements ReviewRepository {
             review: result,
         };
     }
+    getAverageRatingByBusinessId(): Promise<number> {
+        // TODO: implement
+        throw new Error('Method not implemented.');
+    }
 
     private isDuplicatedReview(checkReview: Review) {
         return this.reviews.find((review) => review.equals(checkReview));
