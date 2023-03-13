@@ -11,8 +11,7 @@ import {
 import {
     CreateOnlineBusinessReviewController,
     CreatePhysicalBusinessReviewController,
-    GetOnlineBusinessReviewController,
-    GetPhysicalBusinessReviewController,
+    GetBusinessReviewController,
 } from './entrypoints/reviews/controller';
 import {
     OnlineBusinessCreator,
@@ -28,9 +27,8 @@ import { PHYSICAL_BUSINESS_PORT } from './modules/physical-business/domain';
 import { MongoPhysicalBusinessAdapter } from './modules/physical-business/infraestructure';
 import {
     OnlineBusinessReviewCreator,
-    OnlineBusinessReviewReader,
     PhysicalBusinessReviewCreator,
-    PhysicalBusinessReviewReader,
+    BusinessReviewReader,
 } from './modules/reviews/application';
 import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
 import { MongoReviewAdapter } from './modules/reviews/infraestructure';
@@ -44,9 +42,8 @@ import { MongoDatabaseConnection } from './modules/shared/infraestructure/mongo-
         CreatePhysicalBusinessController,
         CreatePhysicalBusinessReviewController,
         GetOnlineBusinessController,
-        GetOnlineBusinessReviewController,
         GetPhysicalBusinessController,
-        GetPhysicalBusinessReviewController,
+        GetBusinessReviewController,
     ],
     providers: [
         OnlineBusinessCreator,
@@ -55,8 +52,7 @@ import { MongoDatabaseConnection } from './modules/shared/infraestructure/mongo-
         PhysicalBusinessReviewCreator,
         OnlineBusinessReader,
         PhysicalBusinessReader,
-        OnlineBusinessReviewReader,
-        PhysicalBusinessReviewReader,
+        BusinessReviewReader,
         MongoDatabaseConnection,
         {
             provide: ONLINE_BUSINESS_PORT,

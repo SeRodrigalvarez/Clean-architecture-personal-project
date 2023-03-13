@@ -7,24 +7,24 @@ import {
     REVIEW_REPOSITORY_PORT,
 } from '../domain';
 
-export interface GetOnlineBusinessReviewByBusinessIdResult {
-    status: OnlineBusinessReviewReaderResultStatus;
+export interface GetBusinessReviewByBusinessIdResult {
+    status: BusinessReviewReaderResultStatus;
     reviews?: Review[];
 }
 
-export interface GetOnlineBusinessReviewByIdResult {
-    status: OnlineBusinessReviewReaderResultStatus;
+export interface GetBusinessReviewByIdResult {
+    status: BusinessReviewReaderResultStatus;
     review?: Review;
 }
 
-export enum OnlineBusinessReviewReaderResultStatus {
+export enum BusinessReviewReaderResultStatus {
     OK,
     NOT_FOUND,
     GENERIC_ERROR,
 }
 
 @Injectable()
-export class OnlineBusinessReviewReader {
+export class BusinessReviewReader {
     constructor(
         @Inject(REVIEW_REPOSITORY_PORT)
         private repository: ReviewRepository,
@@ -34,7 +34,7 @@ export class OnlineBusinessReviewReader {
         id: Id,
         pageNumber: PageNumber,
         pageSize: PageSize,
-    ): Promise<GetOnlineBusinessReviewByBusinessIdResult> {
+    ): Promise<GetBusinessReviewByBusinessIdResult> {
         const result = await this.repository.getByBusinessId(
             id,
             pageNumber,
@@ -43,35 +43,35 @@ export class OnlineBusinessReviewReader {
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
-                status: OnlineBusinessReviewReaderResultStatus.GENERIC_ERROR,
+                status: BusinessReviewReaderResultStatus.GENERIC_ERROR,
             };
         }
         if (result.status === GetResultStatus.NOT_FOUND) {
             return {
-                status: OnlineBusinessReviewReaderResultStatus.NOT_FOUND,
+                status: BusinessReviewReaderResultStatus.NOT_FOUND,
             };
         }
         return {
-            status: OnlineBusinessReviewReaderResultStatus.OK,
+            status: BusinessReviewReaderResultStatus.OK,
             reviews: result.reviews,
         };
     }
 
-    async getById(id: Id): Promise<GetOnlineBusinessReviewByIdResult> {
+    async getById(id: Id): Promise<GetBusinessReviewByIdResult> {
         const result = await this.repository.getById(id);
 
         if (result.status === GetResultStatus.GENERIC_ERROR) {
             return {
-                status: OnlineBusinessReviewReaderResultStatus.GENERIC_ERROR,
+                status: BusinessReviewReaderResultStatus.GENERIC_ERROR,
             };
         }
         if (result.status === GetResultStatus.NOT_FOUND) {
             return {
-                status: OnlineBusinessReviewReaderResultStatus.NOT_FOUND,
+                status: BusinessReviewReaderResultStatus.NOT_FOUND,
             };
         }
         return {
-            status: OnlineBusinessReviewReaderResultStatus.OK,
+            status: BusinessReviewReaderResultStatus.OK,
             review: result.review,
         };
     }

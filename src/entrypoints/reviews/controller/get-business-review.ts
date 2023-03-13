@@ -9,8 +9,8 @@ import {
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import {
-    PhysicalBusinessReviewReader,
-    PhysicalBusinessReviewReaderResultStatus,
+    BusinessReviewReader,
+    BusinessReviewReaderResultStatus,
 } from 'src/modules/reviews/application';
 import { Review } from 'src/modules/reviews/domain';
 import {
@@ -18,16 +18,16 @@ import {
     PageSize,
     PageNumber,
     PAGE_NUMBER_MIN_VALUE,
-    PAGE_SIZE_MIN_VALUE,
     PAGE_SIZE_MAX_VALUE,
+    PAGE_SIZE_MIN_VALUE,
 } from 'src/modules/shared/domain';
 
-export class GetPhysicalBusinesssReviewParam {
+export class GetBusinesssReviewParam {
     @IsUUID()
     id: string;
 }
 
-export class GetPhysicalBusinesssReviewQuery {
+export class GetBusinesssReviewQuery {
     @IsOptional()
     @Type(() => Number)
     @IsInt()
@@ -41,14 +41,14 @@ export class GetPhysicalBusinesssReviewQuery {
     pageSize: string;
 }
 
-@Controller('business/physical')
-export class GetPhysicalBusinessReviewController {
-    constructor(private reviewReader: PhysicalBusinessReviewReader) {}
+@Controller('business')
+export class GetBusinessReviewController {
+    constructor(private reviewReader: BusinessReviewReader) {}
 
     @Get(':id/review')
     async getByBusinessId(
-        @Param() param: GetPhysicalBusinesssReviewParam,
-        @Query() query: GetPhysicalBusinesssReviewQuery,
+        @Param() param: GetBusinesssReviewParam,
+        @Query() query: GetBusinesssReviewQuery,
     ) {
         const pageNumber = query.pageNumber
             ? PageNumber.createFrom(Number(query.pageNumber))
@@ -62,16 +62,11 @@ export class GetPhysicalBusinessReviewController {
             pageSize,
         );
 
-        if (
-            result.status ===
-            PhysicalBusinessReviewReaderResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === BusinessReviewReaderResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (
-            result.status === PhysicalBusinessReviewReaderResultStatus.NOT_FOUND
-        ) {
+        if (result.status === BusinessReviewReaderResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No reviews for the business with id ${param.id}`,
             );
@@ -81,19 +76,14 @@ export class GetPhysicalBusinessReviewController {
     }
 
     @Get('review/:id')
-    async getById(@Param() param: GetPhysicalBusinesssReviewParam) {
+    async getById(@Param() param: GetBusinesssReviewParam) {
         const result = await this.reviewReader.getById(Id.createFrom(param.id));
 
-        if (
-            result.status ===
-            PhysicalBusinessReviewReaderResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === BusinessReviewReaderResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (
-            result.status === PhysicalBusinessReviewReaderResultStatus.NOT_FOUND
-        ) {
+        if (result.status === BusinessReviewReaderResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No reviews for the business with id ${param.id}`,
             );
