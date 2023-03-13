@@ -9,8 +9,7 @@ import {
     GetPhysicalBusinessController,
 } from './entrypoints/physical-business/controller';
 import {
-    CreateOnlineBusinessReviewController,
-    CreatePhysicalBusinessReviewController,
+    CreateBusinessReviewController,
     GetBusinessReviewController,
 } from './entrypoints/reviews/controller';
 import {
@@ -26,8 +25,7 @@ import {
 import { PHYSICAL_BUSINESS_PORT } from './modules/physical-business/domain';
 import { MongoPhysicalBusinessAdapter } from './modules/physical-business/infraestructure';
 import {
-    OnlineBusinessReviewCreator,
-    PhysicalBusinessReviewCreator,
+    BusinessReviewCreator,
     BusinessReviewReader,
 } from './modules/reviews/application';
 import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
@@ -38,9 +36,8 @@ import { MongoDatabaseConnection } from './modules/shared/infraestructure/mongo-
     imports: [ConfigModule.forRoot()],
     controllers: [
         CreateOnlineBusinessController,
-        CreateOnlineBusinessReviewController,
         CreatePhysicalBusinessController,
-        CreatePhysicalBusinessReviewController,
+        CreateBusinessReviewController,
         GetOnlineBusinessController,
         GetPhysicalBusinessController,
         GetBusinessReviewController,
@@ -48,8 +45,7 @@ import { MongoDatabaseConnection } from './modules/shared/infraestructure/mongo-
     providers: [
         OnlineBusinessCreator,
         PhysicalBusinessCreator,
-        OnlineBusinessReviewCreator,
-        PhysicalBusinessReviewCreator,
+        BusinessReviewCreator,
         OnlineBusinessReader,
         PhysicalBusinessReader,
         BusinessReviewReader,

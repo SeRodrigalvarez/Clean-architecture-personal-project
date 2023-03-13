@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { IsInt, IsString, IsUUID, Length, Max, Min } from 'class-validator';
 import {
-    OnlineBusinessReviewCreator,
-    OnlineBusinessReviewCreatorResultStatus,
+    BusinessReviewCreator,
+    BusinessReviewCreatorResultStatus,
 } from 'src/modules/reviews/application';
 import {
     RATING_MAX_VALUE,
@@ -24,12 +24,12 @@ import {
 } from 'src/modules/reviews/domain';
 import { Id } from 'src/modules/shared/domain';
 
-export class CreateOnlineBusinessReviewParam {
+export class CreateBusinessReviewParam {
     @IsUUID()
     businessId: string;
 }
 
-export class CreateOnlineBusinessReviewBody {
+export class CreateBusinessReviewBody {
     @IsString()
     @Length(TEXT_MIN_LENGTH, TEXT_MAX_LENGTH)
     text: string;
@@ -44,14 +44,14 @@ export class CreateOnlineBusinessReviewBody {
     username: string;
 }
 
-@Controller('business/online')
-export class CreateOnlineBusinessReviewController {
-    constructor(private reviewCreator: OnlineBusinessReviewCreator) {}
+@Controller('business')
+export class CreateBusinessReviewController {
+    constructor(private reviewCreator: BusinessReviewCreator) {}
 
     @Post(':businessId/review')
     async execute(
-        @Param() param: CreateOnlineBusinessReviewParam,
-        @Body() body: CreateOnlineBusinessReviewBody,
+        @Param() param: CreateBusinessReviewParam,
+        @Body() body: CreateBusinessReviewBody,
     ) {
         const result = await this.reviewCreator.execute(
             Id.createFrom(param.businessId),
@@ -60,16 +60,13 @@ export class CreateOnlineBusinessReviewController {
             new Username(body.username),
         );
 
-        if (
-            result.status ===
-            OnlineBusinessReviewCreatorResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === BusinessReviewCreatorResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
         if (
             result.status ===
-            OnlineBusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
+            BusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
         ) {
             throw new BadRequestException(
                 `There is no business with id ${param.businessId}`,
@@ -77,7 +74,7 @@ export class CreateOnlineBusinessReviewController {
         }
         if (
             result.status ===
-            OnlineBusinessReviewCreatorResultStatus.DUPLICATED_REVIEW
+            BusinessReviewCreatorResultStatus.DUPLICATED_REVIEW
         ) {
             throw new BadRequestException(
                 `There is already a review from user ${body.username} for the business with id ${param.businessId}`,
