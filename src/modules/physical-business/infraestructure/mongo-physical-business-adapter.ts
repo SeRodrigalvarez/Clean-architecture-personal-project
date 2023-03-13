@@ -91,7 +91,7 @@ export class MongoPhysicalBusinessAdapter
                     ],
                 })
                 .skip(pageNumber.value * pageSize.value)
-                .limit(pageNumber.value);
+                .limit(pageSize.value);
             const array = await cursor.toArray();
             const result = await array.map(this.documentToDomain);
             if (result.length === 0) {
@@ -139,7 +139,7 @@ export class MongoPhysicalBusinessAdapter
             const cursor = await this.collection
                 .find()
                 .skip(pageNumber.value * pageSize.value)
-                .limit(pageNumber.value);
+                .limit(pageSize.value);
             const array = await cursor.toArray();
             const result = await array.map(this.documentToDomain);
             if (result.length === 0) {
