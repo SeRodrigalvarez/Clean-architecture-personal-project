@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Collection } from 'mongodb';
 import { Id, PageNumber, PageSize } from 'src/modules/shared/domain';
-import { MongoDatabaseConnection } from 'src/modules/shared/infraestructure/mongo-database-connection';
+import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
 import {
     CreateResult,
     CreateResultStatus,

@@ -8,61 +8,52 @@ import {
     BusinessEmail,
     BusinessReviewsAmount,
 } from 'src/modules/shared/domain';
-import { MongoDatabaseConnection } from 'src/modules/shared/infraestructure/mongo-database-connection';
+import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
 import {
     CreateResult,
     CreateResultStatus,
     GetResult,
     GetResultStatus,
     GetSingleResult,
-    PhysicalBusiness,
-    PhysicalBusinessAddress,
-    PhysicalBusinessName,
-    PhysicalBusinessPhone,
-    PhysicalBusinessRepository,
+    OnlineBusiness,
+    OnlineBusinessName,
+    OnlineBusinessRepository,
+    OnlineBusinessWebsite,
     UpdateResult,
     UpdateResultStatus,
 } from '../domain';
 
-interface PhysicalBusinessDocument {
+interface OnlineBusinessDocument {
     id: string;
     name: string;
-    address: {
-        street: string;
-        city: string;
-        postalCode: string;
-        country: string;
-    };
-    phone: string;
+    website: string;
     email: string;
     reviewsAmount: number;
 }
 
 @Injectable()
-export class MongoPhysicalBusinessAdapter
-    implements PhysicalBusinessRepository
-{
-    private collection: Collection<PhysicalBusinessDocument>;
+export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
+    private collection: Collection<OnlineBusinessDocument>;
 
     constructor(
         connection: MongoDatabaseConnection,
         private config: ConfigService,
     ) {
         this.collection =
-            connection.database.collection<PhysicalBusinessDocument>(
-                this.config.get('MONGODB_PHYSICAL_BUSINESS_COLLECTION'),
+            connection.database.collection<OnlineBusinessDocument>(
+                this.config.get('MONGODB_ONLINE_BUSINESS_COLLECTION'),
             );
     }
 
-    async create(physicalBusiness: PhysicalBusiness): Promise<CreateResult> {
+    async create(onlineBusiness: OnlineBusiness): Promise<CreateResult> {
         try {
-            if (await this.doesNameAlreadyExists(physicalBusiness.name)) {
+            if (await this.doesNameAlreadyExists(onlineBusiness.name)) {
                 return {
                     status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
                 };
             }
             await this.collection.insertOne(
-                this.domainToDocument(physicalBusiness),
+                this.domainToDocument(onlineBusiness),
             );
             return {
                 status: CreateResultStatus.OK,
@@ -75,7 +66,7 @@ export class MongoPhysicalBusinessAdapter
         }
     }
 
-    async getByNameOrAddress(
+    async getByNameOrWebsite(
         value: string,
         pageNumber: PageNumber,
         pageSize: PageSize,
@@ -85,9 +76,7 @@ export class MongoPhysicalBusinessAdapter
                 .find({
                     $or: [
                         { name: new RegExp(value, 'i') },
-                        { 'address.street': new RegExp(value, 'i') },
-                        { 'address.city': new RegExp(value, 'i') },
-                        { 'address.postalCode': new RegExp(value, 'i') },
+                        { website: new RegExp(value, 'i') },
                     ],
                 })
                 .skip(pageNumber.value * pageSize.value)
@@ -101,7 +90,7 @@ export class MongoPhysicalBusinessAdapter
             }
             return {
                 status: GetResultStatus.OK,
-                physicalBusinesses: result,
+                onlineBusinesses: result,
             };
         } catch (error) {
             console.log(error); //TODO: use logger
@@ -121,7 +110,7 @@ export class MongoPhysicalBusinessAdapter
             }
             return {
                 status: GetResultStatus.OK,
-                physicalBusiness: this.documentToDomain(result),
+                onlineBusiness: this.documentToDomain(result),
             };
         } catch (error) {
             console.log(error); //TODO: use logger
@@ -149,7 +138,7 @@ export class MongoPhysicalBusinessAdapter
             }
             return {
                 status: GetResultStatus.OK,
-                physicalBusinesses: result,
+                onlineBusinesses: result,
             };
         } catch (error) {
             console.log(error); //TODO: use logger
@@ -185,32 +174,21 @@ export class MongoPhysicalBusinessAdapter
         return !!(await this.collection.findOne({ name }));
     }
 
-    private domainToDocument(
-        business: PhysicalBusiness,
-    ): PhysicalBusinessDocument {
+    private domainToDocument(business: OnlineBusiness): OnlineBusinessDocument {
         return {
             id: business.id,
             name: business.name,
-            address: business.address,
-            phone: business.phone,
+            website: business.website,
             email: business.email,
             reviewsAmount: business.reviewsAmount,
         };
     }
 
-    private documentToDomain(
-        document: PhysicalBusinessDocument,
-    ): PhysicalBusiness {
-        return PhysicalBusiness.createFrom(
+    private documentToDomain(document: OnlineBusinessDocument): OnlineBusiness {
+        return OnlineBusiness.createFrom(
             Id.createFrom(document.id),
-            new PhysicalBusinessName(document.name),
-            new PhysicalBusinessAddress(
-                document.address.street,
-                document.address.city,
-                document.address.postalCode,
-                document.address.country,
-            ),
-            new PhysicalBusinessPhone(document.phone),
+            new OnlineBusinessName(document.name),
+            new OnlineBusinessWebsite(document.website),
             new BusinessEmail(document.email),
             BusinessReviewsAmount.createFrom(document.reviewsAmount),
         );

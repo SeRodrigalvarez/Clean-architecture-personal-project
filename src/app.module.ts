@@ -17,20 +17,20 @@ import {
     OnlineBusinessReader,
 } from './modules/online-business/application';
 import { ONLINE_BUSINESS_PORT } from './modules/online-business/domain';
-import { MongoOnlineBusinessAdapter } from './modules/online-business/infraestructure';
+import { MongoOnlineBusinessAdapter } from './modules/online-business/infrastructure';
 import {
     PhysicalBusinessCreator,
     PhysicalBusinessReader,
 } from './modules/physical-business/application';
 import { PHYSICAL_BUSINESS_PORT } from './modules/physical-business/domain';
-import { MongoPhysicalBusinessAdapter } from './modules/physical-business/infraestructure';
+import { MongoPhysicalBusinessAdapter } from './modules/physical-business/infrastructure';
 import {
     BusinessReviewCreator,
     BusinessReviewReader,
 } from './modules/reviews/application';
 import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
-import { MongoReviewAdapter } from './modules/reviews/infraestructure';
-import { MongoDatabaseConnection } from './modules/shared/infraestructure/mongo-database-connection';
+import { MongoReviewAdapter } from './modules/reviews/infrastructure';
+import { MongoDatabaseConnection } from './modules/shared/infrastructure/mongo-database-connection';
 
 @Module({
     imports: [ConfigModule.forRoot()],
