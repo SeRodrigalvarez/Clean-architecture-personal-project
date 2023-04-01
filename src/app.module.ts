@@ -34,24 +34,37 @@ import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
 import { MongoReviewAdapter } from './modules/reviews/infrastructure';
 import { MongoDatabaseConnection } from './modules/shared/infrastructure/mongo-database-connection';
 
+export const CreateControllers = [
+    CreateOnlineBusinessController,
+    CreatePhysicalBusinessController,
+    CreateBusinessReviewController,
+];
+export const GetControllers = [
+    GetOnlineBusinessController,
+    GetPhysicalBusinessController,
+    GetBusinessReviewController,
+];
+
+export const CommandHandlers = [CreateOnlineBusinessCommandHandler];
+
+export const CreatorUseCases = [
+    OnlineBusinessCreator,
+    PhysicalBusinessCreator,
+    BusinessReviewCreator,
+];
+export const ReaderUseCases = [
+    OnlineBusinessReader,
+    PhysicalBusinessReader,
+    BusinessReviewReader,
+];
+
 @Module({
     imports: [ConfigModule.forRoot(), CqrsModule],
-    controllers: [
-        CreateOnlineBusinessController,
-        CreatePhysicalBusinessController,
-        CreateBusinessReviewController,
-        GetOnlineBusinessController,
-        GetPhysicalBusinessController,
-        GetBusinessReviewController,
-    ],
+    controllers: [...CreateControllers, ...GetControllers],
     providers: [
-        CreateOnlineBusinessCommandHandler,
-        OnlineBusinessCreator,
-        PhysicalBusinessCreator,
-        BusinessReviewCreator,
-        OnlineBusinessReader,
-        PhysicalBusinessReader,
-        BusinessReviewReader,
+        ...CommandHandlers,
+        ...CreatorUseCases,
+        ...ReaderUseCases,
         MongoDatabaseConnection,
         {
             provide: ONLINE_BUSINESS_PORT,
