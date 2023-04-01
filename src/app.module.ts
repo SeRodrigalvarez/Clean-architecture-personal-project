@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
 import {
     CreateOnlineBusinessController,
     GetOnlineBusinessController,
@@ -13,6 +14,7 @@ import {
     GetBusinessReviewController,
 } from './entrypoints/reviews/controller';
 import {
+    CreateOnlineBusinessCommandHandler,
     OnlineBusinessCreator,
     OnlineBusinessReader,
 } from './modules/online-business/application';
@@ -33,7 +35,7 @@ import { MongoReviewAdapter } from './modules/reviews/infrastructure';
 import { MongoDatabaseConnection } from './modules/shared/infrastructure/mongo-database-connection';
 
 @Module({
-    imports: [ConfigModule.forRoot()],
+    imports: [ConfigModule.forRoot(), CqrsModule],
     controllers: [
         CreateOnlineBusinessController,
         CreatePhysicalBusinessController,
@@ -43,6 +45,7 @@ import { MongoDatabaseConnection } from './modules/shared/infrastructure/mongo-d
         GetBusinessReviewController,
     ],
     providers: [
+        CreateOnlineBusinessCommandHandler,
         OnlineBusinessCreator,
         PhysicalBusinessCreator,
         BusinessReviewCreator,
