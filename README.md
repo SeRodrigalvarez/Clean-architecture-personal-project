@@ -10,9 +10,10 @@
 $ npm install
 ```
 
+Run once to install husky if you are going to commit something:
+
 ```bash
-# run once to install husky if you are going to commit something 
-$ npm prepare
+$ npm run prepare
 ```
 
 ## Database
