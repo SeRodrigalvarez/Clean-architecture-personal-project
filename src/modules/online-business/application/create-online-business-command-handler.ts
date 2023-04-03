@@ -1,4 +1,4 @@
-import { CommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import {
     CreateOnlineBusinessCommand,
     OnlineBusinessCreator,
@@ -19,7 +19,9 @@ export enum CreateOnlineBusinessCommandResultStatus {
 }
 
 @CommandHandler(CreateOnlineBusinessCommand)
-export class CreateOnlineBusinessCommandHandler {
+export class CreateOnlineBusinessCommandHandler
+    implements ICommandHandler<CreateOnlineBusinessCommand>
+{
     constructor(private onlineBusinessCreator: OnlineBusinessCreator) {}
 
     async execute(

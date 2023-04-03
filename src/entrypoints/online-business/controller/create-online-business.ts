@@ -9,6 +9,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { IsEmail, IsString, IsUrl, Length } from 'class-validator';
 import {
     CreateOnlineBusinessCommand,
+    CreateOnlineBusinessCommandResult,
     CreateOnlineBusinessCommandResultStatus,
 } from 'src/modules/online-business/application';
 import {
@@ -34,13 +35,14 @@ export class CreateOnlineBusinessController {
 
     @Post()
     async execute(@Body() body: CreateOnlineBusinessBody) {
-        const result = await this.commandBus.execute(
-            new CreateOnlineBusinessCommand(
-                body.name,
-                body.website,
-                body.email,
-            ),
-        );
+        const result: CreateOnlineBusinessCommandResult =
+            await this.commandBus.execute(
+                new CreateOnlineBusinessCommand(
+                    body.name,
+                    body.website,
+                    body.email,
+                ),
+            );
 
         if (
             result.status ===
