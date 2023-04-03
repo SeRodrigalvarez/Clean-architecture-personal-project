@@ -3,7 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import {
     CreateOnlineBusinessController,
-    GetOnlineBusinessController,
+    GetOnlineBusinessesController,
+    GetOnlineBusinessByIdController,
 } from './entrypoints/online-business/controller';
 import {
     CreatePhysicalBusinessController,
@@ -15,6 +16,8 @@ import {
 } from './entrypoints/reviews/controller';
 import {
     CreateOnlineBusinessCommandHandler,
+    GetOnlineBusinessByIdQueryHandler,
+    GetOnlineBusinessesQueryHandler,
     OnlineBusinessCreator,
     OnlineBusinessReader,
 } from './modules/online-business/application';
@@ -40,12 +43,18 @@ export const CreateControllers = [
     CreateBusinessReviewController,
 ];
 export const GetControllers = [
-    GetOnlineBusinessController,
+    GetOnlineBusinessesController,
+    GetOnlineBusinessByIdController,
     GetPhysicalBusinessController,
     GetBusinessReviewController,
 ];
 
 export const CommandHandlers = [CreateOnlineBusinessCommandHandler];
+
+export const QueryHandlers = [
+    GetOnlineBusinessesQueryHandler,
+    GetOnlineBusinessByIdQueryHandler,
+];
 
 export const CreatorUseCases = [
     OnlineBusinessCreator,
@@ -63,6 +72,7 @@ export const ReaderUseCases = [
     controllers: [...CreateControllers, ...GetControllers],
     providers: [
         ...CommandHandlers,
+        ...QueryHandlers,
         ...CreatorUseCases,
         ...ReaderUseCases,
         MongoDatabaseConnection,
