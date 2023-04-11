@@ -18,17 +18,20 @@ export interface ReaderOnlineBusiness {
     website: string;
     email: string;
     reviewsAmount: number;
+}
+
+export interface ReaderOnlineBusinessById extends ReaderOnlineBusiness {
     averageRating: number;
 }
 
 export interface FilterOnlineBusinessesResult {
     status: OnlineBusinessReaderResultStatus;
-    onlineBusinesses?: OnlineBusiness[];
+    onlineBusinesses?: ReaderOnlineBusiness[];
 }
 
 export interface GetOnlineBusinessByIdResult {
     status: OnlineBusinessReaderResultStatus;
-    onlineBusiness?: ReaderOnlineBusiness;
+    onlineBusiness?: ReaderOnlineBusinessById;
 }
 
 export enum OnlineBusinessReaderResultStatus {
@@ -76,7 +79,9 @@ export class OnlineBusinessReader {
         }
         return {
             status: OnlineBusinessReaderResultStatus.OK,
-            onlineBusinesses: result.onlineBusinesses,
+            onlineBusinesses: this.domainToResultDtoMapper(
+                result.onlineBusinesses,
+            ),
         };
     }
 
@@ -110,5 +115,17 @@ export class OnlineBusinessReader {
                 averageRating,
             },
         };
+    }
+
+    private domainToResultDtoMapper(
+        onlineBusinesses: OnlineBusiness[],
+    ): ReaderOnlineBusiness[] {
+        return onlineBusinesses.map((business) => ({
+            id: business.id,
+            name: business.name,
+            website: business.website,
+            email: business.email,
+            reviewsAmount: business.reviewsAmount,
+        }));
     }
 }

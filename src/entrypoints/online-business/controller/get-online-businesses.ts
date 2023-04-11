@@ -9,11 +9,10 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Type } from 'class-transformer';
 import { IsString, IsOptional, IsInt, Max, Min } from 'class-validator';
 import {
-    GetOnlineBusinessesQueryResultStatus,
+    FilterOnlineBusinessesResult,
     GetOnlineBusinessesQuery,
-    GetOnlineBusinessesQueryResult,
+    OnlineBusinessReaderResultStatus,
 } from 'src/modules/online-business/application';
-import { OnlineBusiness } from 'src/modules/online-business/domain';
 import {
     PAGE_NUMBER_MIN_VALUE,
     PAGE_SIZE_MAX_VALUE,
@@ -43,7 +42,7 @@ export class GetOnlineBusinessesController {
 
     @Get()
     async execute(@Query() query: FilterOnlineBusinessesQuery) {
-        const result: GetOnlineBusinessesQueryResult =
+        const result: FilterOnlineBusinessesResult =
             await this.queryBus.execute(
                 new GetOnlineBusinessesQuery(
                     query.filter,
@@ -52,28 +51,16 @@ export class GetOnlineBusinessesController {
                 ),
             );
 
-        if (
-            result.status === GetOnlineBusinessesQueryResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === GetOnlineBusinessesQueryResultStatus.NOT_FOUND) {
+        if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 'No online businesses found with the given filters',
             );
         }
 
-        return this.domainToJsonMapper(result.onlineBusinesses);
-    }
-
-    private domainToJsonMapper(onlineBusinesses: OnlineBusiness[]) {
-        return onlineBusinesses.map((business) => ({
-            id: business.id,
-            name: business.name,
-            website: business.website,
-            email: business.email,
-            reviewAmount: business.reviewsAmount,
-        }));
+        return result.onlineBusinesses;
     }
 }

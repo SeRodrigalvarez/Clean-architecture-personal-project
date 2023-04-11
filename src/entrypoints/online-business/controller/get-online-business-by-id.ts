@@ -9,8 +9,8 @@ import { QueryBus } from '@nestjs/cqrs';
 import { IsUUID } from 'class-validator';
 import {
     GetOnlineBusinessByIdQuery,
-    GetOnlineBusinessByIdQueryResult,
-    GetOnlineBusinessByIdQueryResultStatus,
+    GetOnlineBusinessByIdResult,
+    OnlineBusinessReaderResultStatus,
 } from 'src/modules/online-business/application';
 
 export class GetOnlineBusinesssParam {
@@ -24,35 +24,20 @@ export class GetOnlineBusinessByIdController {
 
     @Get(':id')
     async execute(@Param() param: GetOnlineBusinesssParam) {
-        const result: GetOnlineBusinessByIdQueryResult =
-            await this.queryBus.execute(
-                new GetOnlineBusinessByIdQuery(param.id),
-            );
+        const result: GetOnlineBusinessByIdResult = await this.queryBus.execute(
+            new GetOnlineBusinessByIdQuery(param.id),
+        );
 
-        if (
-            result.status ===
-            GetOnlineBusinessByIdQueryResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (
-            result.status === GetOnlineBusinessByIdQueryResultStatus.NOT_FOUND
-        ) {
+        if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No online business with id: ${param.id}`,
             );
         }
 
-        const business = result.onlineBusiness;
-
-        return {
-            id: business.id,
-            name: business.name,
-            website: business.website,
-            email: business.email,
-            reviewAmount: business.reviewsAmount,
-            averageRating: business.averageRating,
-        };
+        return result.onlineBusiness;
     }
 }

@@ -9,8 +9,8 @@ import { CommandBus } from '@nestjs/cqrs';
 import { IsEmail, IsString, IsUrl, Length } from 'class-validator';
 import {
     CreateOnlineBusinessCommand,
-    CreateOnlineBusinessCommandResult,
-    CreateOnlineBusinessCommandResultStatus,
+    OnlineBusinessCreatorResult,
+    OnlineBusinessCreatorResultStatus,
 } from 'src/modules/online-business/application';
 import {
     NAME_MAX_LENGTH,
@@ -35,7 +35,7 @@ export class CreateOnlineBusinessController {
 
     @Post()
     async execute(@Body() body: CreateOnlineBusinessBody) {
-        const result: CreateOnlineBusinessCommandResult =
+        const result: OnlineBusinessCreatorResult =
             await this.commandBus.execute(
                 new CreateOnlineBusinessCommand(
                     body.name,
@@ -46,16 +46,13 @@ export class CreateOnlineBusinessController {
 
         if (
             result.status ===
-            CreateOnlineBusinessCommandResultStatus.BUSINESS_NAME_ALREADY_EXISTS
+            OnlineBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS
         ) {
             throw new BadRequestException(
                 `Business name ${body.name} already exists`,
             );
         }
-        if (
-            result.status ===
-            CreateOnlineBusinessCommandResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === OnlineBusinessCreatorResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
         return {
