@@ -1,7 +1,10 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetOnlineBusinessesQuery } from './get-online-businesses-query';
 import { PageNumber, PageSize } from 'src/modules/shared/domain';
-import { FilterOnlineBusinessesResult, OnlineBusinessReader } from '.';
+import {
+    FilterOnlineBusinessesResult,
+    OnlineBusinessReader,
+    GetOnlineBusinessesQuery,
+} from '.';
 
 @QueryHandler(GetOnlineBusinessesQuery)
 export class GetOnlineBusinessesQueryHandler
