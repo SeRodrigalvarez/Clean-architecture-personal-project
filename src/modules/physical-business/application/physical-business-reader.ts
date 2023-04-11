@@ -18,17 +18,20 @@ export interface ReaderPhysicalBusiness {
     phone: string;
     email: string;
     reviewsAmount: number;
+}
+
+export interface ReaderPhysicalBusinessById extends ReaderPhysicalBusiness {
     averageRating: number;
 }
 
 export interface FilterPhysicalBusinessesResult {
     status: PhysicalBusinessReaderResultStatus;
-    physicalBusinesses?: PhysicalBusiness[];
+    physicalBusinesses?: ReaderPhysicalBusiness[];
 }
 
 export interface GetPhysicalBusinessByIdResult {
     status: PhysicalBusinessReaderResultStatus;
-    physicalBusiness?: ReaderPhysicalBusiness;
+    physicalBusiness?: ReaderPhysicalBusinessById;
 }
 
 export enum PhysicalBusinessReaderResultStatus {
@@ -76,7 +79,9 @@ export class PhysicalBusinessReader {
         }
         return {
             status: PhysicalBusinessReaderResultStatus.OK,
-            physicalBusinesses: result.physicalBusinesses,
+            physicalBusinesses: this.domainToResultDtoMapper(
+                result.physicalBusinesses,
+            ),
         };
     }
 
@@ -111,5 +116,18 @@ export class PhysicalBusinessReader {
                 averageRating,
             },
         };
+    }
+
+    private domainToResultDtoMapper(
+        physicalBusinesses: PhysicalBusiness[],
+    ): ReaderPhysicalBusiness[] {
+        return physicalBusinesses.map((business) => ({
+            id: business.id,
+            name: business.name,
+            address: business.addressString,
+            email: business.email,
+            phone: business.phone,
+            reviewsAmount: business.reviewsAmount,
+        }));
     }
 }

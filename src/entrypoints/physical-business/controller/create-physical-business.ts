@@ -5,13 +5,14 @@ import {
     BadRequestException,
     InternalServerErrorException,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { IsEmail, IsISO31661Alpha3, IsString, Length } from 'class-validator';
 import {
-    PhysicalBusinessCreator,
+    CreatePhysicalBusinessCommand,
+    PhysicalBusinessCreatorResult,
     PhysicalBusinessCreatorResultStatus,
 } from 'src/modules/physical-business/application';
 import {
-    PhysicalBusinessName,
     CITY_MAX_LENGTH,
     CITY_MIN_LENGTH,
     NAME_MAX_LENGTH,
@@ -22,10 +23,7 @@ import {
     STREET_MIN_LENGTH,
     PHONE_MAX_LENGTH,
     PHONE_MIN_LENGTH,
-    PhysicalBusinessAddress,
-    PhysicalBusinessPhone,
 } from 'src/modules/physical-business/domain';
-import { BusinessEmail } from 'src/modules/shared/domain';
 
 export class CreatePhysicalBusinessBody {
     @IsString()
@@ -57,21 +55,22 @@ export class CreatePhysicalBusinessBody {
 
 @Controller('business/physical')
 export class CreatePhysicalBusinessController {
-    constructor(private physicalBusinessCreator: PhysicalBusinessCreator) {}
+    constructor(private commandBus: CommandBus) {}
 
     @Post()
     async execute(@Body() body: CreatePhysicalBusinessBody) {
-        const result = await this.physicalBusinessCreator.execute(
-            new PhysicalBusinessName(body.name),
-            new PhysicalBusinessAddress(
-                body.street,
-                body.city,
-                body.postalCode,
-                body.country,
-            ),
-            new PhysicalBusinessPhone(body.phone),
-            new BusinessEmail(body.email),
-        );
+        const result: PhysicalBusinessCreatorResult =
+            await this.commandBus.execute(
+                new CreatePhysicalBusinessCommand(
+                    body.name,
+                    body.street,
+                    body.city,
+                    body.postalCode,
+                    body.country,
+                    body.phone,
+                    body.email,
+                ),
+            );
 
         if (
             result.status ===

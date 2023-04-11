@@ -8,7 +8,8 @@ import {
 } from './entrypoints/online-business/controller';
 import {
     CreatePhysicalBusinessController,
-    GetPhysicalBusinessController,
+    GetPhysicalBusinessByIdController,
+    GetPhysicalBusinessesController,
 } from './entrypoints/physical-business/controller';
 import {
     CreateBusinessReviewController,
@@ -24,6 +25,9 @@ import {
 import { ONLINE_BUSINESS_PORT } from './modules/online-business/domain';
 import { MongoOnlineBusinessAdapter } from './modules/online-business/infrastructure';
 import {
+    CreatePhysicalBusinessCommandHanlder,
+    GetPhysicalBusinessByIdQueryHanlder,
+    GetPhysicalBusinessesQueryHandler,
     PhysicalBusinessCreator,
     PhysicalBusinessReader,
 } from './modules/physical-business/application';
@@ -45,15 +49,21 @@ export const CreateControllers = [
 export const GetControllers = [
     GetOnlineBusinessesController,
     GetOnlineBusinessByIdController,
-    GetPhysicalBusinessController,
+    GetPhysicalBusinessesController,
+    GetPhysicalBusinessByIdController,
     GetBusinessReviewController,
 ];
 
-export const CommandHandlers = [CreateOnlineBusinessCommandHandler];
+export const CommandHandlers = [
+    CreateOnlineBusinessCommandHandler,
+    CreatePhysicalBusinessCommandHanlder,
+];
 
 export const QueryHandlers = [
     GetOnlineBusinessesQueryHandler,
     GetOnlineBusinessByIdQueryHandler,
+    GetPhysicalBusinessesQueryHandler,
+    GetPhysicalBusinessByIdQueryHanlder,
 ];
 
 export const CreatorUseCases = [
