@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Collection } from 'mongodb';
 import {
@@ -33,6 +33,8 @@ interface OnlineBusinessDocument {
 
 @Injectable()
 export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
+    private readonly logger = new Logger(MongoOnlineBusinessAdapter.name);
+
     private collection: Collection<OnlineBusinessDocument>;
 
     constructor(
@@ -47,11 +49,18 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
 
     async create(onlineBusiness: OnlineBusiness): Promise<CreateResult> {
         try {
-            if (await this.doesNameAlreadyExists(onlineBusiness.name)) {
+            const collisionResult = await this.businessCollisionCheck(
+                onlineBusiness.name,
+                onlineBusiness.website,
+            );
+            if (collisionResult.isCollision) {
                 return {
-                    status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+                    status: CreateResultStatus.BUSINESS_ALREADY_EXISTS,
+                    isNameCollision: collisionResult.isNameCollision,
+                    isWebsiteCollision: collisionResult.isWebsiteCollision,
                 };
             }
+
             await this.collection.insertOne(
                 this.domainToDocument(onlineBusiness),
             );
@@ -59,7 +68,7 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 status: CreateResultStatus.OK,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            this.logger.error(error);
             return {
                 status: CreateResultStatus.GENERIC_ERROR,
             };
@@ -93,7 +102,7 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 onlineBusinesses: result,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: GetResultStatus.GENERIC_ERROR,
             };
@@ -113,7 +122,7 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 onlineBusiness: this.documentToDomain(result),
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: GetResultStatus.GENERIC_ERROR,
             };
@@ -141,7 +150,7 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 onlineBusinesses: result,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: GetResultStatus.GENERIC_ERROR,
             };
@@ -163,15 +172,24 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 status: UpdateResultStatus.NOT_FOUND,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: UpdateResultStatus.GENERIC_ERROR,
             };
         }
     }
 
-    private async doesNameAlreadyExists(name: string) {
-        return !!(await this.collection.findOne({ name }));
+    private async businessCollisionCheck(name: string, website: string) {
+        const isNameCollision = !!(await this.collection.findOne({ name }));
+        const isWebsiteCollision = !!(await this.collection.findOne({
+            website,
+        }));
+
+        return {
+            isCollision: isNameCollision || isWebsiteCollision,
+            isNameCollision,
+            isWebsiteCollision,
+        };
     }
 
     private domainToDocument(business: OnlineBusiness): OnlineBusinessDocument {

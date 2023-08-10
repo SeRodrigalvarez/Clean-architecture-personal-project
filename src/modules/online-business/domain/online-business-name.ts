@@ -9,7 +9,7 @@ export class OnlineBusinessName {
     private name: string;
 
     constructor(name: string) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.guard();
     }
 
@@ -26,7 +26,7 @@ export class OnlineBusinessName {
         return this.name;
     }
 
-    equals(name: OnlineBusinessName) {
+    equals(name: this) {
         return this.name === name.value;
     }
 

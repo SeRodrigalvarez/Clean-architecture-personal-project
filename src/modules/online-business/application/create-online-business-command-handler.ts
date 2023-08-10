@@ -1,22 +1,25 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import {
+    COMMAND_BUS_PORT,
+    CommandBus,
+    CommandHandler,
     CreateOnlineBusinessCommand,
-    OnlineBusinessCreator,
-    OnlineBusinessCreatorResult,
-} from '.';
+} from 'src/modules/shared/domain/commands';
+import { OnlineBusinessCreator } from '.';
 import { OnlineBusinessName, OnlineBusinessWebsite } from '../domain';
-import { BusinessEmail } from 'src/modules/shared/domain';
+import { BusinessEmail, Id } from 'src/modules/shared/domain';
+import { Inject, Injectable } from '@nestjs/common';
 
-@CommandHandler(CreateOnlineBusinessCommand)
-export class CreateOnlineBusinessCommandHandler
-    implements ICommandHandler<CreateOnlineBusinessCommand>
-{
-    constructor(private onlineBusinessCreator: OnlineBusinessCreator) {}
-
-    async execute(
-        command: CreateOnlineBusinessCommand,
-    ): Promise<OnlineBusinessCreatorResult> {
-        return await this.onlineBusinessCreator.execute(
+@Injectable()
+export class CreateOnlineBusinessCommandHandler implements CommandHandler {
+    constructor(
+        private onlineBusinessCreator: OnlineBusinessCreator,
+        @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,
+    ) {
+        this.commandBus.addHandler(CreateOnlineBusinessCommand, this);
+    }
+    async execute(command: CreateOnlineBusinessCommand) {
+        this.onlineBusinessCreator.execute(
+            Id.createFrom(command.id),
             new OnlineBusinessName(command.name),
             new OnlineBusinessWebsite(command.website),
             new BusinessEmail(command.email),

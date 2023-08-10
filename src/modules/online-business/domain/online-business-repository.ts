@@ -1,13 +1,15 @@
 import { OnlineBusiness } from './';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 
-export interface CreateResult {
+export class CreateResult {
     status: CreateResultStatus;
+    isNameCollision?: boolean;
+    isWebsiteCollision?: boolean;
 }
 
 export enum CreateResultStatus {
     OK,
-    BUSINESS_NAME_ALREADY_EXISTS,
+    BUSINESS_ALREADY_EXISTS,
     GENERIC_ERROR,
 }
 

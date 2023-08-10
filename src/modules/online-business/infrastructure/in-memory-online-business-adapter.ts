@@ -6,19 +6,22 @@ import {
     CreateResultStatus,
     GetResultStatus,
     UpdateResultStatus,
+    OnlineBusinessWebsite,
 } from '../domain';
 
 export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
     private businesses: OnlineBusiness[] = [];
 
     async create(onlineBusiness: OnlineBusiness) {
-        if (
-            this.doesNameAlreadyExists(
-                new OnlineBusinessName(onlineBusiness.name),
-            )
-        ) {
+        const collisionResult = await this.businessCollisionCheck(
+            onlineBusiness.name,
+            onlineBusiness.website,
+        );
+        if (collisionResult.isCollision) {
             return {
-                status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+                status: CreateResultStatus.BUSINESS_ALREADY_EXISTS,
+                isNameCollision: collisionResult.isNameCollision,
+                isWebsiteCollision: collisionResult.isWebsiteCollision,
             };
         }
         this.businesses.push(onlineBusiness);
@@ -93,7 +96,18 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    private doesNameAlreadyExists(name: OnlineBusinessName) {
-        return this.businesses.some((business) => business.hasName(name));
+    private async businessCollisionCheck(name: string, website: string) {
+        const isNameCollision = this.businesses.some((business) =>
+            business.hasName(new OnlineBusinessName(name)),
+        );
+        const isWebsiteCollision = this.businesses.some((business) =>
+            business.hasWebsite(new OnlineBusinessWebsite(website)),
+        );
+
+        return {
+            isCollision: isNameCollision || isWebsiteCollision,
+            isNameCollision,
+            isWebsiteCollision,
+        };
     }
 }

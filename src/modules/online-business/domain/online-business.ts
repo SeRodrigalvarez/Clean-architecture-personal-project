@@ -15,12 +15,13 @@ export class OnlineBusiness {
     ) {}
 
     static createNew(
+        bId: Id,
         bName: OnlineBusinessName,
         bWebsite: OnlineBusinessWebsite,
         bEmail: BusinessEmail,
     ) {
         return new this(
-            Id.createNew(),
+            bId,
             bName,
             bWebsite,
             bEmail,
@@ -76,6 +77,10 @@ export class OnlineBusiness {
 
     hasName(name: OnlineBusinessName) {
         return this.bName.equals(name);
+    }
+
+    hasWebsite(website: OnlineBusinessWebsite) {
+        return this.bWebsite.equals(website);
     }
 
     hasId(id: Id) {

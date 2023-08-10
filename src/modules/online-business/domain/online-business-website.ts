@@ -5,7 +5,7 @@ export class OnlineBusinessWebsite {
     private website: string;
 
     constructor(website: string) {
-        this.website = website;
+        this.website = website.toLowerCase();
         this.guard();
     }
 
@@ -20,6 +20,10 @@ export class OnlineBusinessWebsite {
 
     get value() {
         return this.website;
+    }
+
+    equals(website: this) {
+        return this.website === website.value;
     }
 
     includes(value: string) {

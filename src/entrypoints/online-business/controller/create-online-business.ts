@@ -1,23 +1,19 @@
-import {
-    Controller,
-    Post,
-    Body,
-    BadRequestException,
-    InternalServerErrorException,
-} from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
-import { IsEmail, IsString, IsUrl, Length } from 'class-validator';
-import {
-    CreateOnlineBusinessCommand,
-    OnlineBusinessCreatorResult,
-    OnlineBusinessCreatorResultStatus,
-} from 'src/modules/online-business/application';
+import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { IsEmail, IsString, IsUUID, IsUrl, Length } from 'class-validator';
 import {
     NAME_MAX_LENGTH,
     NAME_MIN_LENGTH,
 } from 'src/modules/online-business/domain';
+import {
+    COMMAND_BUS_PORT,
+    CommandBus,
+    CreateOnlineBusinessCommand,
+} from 'src/modules/shared/domain/commands';
 
 export class CreateOnlineBusinessBody {
+    @IsUUID()
+    id: string;
+
     @IsString()
     @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
     name: string;
@@ -31,32 +27,27 @@ export class CreateOnlineBusinessBody {
 
 @Controller('business/online')
 export class CreateOnlineBusinessController {
-    constructor(private commandBus: CommandBus) {}
+    constructor(@Inject(COMMAND_BUS_PORT) private commandBus: CommandBus) {}
 
     @Post()
     async execute(@Body() body: CreateOnlineBusinessBody) {
-        const result: OnlineBusinessCreatorResult =
-            await this.commandBus.execute(
-                new CreateOnlineBusinessCommand(
-                    body.name,
-                    body.website,
-                    body.email,
-                ),
-            );
+        /**
+         * TODO: Use Querybus to check if the business is already created
+         * Error:
+         * throw new BadRequestException(`Business name ${body.name} already exists`,);
+         */
 
-        if (
-            result.status ===
-            OnlineBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS
-        ) {
-            throw new BadRequestException(
-                `Business name ${body.name} already exists`,
-            );
-        }
-        if (result.status === OnlineBusinessCreatorResultStatus.GENERIC_ERROR) {
-            throw new InternalServerErrorException();
-        }
-        return {
-            id: result.id,
-        };
+        await this.commandBus.execute(
+            new CreateOnlineBusinessCommand(
+                body.id,
+                body.name,
+                body.website,
+                body.email,
+            ),
+        );
+        /**
+         * TODO: Use Querybus to check if the business was created
+         * Error: throw new InternalServerErrorException();
+         */
     }
 }
