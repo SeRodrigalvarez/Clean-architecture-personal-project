@@ -1,12 +1,16 @@
+import { OnlineBusinessCreator } from '.';
 import {
+    OnlineBusinessName,
+    OnlineBusinessWebsite,
+    CreateOnlineBusinessCommand,
+} from '../domain';
+import {
+    BusinessEmail,
+    Id,
     COMMAND_BUS_PORT,
     CommandBus,
     CommandHandler,
-    CreateOnlineBusinessCommand,
-} from 'src/modules/shared/domain/commands';
-import { OnlineBusinessCreator } from '.';
-import { OnlineBusinessName, OnlineBusinessWebsite } from '../domain';
-import { BusinessEmail, Id } from 'src/modules/shared/domain';
+} from 'src/modules/shared/domain';
 import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()

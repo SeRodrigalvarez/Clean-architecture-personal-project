@@ -1,14 +1,11 @@
 import { Controller, Post, Body, Inject } from '@nestjs/common';
 import { IsEmail, IsString, IsUUID, IsUrl, Length } from 'class-validator';
 import {
+    CreateOnlineBusinessCommand,
     NAME_MAX_LENGTH,
     NAME_MIN_LENGTH,
 } from 'src/modules/online-business/domain';
-import {
-    COMMAND_BUS_PORT,
-    CommandBus,
-    CreateOnlineBusinessCommand,
-} from 'src/modules/shared/domain/commands';
+import { COMMAND_BUS_PORT, CommandBus } from 'src/modules/shared/domain';
 
 export class CreateOnlineBusinessBody {
     @IsUUID()

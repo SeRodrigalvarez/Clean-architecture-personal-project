@@ -1,4 +1,4 @@
-import { Command, CommandBus, CommandHandler } from '../../domain/commands';
+import { Command, CommandBus, CommandHandler } from '../domain';
 
 export class InMemoryCommandBus implements CommandBus {
     private commandHandlers: Map<Command, CommandHandler> = new Map();

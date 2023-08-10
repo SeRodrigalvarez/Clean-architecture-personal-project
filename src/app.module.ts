@@ -39,9 +39,11 @@ import {
 } from './modules/reviews/application';
 import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
 import { MongoReviewAdapter } from './modules/reviews/infrastructure';
-import { MongoDatabaseConnection } from './modules/shared/infrastructure';
-import { COMMAND_BUS_PORT } from './modules/shared/domain/commands';
-import { InMemoryCommandBus } from './modules/shared/infrastructure/commands';
+import {
+    InMemoryCommandBus,
+    MongoDatabaseConnection,
+} from './modules/shared/infrastructure';
+import { COMMAND_BUS_PORT } from './modules/shared/domain';
 
 export const CreateControllers = [
     CreateOnlineBusinessController,
