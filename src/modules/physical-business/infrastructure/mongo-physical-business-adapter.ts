@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Collection } from 'mongodb';
 import {
@@ -42,6 +42,8 @@ interface PhysicalBusinessDocument {
 export class MongoPhysicalBusinessAdapter
     implements PhysicalBusinessRepository
 {
+    private readonly logger = new Logger(MongoPhysicalBusinessAdapter.name);
+
     private collection: Collection<PhysicalBusinessDocument>;
 
     constructor(
@@ -56,11 +58,18 @@ export class MongoPhysicalBusinessAdapter
 
     async create(physicalBusiness: PhysicalBusiness): Promise<CreateResult> {
         try {
-            if (await this.doesNameAlreadyExists(physicalBusiness.name)) {
+            const collisionResult = await this.businessCollisionCheck(
+                physicalBusiness.name,
+                physicalBusiness.phone,
+            );
+            if (collisionResult.isCollision) {
                 return {
-                    status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+                    status: CreateResultStatus.BUSINESS_ALREADY_EXISTS,
+                    isNameCollision: collisionResult.isNameCollision,
+                    isPhoneCollision: collisionResult.isPhoneCollision,
                 };
             }
+
             await this.collection.insertOne(
                 this.domainToDocument(physicalBusiness),
             );
@@ -68,7 +77,7 @@ export class MongoPhysicalBusinessAdapter
                 status: CreateResultStatus.OK,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            this.logger.error(error);
             return {
                 status: CreateResultStatus.GENERIC_ERROR,
             };
@@ -104,7 +113,7 @@ export class MongoPhysicalBusinessAdapter
                 physicalBusinesses: result,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: GetResultStatus.GENERIC_ERROR,
             };
@@ -124,7 +133,7 @@ export class MongoPhysicalBusinessAdapter
                 physicalBusiness: this.documentToDomain(result),
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: GetResultStatus.GENERIC_ERROR,
             };
@@ -152,7 +161,7 @@ export class MongoPhysicalBusinessAdapter
                 physicalBusinesses: result,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: GetResultStatus.GENERIC_ERROR,
             };
@@ -174,15 +183,22 @@ export class MongoPhysicalBusinessAdapter
                 status: UpdateResultStatus.NOT_FOUND,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            console.error(error); //TODO: use logger
             return {
                 status: UpdateResultStatus.GENERIC_ERROR,
             };
         }
     }
 
-    private async doesNameAlreadyExists(name: string) {
-        return !!(await this.collection.findOne({ name }));
+    private async businessCollisionCheck(name: string, phone: string) {
+        const isNameCollision = !!(await this.collection.findOne({ name }));
+        const isPhoneCollision = !!(await this.collection.findOne({ phone }));
+
+        return {
+            isCollision: isNameCollision || isPhoneCollision,
+            isNameCollision,
+            isPhoneCollision,
+        };
     }
 
     private domainToDocument(

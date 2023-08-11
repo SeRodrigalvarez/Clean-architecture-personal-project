@@ -22,6 +22,10 @@ export class PhysicalBusinessPhone {
         }
     }
 
+    equals(phone: this) {
+        return this.phone === phone.value;
+    }
+
     get value() {
         return this.phone;
     }

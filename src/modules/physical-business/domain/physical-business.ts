@@ -20,13 +20,14 @@ export class PhysicalBusiness {
     ) {}
 
     static createNew(
+        bId: Id,
         bName: PhysicalBusinessName,
         bAddress: PhysicalBusinessAddress,
         bPhone: PhysicalBusinessPhone,
         bEmail: BusinessEmail,
     ) {
         return new this(
-            Id.createNew(),
+            bId,
             bName,
             bAddress,
             bPhone,
@@ -92,6 +93,10 @@ export class PhysicalBusiness {
 
     hasName(name: PhysicalBusinessName) {
         return this.bName.equals(name);
+    }
+
+    hasPhone(phone: PhysicalBusinessPhone) {
+        return this.bPhone.equals(phone);
     }
 
     hasId(id: Id) {

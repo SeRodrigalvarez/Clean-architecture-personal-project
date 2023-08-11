@@ -36,10 +36,10 @@ export class PhysicalBusinessAddress {
         postalCode: string,
         country: string,
     ) {
-        this.street = street;
-        this.city = city;
+        this.street = street.toLowerCase();
+        this.city = city.toLowerCase();
         this.postalCode = postalCode;
-        this.country = country;
+        this.country = country.toLowerCase();
         this.guard();
     }
 

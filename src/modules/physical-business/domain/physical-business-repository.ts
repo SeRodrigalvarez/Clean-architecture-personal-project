@@ -3,11 +3,13 @@ import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 
 export interface CreateResult {
     status: CreateResultStatus;
+    isNameCollision?: boolean;
+    isPhoneCollision?: boolean;
 }
 
 export enum CreateResultStatus {
     OK,
-    BUSINESS_NAME_ALREADY_EXISTS,
+    BUSINESS_ALREADY_EXISTS,
     GENERIC_ERROR,
 }
 

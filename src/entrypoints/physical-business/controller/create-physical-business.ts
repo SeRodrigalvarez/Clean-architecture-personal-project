@@ -1,17 +1,11 @@
+import { Controller, Post, Body, Inject } from '@nestjs/common';
 import {
-    Controller,
-    Post,
-    Body,
-    BadRequestException,
-    InternalServerErrorException,
-} from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
-import { IsEmail, IsISO31661Alpha3, IsString, Length } from 'class-validator';
-import {
-    CreatePhysicalBusinessCommand,
-    PhysicalBusinessCreatorResult,
-    PhysicalBusinessCreatorResultStatus,
-} from 'src/modules/physical-business/application';
+    IsEmail,
+    IsISO31661Alpha3,
+    IsString,
+    IsUUID,
+    Length,
+} from 'class-validator';
 import {
     CITY_MAX_LENGTH,
     CITY_MIN_LENGTH,
@@ -23,9 +17,14 @@ import {
     STREET_MIN_LENGTH,
     PHONE_MAX_LENGTH,
     PHONE_MIN_LENGTH,
+    CreatePhysicalBusinessCommand,
 } from 'src/modules/physical-business/domain';
+import { COMMAND_BUS_PORT, CommandBus } from 'src/modules/shared/domain';
 
 export class CreatePhysicalBusinessBody {
+    @IsUUID()
+    id: string;
+
     @IsString()
     @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
     name: string;
@@ -55,38 +54,32 @@ export class CreatePhysicalBusinessBody {
 
 @Controller('business/physical')
 export class CreatePhysicalBusinessController {
-    constructor(private commandBus: CommandBus) {}
+    constructor(@Inject(COMMAND_BUS_PORT) private commandBus: CommandBus) {}
 
     @Post()
     async execute(@Body() body: CreatePhysicalBusinessBody) {
-        const result: PhysicalBusinessCreatorResult =
-            await this.commandBus.execute(
-                new CreatePhysicalBusinessCommand(
-                    body.name,
-                    body.street,
-                    body.city,
-                    body.postalCode,
-                    body.country,
-                    body.phone,
-                    body.email,
-                ),
-            );
+        /**
+         * TODO: Use Querybus to check if the business is already created
+         * Error:
+         * throw new BadRequestException(`Business name ${body.name} already exists`,);
+         */
 
-        if (
-            result.status ===
-            PhysicalBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS
-        ) {
-            throw new BadRequestException(
-                `Business name ${body.name} already exists`,
-            );
-        }
-        if (
-            result.status === PhysicalBusinessCreatorResultStatus.GENERIC_ERROR
-        ) {
-            throw new InternalServerErrorException();
-        }
-        return {
-            id: result.id,
-        };
+        await this.commandBus.execute(
+            new CreatePhysicalBusinessCommand(
+                body.id,
+                body.name,
+                body.street,
+                body.city,
+                body.postalCode,
+                body.country,
+                body.phone,
+                body.email,
+            ),
+        );
+
+        /**
+         * TODO: Use Querybus to check if the business was created
+         * Error: throw new InternalServerErrorException();
+         */
     }
 }

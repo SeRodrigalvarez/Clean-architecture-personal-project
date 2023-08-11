@@ -1,26 +1,31 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { PhysicalBusinessCreator } from '.';
 import {
-    PhysicalBusinessCreator,
-    PhysicalBusinessCreatorResult,
-    CreatePhysicalBusinessCommand,
-} from '.';
-import { BusinessEmail } from 'src/modules/shared/domain';
+    BusinessEmail,
+    Id,
+    CommandHandler,
+    COMMAND_BUS_PORT,
+    CommandBus,
+} from 'src/modules/shared/domain';
 import {
     PhysicalBusinessName,
     PhysicalBusinessAddress,
     PhysicalBusinessPhone,
+    CreatePhysicalBusinessCommand,
 } from '../domain';
+import { Inject, Injectable } from '@nestjs/common';
 
-@CommandHandler(CreatePhysicalBusinessCommand)
-export class CreatePhysicalBusinessCommandHanlder
-    implements ICommandHandler<CreatePhysicalBusinessCommand>
-{
-    constructor(private physicalBusinessCreator: PhysicalBusinessCreator) {}
+@Injectable()
+export class CreatePhysicalBusinessCommandHanlder implements CommandHandler {
+    constructor(
+        private physicalBusinessCreator: PhysicalBusinessCreator,
+        @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,
+    ) {
+        this.commandBus.addHandler(CreatePhysicalBusinessCommand, this);
+    }
 
-    async execute(
-        command: CreatePhysicalBusinessCommand,
-    ): Promise<PhysicalBusinessCreatorResult> {
-        return await this.physicalBusinessCreator.execute(
+    async execute(command: CreatePhysicalBusinessCommand): Promise<void> {
+        await this.physicalBusinessCreator.execute(
+            Id.createFrom(command.id),
             new PhysicalBusinessName(command.name),
             new PhysicalBusinessAddress(
                 command.street,

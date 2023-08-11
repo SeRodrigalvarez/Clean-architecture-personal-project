@@ -6,6 +6,7 @@ import {
     CreateResultStatus,
     GetResultStatus,
     UpdateResultStatus,
+    PhysicalBusinessPhone,
 } from '../domain';
 
 export class InMemoryPhysicalBusinessAdapter
@@ -14,13 +15,15 @@ export class InMemoryPhysicalBusinessAdapter
     private businesses: PhysicalBusiness[] = [];
 
     async create(physicalBusiness: PhysicalBusiness) {
-        if (
-            this.doesNameAlreadyExists(
-                new PhysicalBusinessName(physicalBusiness.name),
-            )
-        ) {
+        const collisionResult = await this.businessCollisionCheck(
+            physicalBusiness.name,
+            physicalBusiness.phone,
+        );
+        if (collisionResult.isCollision) {
             return {
-                status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+                status: CreateResultStatus.BUSINESS_ALREADY_EXISTS,
+                isNameCollision: collisionResult.isNameCollision,
+                isPhoneCollision: collisionResult.isPhoneCollision,
             };
         }
         this.businesses.push(physicalBusiness);
@@ -95,7 +98,18 @@ export class InMemoryPhysicalBusinessAdapter
         };
     }
 
-    private doesNameAlreadyExists(name: PhysicalBusinessName) {
-        return this.businesses.some((business) => business.hasName(name));
+    private async businessCollisionCheck(name: string, phone: string) {
+        const isNameCollision = this.businesses.some((business) =>
+            business.hasName(new PhysicalBusinessName(name)),
+        );
+        const isPhoneCollision = this.businesses.some((business) =>
+            business.hasPhone(new PhysicalBusinessPhone(phone)),
+        );
+
+        return {
+            isCollision: isNameCollision || isPhoneCollision,
+            isNameCollision,
+            isPhoneCollision,
+        };
     }
 }
