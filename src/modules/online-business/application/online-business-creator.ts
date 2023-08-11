@@ -9,17 +9,6 @@ import {
     CreateResultStatus,
 } from '../domain';
 
-export interface OnlineBusinessCreatorResult {
-    status: OnlineBusinessCreatorResultStatus;
-    id?: string;
-}
-
-export enum OnlineBusinessCreatorResultStatus {
-    OK,
-    BUSINESS_NAME_ALREADY_EXISTS,
-    GENERIC_ERROR,
-}
-
 @Injectable()
 export class OnlineBusinessCreator {
     private readonly logger = new Logger(OnlineBusinessCreator.name);

@@ -1,7 +1,7 @@
 import { OnlineBusiness } from './';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 
-export class CreateResult {
+export interface CreateResult {
     status: CreateResultStatus;
     isNameCollision?: boolean;
     isWebsiteCollision?: boolean;

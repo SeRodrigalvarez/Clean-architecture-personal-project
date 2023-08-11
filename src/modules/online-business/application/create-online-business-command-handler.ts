@@ -22,7 +22,7 @@ export class CreateOnlineBusinessCommandHandler implements CommandHandler {
         this.commandBus.addHandler(CreateOnlineBusinessCommand, this);
     }
     async execute(command: CreateOnlineBusinessCommand) {
-        this.onlineBusinessCreator.execute(
+        await this.onlineBusinessCreator.execute(
             Id.createFrom(command.id),
             new OnlineBusinessName(command.name),
             new OnlineBusinessWebsite(command.website),
