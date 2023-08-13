@@ -6,7 +6,6 @@ import {
     PageSize,
     Id,
     BusinessEmail,
-    BusinessReviewsAmount,
 } from 'src/modules/shared/domain';
 import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
 import {
@@ -28,7 +27,6 @@ interface OnlineBusinessDocument {
     name: string;
     website: string;
     email: string;
-    reviewsAmount: number;
 }
 
 @Injectable()
@@ -61,9 +59,7 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 };
             }
 
-            await this.collection.insertOne(
-                this.domainToDocument(onlineBusiness),
-            );
+            await this.collection.insertOne(onlineBusiness.toPrimitives());
             return {
                 status: CreateResultStatus.OK,
             };
@@ -192,23 +188,12 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
         };
     }
 
-    private domainToDocument(business: OnlineBusiness): OnlineBusinessDocument {
-        return {
-            id: business.id,
-            name: business.name,
-            website: business.website,
-            email: business.email,
-            reviewsAmount: business.reviewsAmount,
-        };
-    }
-
     private documentToDomain(document: OnlineBusinessDocument): OnlineBusiness {
-        return OnlineBusiness.createFrom(
+        return OnlineBusiness.create(
             Id.createFrom(document.id),
             new OnlineBusinessName(document.name),
             new OnlineBusinessWebsite(document.website),
             new BusinessEmail(document.email),
-            BusinessReviewsAmount.createFrom(document.reviewsAmount),
         );
     }
 }

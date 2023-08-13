@@ -1,42 +1,42 @@
-import {
-    BusinessEmail,
-    Id,
-    BusinessReviewsAmount,
-} from 'src/modules/shared/domain';
+import { BusinessEmail, Id, AggregateRoot } from 'src/modules/shared/domain';
 import { OnlineBusinessName, OnlineBusinessWebsite } from './';
+import { OnlineBusinessCreatedEvent } from './online-business-created-event';
 
-export class OnlineBusiness {
+export class OnlineBusiness extends AggregateRoot {
     private constructor(
         private bId: Id,
         private bName: OnlineBusinessName,
         private bWebsite: OnlineBusinessWebsite,
         private bEmail: BusinessEmail,
-        private bReviewsAmount: BusinessReviewsAmount,
-    ) {}
-
-    static createNew(
-        bId: Id,
-        bName: OnlineBusinessName,
-        bWebsite: OnlineBusinessWebsite,
-        bEmail: BusinessEmail,
     ) {
-        return new this(
-            bId,
-            bName,
-            bWebsite,
-            bEmail,
-            BusinessReviewsAmount.createNew(),
-        );
+        super();
     }
 
-    static createFrom(
+    static create(
         bId: Id,
         bName: OnlineBusinessName,
         bWebsite: OnlineBusinessWebsite,
         bEmail: BusinessEmail,
-        bReviewsAmount: BusinessReviewsAmount,
     ) {
-        return new this(bId, bName, bWebsite, bEmail, bReviewsAmount);
+        const onlineBusiness = new this(bId, bName, bWebsite, bEmail);
+        onlineBusiness.record(
+            new OnlineBusinessCreatedEvent({
+                aggregateId: bId.value,
+                name: bName.value,
+                website: bWebsite.value,
+                email: bEmail.value,
+            }),
+        );
+        return onlineBusiness;
+    }
+
+    toPrimitives() {
+        return {
+            id: this.bId.value,
+            name: this.bName.value,
+            website: this.bWebsite.value,
+            email: this.bEmail.value,
+        };
     }
 
     get id() {
@@ -53,18 +53,6 @@ export class OnlineBusiness {
 
     get email() {
         return this.bEmail.value;
-    }
-
-    get reviewsAmount() {
-        return this.bReviewsAmount.value;
-    }
-
-    increaseReviewAmount() {
-        this.bReviewsAmount.increase();
-    }
-
-    decreaseReviewAmount() {
-        this.bReviewsAmount.decrease();
     }
 
     includesName(value: string) {

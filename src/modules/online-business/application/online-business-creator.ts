@@ -24,7 +24,7 @@ export class OnlineBusinessCreator {
         website: OnlineBusinessWebsite,
         email: BusinessEmail,
     ) {
-        const business = OnlineBusiness.createNew(id, name, website, email);
+        const business = OnlineBusiness.create(id, name, website, email);
         const result = await this.repository.create(business);
         if (result.status === CreateResultStatus.BUSINESS_ALREADY_EXISTS) {
             if (result.isNameCollision) {

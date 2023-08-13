@@ -111,7 +111,7 @@ export class OnlineBusinessReader {
                 name: business.name,
                 email: business.email,
                 website: business.website,
-                reviewsAmount: business.reviewsAmount,
+                reviewsAmount: 0, // TODO: reviewsAmount will be moved to Read Model
                 averageRating,
             },
         };
@@ -125,7 +125,7 @@ export class OnlineBusinessReader {
             name: business.name,
             website: business.website,
             email: business.email,
-            reviewsAmount: business.reviewsAmount,
+            reviewsAmount: 0, // TODO: reviewsAmount will be moved to Read Model
         }));
     }
 }

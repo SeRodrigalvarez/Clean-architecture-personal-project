@@ -90,7 +90,7 @@ export class InMemoryOnlineBusinessAdapter implements OnlineBusinessRepository {
                 status: UpdateResultStatus.NOT_FOUND,
             };
         }
-        result.onlineBusiness.increaseReviewAmount();
+        //result.onlineBusiness.increaseReviewAmount(); // TODO: reviewsAmount will be moved to Read Model
         return {
             status: UpdateResultStatus.OK,
         };
