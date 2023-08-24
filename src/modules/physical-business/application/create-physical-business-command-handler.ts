@@ -20,7 +20,10 @@ export class CreatePhysicalBusinessCommandHanlder implements CommandHandler {
         private physicalBusinessCreator: PhysicalBusinessCreator,
         @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,
     ) {
-        this.commandBus.addHandler(CreatePhysicalBusinessCommand, this);
+        this.commandBus.addHandler(
+            CreatePhysicalBusinessCommand.COMMAND_NAME,
+            this,
+        );
     }
 
     async execute(command: CreatePhysicalBusinessCommand): Promise<void> {
