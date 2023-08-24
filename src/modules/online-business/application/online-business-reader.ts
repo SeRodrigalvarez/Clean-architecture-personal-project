@@ -5,11 +5,11 @@ import {
 } from 'src/modules/reviews/domain';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
-    GetResult,
-    GetResultStatus,
-    OnlineBusiness,
-    OnlineBusinessRepository,
+    OnlineBusinessViewRepository,
     ONLINE_BUSINESS_PORT,
+    GetViewResult,
+    GetViewResultStatus,
+    OnlineBusinessView,
 } from '../domain';
 
 export interface ReaderOnlineBusiness {
@@ -44,7 +44,7 @@ export enum OnlineBusinessReaderResultStatus {
 export class OnlineBusinessReader {
     constructor(
         @Inject(ONLINE_BUSINESS_PORT)
-        private onlineBusinessRepository: OnlineBusinessRepository,
+        private onlineBusinessViewRepository: OnlineBusinessViewRepository,
         @Inject(REVIEW_REPOSITORY_PORT)
         private reviewRepository: ReviewRepository,
     ) {}
@@ -54,25 +54,25 @@ export class OnlineBusinessReader {
         pageSize: PageSize,
         value?: string,
     ): Promise<FilterOnlineBusinessesResult> {
-        let result: GetResult;
+        let result: GetViewResult;
         if (value) {
-            result = await this.onlineBusinessRepository.getByNameOrWebsite(
+            result = await this.onlineBusinessViewRepository.getByNameOrWebsite(
                 value,
                 pageNumber,
                 pageSize,
             );
         } else {
-            result = await this.onlineBusinessRepository.getAll(
+            result = await this.onlineBusinessViewRepository.getAll(
                 pageNumber,
                 pageSize,
             );
         }
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
             return {
                 status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
             };
         }
-        if (result.status === GetResultStatus.NOT_FOUND) {
+        if (result.status === GetViewResultStatus.NOT_FOUND) {
             return {
                 status: OnlineBusinessReaderResultStatus.NOT_FOUND,
             };
@@ -80,27 +80,27 @@ export class OnlineBusinessReader {
         return {
             status: OnlineBusinessReaderResultStatus.OK,
             onlineBusinesses: this.domainToResultDtoMapper(
-                result.onlineBusinesses,
+                result.onlineBusinessViews,
             ),
         };
     }
 
     async getById(id: Id): Promise<GetOnlineBusinessByIdResult> {
-        const result = await this.onlineBusinessRepository.getById(id);
+        const result = await this.onlineBusinessViewRepository.getById(id);
 
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
             return {
                 status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
             };
         }
 
-        if (result.status === GetResultStatus.NOT_FOUND) {
+        if (result.status === GetViewResultStatus.NOT_FOUND) {
             return {
                 status: OnlineBusinessReaderResultStatus.NOT_FOUND,
             };
         }
 
-        const business = result.onlineBusiness;
+        const business = result.onlineBusinessView;
         const averageRating =
             await this.reviewRepository.getAverageRatingByBusinessId(id);
 
@@ -118,7 +118,7 @@ export class OnlineBusinessReader {
     }
 
     private domainToResultDtoMapper(
-        onlineBusinesses: OnlineBusiness[],
+        onlineBusinesses: OnlineBusinessView[],
     ): ReaderOnlineBusiness[] {
         return onlineBusinesses.map((business) => ({
             id: business.id,

@@ -21,9 +21,16 @@ import {
     GetOnlineBusinessesQueryHandler,
     OnlineBusinessCreator,
     OnlineBusinessReader,
+    OnlineBusinessViewCreator,
 } from './modules/online-business/application';
-import { ONLINE_BUSINESS_PORT } from './modules/online-business/domain';
-import { MongoOnlineBusinessAdapter } from './modules/online-business/infrastructure';
+import {
+    ONLINE_BUSINESS_PORT,
+    ONLINE_BUSINESS_VIEW_PORT,
+} from './modules/online-business/domain';
+import {
+    MongoOnlineBusinessAdapter,
+    MongoOnlineBusinessViewAdapter,
+} from './modules/online-business/infrastructure';
 import {
     CreatePhysicalBusinessCommandHanlder,
     GetPhysicalBusinessByIdQueryHanlder,
@@ -72,6 +79,7 @@ export const QueryHandlers = [
 
 export const CreatorUseCases = [
     OnlineBusinessCreator,
+    OnlineBusinessViewCreator,
     PhysicalBusinessCreator,
     BusinessReviewCreator,
 ];
@@ -93,6 +101,10 @@ export const ReaderUseCases = [
         {
             provide: ONLINE_BUSINESS_PORT,
             useClass: MongoOnlineBusinessAdapter,
+        },
+        {
+            provide: ONLINE_BUSINESS_VIEW_PORT,
+            useClass: MongoOnlineBusinessViewAdapter,
         },
         {
             provide: PHYSICAL_BUSINESS_PORT,

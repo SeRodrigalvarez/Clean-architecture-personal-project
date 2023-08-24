@@ -6,7 +6,7 @@ import {
     OnlineBusinessRepository,
     OnlineBusinessWebsite,
     ONLINE_BUSINESS_PORT,
-    CreateResultStatus,
+    SaveResultStatus,
 } from '../domain';
 
 @Injectable()
@@ -25,8 +25,8 @@ export class OnlineBusinessCreator {
         email: BusinessEmail,
     ) {
         const business = OnlineBusiness.create(id, name, website, email);
-        const result = await this.repository.create(business);
-        if (result.status === CreateResultStatus.BUSINESS_ALREADY_EXISTS) {
+        const result = await this.repository.save(business);
+        if (result.status === SaveResultStatus.BUSINESS_ALREADY_EXISTS) {
             if (result.isNameCollision) {
                 this.logger.error(
                     `An online business with name ${name.value} already exists`,
@@ -38,7 +38,7 @@ export class OnlineBusinessCreator {
                 );
             }
         }
-        if (result.status === CreateResultStatus.GENERIC_ERROR) {
+        if (result.status === SaveResultStatus.GENERIC_ERROR) {
             this.logger.error(`Error at online business repository level`);
         }
     }

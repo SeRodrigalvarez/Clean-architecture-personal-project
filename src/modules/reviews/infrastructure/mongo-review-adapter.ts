@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Collection } from 'mongodb';
-import { Id, PageNumber, PageSize } from 'src/modules/shared/domain';
+import {
+    Id,
+    PageNumber,
+    PageSize,
+    ReviewRating,
+} from 'src/modules/shared/domain';
 import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
 import {
     CreateResult,
@@ -10,7 +15,6 @@ import {
     GetResultStatus,
     GetSingleResult,
     Review,
-    ReviewRating,
     ReviewRepository,
     ReviewText,
     Username,

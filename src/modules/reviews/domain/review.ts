@@ -1,5 +1,5 @@
-import { Id } from 'src/modules/shared/domain';
-import { ReviewRating, ReviewText, Username } from './';
+import { Id, ReviewRating } from 'src/modules/shared/domain';
+import { ReviewText, Username } from './';
 
 export class Review {
     private constructor(

@@ -12,9 +12,6 @@ import {
     BusinessReviewCreatorResultStatus,
 } from 'src/modules/reviews/application';
 import {
-    RATING_MAX_VALUE,
-    RATING_MIN_VALUE,
-    ReviewRating,
     ReviewText,
     TEXT_MAX_LENGTH,
     TEXT_MIN_LENGTH,
@@ -22,7 +19,12 @@ import {
     USERNAME_MAX_LENGTH,
     USERNAME_MIN_LENGTH,
 } from 'src/modules/reviews/domain';
-import { Id } from 'src/modules/shared/domain';
+import {
+    Id,
+    RATING_MAX_VALUE,
+    RATING_MIN_VALUE,
+    ReviewRating,
+} from 'src/modules/shared/domain';
 
 export class CreateBusinessReviewParam {
     @IsUUID()
