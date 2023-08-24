@@ -1,5 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { BusinessEmail, Id } from 'src/modules/shared/domain';
+import {
+    BusinessEmail,
+    EVENT_BUS_PORT,
+    EventBus,
+    Id,
+} from 'src/modules/shared/domain';
 import {
     OnlineBusiness,
     OnlineBusinessName,
@@ -16,6 +21,8 @@ export class OnlineBusinessCreator {
     constructor(
         @Inject(ONLINE_BUSINESS_PORT)
         private repository: OnlineBusinessRepository,
+        @Inject(EVENT_BUS_PORT)
+        private eventBus: EventBus,
     ) {}
 
     async execute(
@@ -40,6 +47,11 @@ export class OnlineBusinessCreator {
         }
         if (result.status === SaveResultStatus.GENERIC_ERROR) {
             this.logger.error(`Error at online business repository level`);
+        }
+        if (result.status === SaveResultStatus.OK) {
+            business
+                .pullDomainEvents()
+                .forEach((event) => this.eventBus.publish(event));
         }
     }
 }

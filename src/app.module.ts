@@ -19,6 +19,7 @@ import {
     CreateOnlineBusinessCommandHandler,
     GetOnlineBusinessByIdQueryHandler,
     GetOnlineBusinessesQueryHandler,
+    OnlineBusinessCreatedEventSubscriber,
     OnlineBusinessCreator,
     OnlineBusinessReader,
     OnlineBusinessViewCreator,
@@ -48,9 +49,10 @@ import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
 import { MongoReviewAdapter } from './modules/reviews/infrastructure';
 import {
     InMemoryCommandBus,
+    InMemoryEventBus,
     MongoDatabaseConnection,
 } from './modules/shared/infrastructure';
-import { COMMAND_BUS_PORT } from './modules/shared/domain';
+import { COMMAND_BUS_PORT, EVENT_BUS_PORT } from './modules/shared/domain';
 
 export const CreateControllers = [
     CreateOnlineBusinessController,
@@ -69,6 +71,8 @@ export const CommandHandlers = [
     CreateOnlineBusinessCommandHandler,
     CreatePhysicalBusinessCommandHanlder,
 ];
+
+export const EventSubscribers = [OnlineBusinessCreatedEventSubscriber];
 
 export const QueryHandlers = [
     GetOnlineBusinessesQueryHandler,
@@ -94,6 +98,7 @@ export const ReaderUseCases = [
     controllers: [...CreateControllers, ...GetControllers],
     providers: [
         ...CommandHandlers,
+        ...EventSubscribers,
         ...QueryHandlers,
         ...CreatorUseCases,
         ...ReaderUseCases,
@@ -117,6 +122,10 @@ export const ReaderUseCases = [
         {
             provide: COMMAND_BUS_PORT,
             useClass: InMemoryCommandBus,
+        },
+        {
+            provide: EVENT_BUS_PORT,
+            useClass: InMemoryEventBus,
         },
     ],
 })

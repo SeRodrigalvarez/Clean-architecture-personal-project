@@ -1,8 +1,6 @@
 import { Id } from '.';
 
 export abstract class DomainEvent {
-    static readonly EVENT_NAME: string;
-
     readonly aggregateId: string;
     readonly eventId: string;
     readonly occurredOn: Date;

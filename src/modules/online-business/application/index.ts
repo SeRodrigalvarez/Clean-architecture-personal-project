@@ -9,3 +9,5 @@ export * from './get-online-businesses-query';
 export * from './get-online-businesses-query-handler';
 export * from './get-online-business-by-id-query';
 export * from './get-online-business-by-id-query-handler';
+
+export * from './online-business-created-event-subscriber';

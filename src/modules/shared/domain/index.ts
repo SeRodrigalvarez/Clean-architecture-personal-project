@@ -13,3 +13,5 @@ export * from './command-handler';
 export * from './command-bus';
 
 export * from './domain-event';
+export * from './domain-event-subscriber';
+export * from './event-bus';
