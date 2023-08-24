@@ -15,7 +15,7 @@ export class Id {
 
     static createFrom(uuid: string) {
         const object = new this(uuid);
-        Id.guard(object);
+        this.guard(object);
         return object;
     }
 

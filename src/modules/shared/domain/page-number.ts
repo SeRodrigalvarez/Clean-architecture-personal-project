@@ -17,7 +17,7 @@ export class PageNumber {
 
     static createFrom(pageNum: number) {
         const object = new this(pageNum);
-        PageNumber.guard(object);
+        this.guard(object);
         return object;
     }
 

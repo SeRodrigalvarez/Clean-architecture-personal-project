@@ -17,7 +17,7 @@ export class BusinessReviewsAmount {
 
     static createFrom(amount: number) {
         const object = new this(amount);
-        BusinessReviewsAmount.guard(object);
+        this.guard(object);
         return object;
     }
 

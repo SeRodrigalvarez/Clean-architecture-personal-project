@@ -19,7 +19,7 @@ export class PageSize {
 
     static createFrom(pageSize: number) {
         const object = new this(pageSize);
-        PageSize.guard(object);
+        this.guard(object);
         return object;
     }
 
