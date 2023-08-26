@@ -1,7 +1,7 @@
 export abstract class Command {
-    readonly eventName: string;
+    readonly commandName: string;
 
-    constructor(eventName: string) {
-        this.eventName = eventName;
+    constructor(commandName: string) {
+        this.commandName = commandName;
     }
 }
