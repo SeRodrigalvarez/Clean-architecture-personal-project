@@ -1,5 +1,5 @@
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
-import { OnlineBusinessView } from './online-business-view';
+import { OnlineBusinessView } from '.';
 
 export interface SaveViewResult {
     status: SaveViewResultStatus;

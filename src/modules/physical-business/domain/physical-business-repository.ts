@@ -1,4 +1,4 @@
-import { PhysicalBusiness } from './';
+import { PhysicalBusiness } from '.';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 
 export interface CreateResult {

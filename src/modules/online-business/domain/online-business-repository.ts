@@ -1,4 +1,4 @@
-import { OnlineBusiness } from './';
+import { OnlineBusiness } from '.';
 
 export interface SaveResult {
     status: SaveResultStatus;

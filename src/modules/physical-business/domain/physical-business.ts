@@ -7,7 +7,7 @@ import {
     PhysicalBusinessAddress,
     PhysicalBusinessName,
     PhysicalBusinessPhone,
-} from './';
+} from '.';
 
 export class PhysicalBusiness {
     private constructor(
