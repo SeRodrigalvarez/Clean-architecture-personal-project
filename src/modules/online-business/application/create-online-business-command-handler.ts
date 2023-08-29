@@ -14,7 +14,9 @@ import {
 import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CreateOnlineBusinessCommandHandler implements CommandHandler {
+export class CreateOnlineBusinessCommandHandler
+    implements CommandHandler<CreateOnlineBusinessCommand>
+{
     constructor(
         private onlineBusinessCreator: OnlineBusinessCreator,
         @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,

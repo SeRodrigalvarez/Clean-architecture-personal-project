@@ -1,5 +1,5 @@
-import { DomainEvent } from './domain-event';
+import { DomainEvent } from '.';
 
-export interface DomainEventSubscriber {
-    on(domainEvent: DomainEvent): Promise<void>;
+export interface DomainEventSubscriber<E extends DomainEvent = DomainEvent> {
+    on(domainEvent: E): Promise<void>;
 }

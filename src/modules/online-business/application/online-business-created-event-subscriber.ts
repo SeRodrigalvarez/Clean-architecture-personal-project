@@ -15,7 +15,7 @@ import { OnlineBusinessViewCreator } from './online-business-view-creator';
 
 @Injectable()
 export class OnlineBusinessCreatedEventSubscriber
-    implements DomainEventSubscriber
+    implements DomainEventSubscriber<OnlineBusinessCreatedEvent>
 {
     constructor(
         private onlineBusinessViewCreator: OnlineBusinessViewCreator,
