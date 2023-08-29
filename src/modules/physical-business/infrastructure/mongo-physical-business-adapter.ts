@@ -77,7 +77,7 @@ export class MongoPhysicalBusinessAdapter
                 status: CreateResultStatus.OK,
             };
         } catch (error) {
-            this.logger.error(error);
+            this.logger.error(error.stack);
             return {
                 status: CreateResultStatus.GENERIC_ERROR,
             };

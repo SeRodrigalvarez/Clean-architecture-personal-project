@@ -56,7 +56,7 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
                 status: SaveResultStatus.OK,
             };
         } catch (error) {
-            this.logger.error(error);
+            this.logger.error(error.stack);
             return {
                 status: SaveResultStatus.GENERIC_ERROR,
             };

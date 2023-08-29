@@ -76,7 +76,7 @@ export class MongoOnlineBusinessViewAdapter
                 status: SaveViewResultStatus.OK,
             };
         } catch (error) {
-            this.logger.error(error);
+            this.logger.error(error.stack);
             return {
                 status: SaveViewResultStatus.GENERIC_ERROR,
             };
@@ -110,7 +110,7 @@ export class MongoOnlineBusinessViewAdapter
                 onlineBusinessViews: result,
             };
         } catch (error) {
-            this.logger.error(error);
+            this.logger.error(error.stack);
             return {
                 status: GetViewResultStatus.GENERIC_ERROR,
             };
@@ -130,7 +130,7 @@ export class MongoOnlineBusinessViewAdapter
                 onlineBusinessView: this.documentToDomain(result),
             };
         } catch (error) {
-            this.logger.error(error);
+            this.logger.error(error.stack);
             return {
                 status: GetViewResultStatus.GENERIC_ERROR,
             };
@@ -158,7 +158,7 @@ export class MongoOnlineBusinessViewAdapter
                 onlineBusinessViews: result,
             };
         } catch (error) {
-            this.logger.error(error);
+            this.logger.error(error.stack);
             return {
                 status: GetViewResultStatus.GENERIC_ERROR,
             };
