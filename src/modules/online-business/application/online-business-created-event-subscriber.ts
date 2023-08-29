@@ -5,13 +5,9 @@ import {
     EVENT_BUS_PORT,
     EventBus,
 } from 'src/modules/shared/domain';
-import {
-    OnlineBusinessCreatedEvent,
-    OnlineBusinessName,
-    OnlineBusinessWebsite,
-} from '../domain';
+import { OnlineBusinessName, OnlineBusinessWebsite } from '../domain';
 import { Inject, Injectable } from '@nestjs/common';
-import { OnlineBusinessViewCreator } from './online-business-view-creator';
+import { OnlineBusinessCreatedEvent, OnlineBusinessViewCreator } from '.';
 
 @Injectable()
 export class OnlineBusinessCreatedEventSubscriber
