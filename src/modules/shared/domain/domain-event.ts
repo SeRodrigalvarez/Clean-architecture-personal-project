@@ -7,10 +7,10 @@ export abstract class DomainEvent {
     readonly eventName: string;
 
     constructor(params: {
-        aggregateId: string;
         eventId?: string;
-        occurredOn?: Date;
         eventName: string;
+        aggregateId: string;
+        occurredOn?: Date;
     }) {
         const { aggregateId, eventId, occurredOn, eventName } = params;
         this.aggregateId = aggregateId;

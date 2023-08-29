@@ -1,9 +1,5 @@
-import { OnlineBusinessCreator } from '.';
-import {
-    OnlineBusinessName,
-    OnlineBusinessWebsite,
-    CreateOnlineBusinessCommand,
-} from '../domain';
+import { CreateOnlineBusinessCommand, OnlineBusinessCreator } from '.';
+import { OnlineBusinessName, OnlineBusinessWebsite } from '../domain';
 import {
     BusinessEmail,
     Id,

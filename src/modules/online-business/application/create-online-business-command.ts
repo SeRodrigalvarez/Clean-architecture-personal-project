@@ -4,10 +4,10 @@ export class CreateOnlineBusinessCommand extends Command {
     static readonly COMMAND_NAME = 'CreateOnlineBusinessCommand';
 
     constructor(
-        public readonly id: string,
-        public readonly name: string,
-        public readonly website: string,
-        public readonly email: string,
+        readonly id: string,
+        readonly name: string,
+        readonly website: string,
+        readonly email: string,
     ) {
         super(CreateOnlineBusinessCommand.COMMAND_NAME);
     }

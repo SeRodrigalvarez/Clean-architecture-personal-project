@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Inject } from '@nestjs/common';
 import { IsEmail, IsString, IsUUID, IsUrl, Length } from 'class-validator';
+import { CreateOnlineBusinessCommand } from 'src/modules/online-business/application';
 import {
-    CreateOnlineBusinessCommand,
     NAME_MAX_LENGTH,
     NAME_MIN_LENGTH,
 } from 'src/modules/online-business/domain';

@@ -1,5 +1,4 @@
-import { DomainEvent } from './domain-event';
-import { DomainEventSubscriber } from './domain-event-subscriber';
+import { DomainEvent, DomainEventSubscriber } from '.';
 
 export interface EventBus {
     publish(domainEvent: DomainEvent);
