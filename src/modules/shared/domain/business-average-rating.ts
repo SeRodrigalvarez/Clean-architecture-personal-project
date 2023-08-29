@@ -1,5 +1,5 @@
 import { IsNumber, Max, Min, validateSync } from 'class-validator';
-import { RATING_MIN_VALUE, RATING_MAX_VALUE } from './review-rating';
+import { RATING_MIN_VALUE, RATING_MAX_VALUE } from '.';
 
 export const RATING_MAX_DECIMAL_PLACES = 1;
 
@@ -14,7 +14,7 @@ export class BusinessAverageRating {
     }
 
     static createNew() {
-        return new this(0);
+        return new this(RATING_MIN_VALUE);
     }
 
     static createFrom(avgRating: number) {
