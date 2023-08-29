@@ -1,17 +1,18 @@
 import {
     Controller,
     Get,
+    Inject,
     InternalServerErrorException,
     NotFoundException,
     Param,
 } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
 import { IsUUID } from 'class-validator';
 import {
     GetOnlineBusinessByIdQuery,
-    GetOnlineBusinessByIdResult,
-    OnlineBusinessReaderResultStatus,
+    GetOnlineBusinessByIdQueryResponse,
 } from 'src/modules/online-business/application';
+import { GetViewResultStatus } from 'src/modules/online-business/domain';
+import { QUERY_BUS_PORT, QueryBus } from 'src/modules/shared/domain';
 
 export class GetOnlineBusinesssParam {
     @IsUUID()
@@ -20,19 +21,18 @@ export class GetOnlineBusinesssParam {
 
 @Controller('business/online')
 export class GetOnlineBusinessByIdController {
-    constructor(private queryBus: QueryBus) {}
+    constructor(@Inject(QUERY_BUS_PORT) private queryBus: QueryBus) {}
 
     @Get(':id')
     async execute(@Param() param: GetOnlineBusinesssParam) {
-        const result: GetOnlineBusinessByIdResult = await this.queryBus.execute(
-            new GetOnlineBusinessByIdQuery(param.id),
-        );
+        const result: GetOnlineBusinessByIdQueryResponse =
+            await this.queryBus.ask(new GetOnlineBusinessByIdQuery(param.id));
 
-        if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
+        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetViewResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No online business with id: ${param.id}`,
             );

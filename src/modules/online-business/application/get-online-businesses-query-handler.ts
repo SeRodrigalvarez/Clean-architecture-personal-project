@@ -1,30 +1,50 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PageNumber, PageSize } from 'src/modules/shared/domain';
 import {
-    FilterOnlineBusinessesResult,
-    OnlineBusinessReader,
+    PageNumber,
+    PageSize,
+    QUERY_BUS_PORT,
+    QueryBus,
+    QueryHandler,
+} from 'src/modules/shared/domain';
+import {
     GetOnlineBusinessesQuery,
+    GetOnlineBusinessesQueryResponse,
+    OnlineBusinessReader,
 } from '.';
+import { Inject, Injectable } from '@nestjs/common';
 
-@QueryHandler(GetOnlineBusinessesQuery)
+@Injectable()
 export class GetOnlineBusinessesQueryHandler
-    implements IQueryHandler<GetOnlineBusinessesQuery>
+    implements
+        QueryHandler<
+            GetOnlineBusinessesQuery,
+            GetOnlineBusinessesQueryResponse
+        >
 {
-    constructor(private onlineBusinessReader: OnlineBusinessReader) {}
+    constructor(
+        private onlineBusinessReader: OnlineBusinessReader,
+        @Inject(QUERY_BUS_PORT) private queryBus: QueryBus,
+    ) {
+        this.queryBus.addHanlder(GetOnlineBusinessesQuery.QUERY_NAME, this);
+    }
 
     async execute(
         query: GetOnlineBusinessesQuery,
-    ): Promise<FilterOnlineBusinessesResult> {
+    ): Promise<GetOnlineBusinessesQueryResponse> {
         const pageNumber = query.pageNumber
             ? PageNumber.createFrom(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
             ? PageSize.createFrom(Number(query.pageSize))
             : PageSize.createMaxPageSize();
-        return await this.onlineBusinessReader.filter(
+        const result = await this.onlineBusinessReader.filter(
             pageNumber,
             pageSize,
             query.filter,
+        );
+
+        return new GetOnlineBusinessesQueryResponse(
+            result.status,
+            result.onlineBusinesses,
         );
     }
 }

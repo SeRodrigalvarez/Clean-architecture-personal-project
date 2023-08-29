@@ -1,7 +1,13 @@
-export class GetOnlineBusinessesQuery {
+import { Query } from 'src/modules/shared/domain';
+
+export class GetOnlineBusinessesQuery extends Query {
+    static readonly QUERY_NAME = 'GetOnlineBusinessesQuery';
+
     constructor(
-        public readonly filter: string,
-        public readonly pageNumber: string,
-        public readonly pageSize: string,
-    ) {}
+        readonly filter: string,
+        readonly pageNumber: string,
+        readonly pageSize: string,
+    ) {
+        super({ queryName: GetOnlineBusinessesQuery.QUERY_NAME });
+    }
 }

@@ -49,17 +49,22 @@ import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
 import { MongoReviewAdapter } from './modules/reviews/infrastructure';
 import {
     InMemoryCommandBus,
+    InMemoryQueryBus,
     InMemoryEventBus,
     MongoDatabaseConnection,
 } from './modules/shared/infrastructure';
-import { COMMAND_BUS_PORT, EVENT_BUS_PORT } from './modules/shared/domain';
+import {
+    COMMAND_BUS_PORT,
+    EVENT_BUS_PORT,
+    QUERY_BUS_PORT,
+} from './modules/shared/domain';
 
-export const CreateControllers = [
+const CreateControllers = [
     CreateOnlineBusinessController,
     CreatePhysicalBusinessController,
     CreateBusinessReviewController,
 ];
-export const GetControllers = [
+const GetControllers = [
     GetOnlineBusinessesController,
     GetOnlineBusinessByIdController,
     GetPhysicalBusinessesController,
@@ -67,30 +72,66 @@ export const GetControllers = [
     GetBusinessReviewController,
 ];
 
-export const CommandHandlers = [
+const CommandHandlers = [
     CreateOnlineBusinessCommandHandler,
     CreatePhysicalBusinessCommandHanlder,
 ];
 
-export const EventSubscribers = [OnlineBusinessCreatedEventSubscriber];
+const EventSubscribers = [OnlineBusinessCreatedEventSubscriber];
 
-export const QueryHandlers = [
+const QueryHandlers = [
     GetOnlineBusinessesQueryHandler,
     GetOnlineBusinessByIdQueryHandler,
     GetPhysicalBusinessesQueryHandler,
     GetPhysicalBusinessByIdQueryHanlder,
 ];
 
-export const CreatorUseCases = [
+const CreatorUseCases = [
     OnlineBusinessCreator,
     OnlineBusinessViewCreator,
     PhysicalBusinessCreator,
     BusinessReviewCreator,
 ];
-export const ReaderUseCases = [
+
+const ReaderUseCases = [
     OnlineBusinessReader,
     PhysicalBusinessReader,
     BusinessReviewReader,
+];
+
+const Buses = [
+    {
+        provide: COMMAND_BUS_PORT,
+        useClass: InMemoryCommandBus,
+    },
+    {
+        provide: QUERY_BUS_PORT,
+        useClass: InMemoryQueryBus,
+    },
+    {
+        provide: EVENT_BUS_PORT,
+        useClass: InMemoryEventBus,
+    },
+];
+
+const Repositories = [
+    MongoDatabaseConnection,
+    {
+        provide: ONLINE_BUSINESS_PORT,
+        useClass: MongoOnlineBusinessAdapter,
+    },
+    {
+        provide: ONLINE_BUSINESS_VIEW_PORT,
+        useClass: MongoOnlineBusinessViewAdapter,
+    },
+    {
+        provide: PHYSICAL_BUSINESS_PORT,
+        useClass: MongoPhysicalBusinessAdapter,
+    },
+    {
+        provide: REVIEW_REPOSITORY_PORT,
+        useClass: MongoReviewAdapter,
+    },
 ];
 
 @Module({
@@ -102,31 +143,8 @@ export const ReaderUseCases = [
         ...QueryHandlers,
         ...CreatorUseCases,
         ...ReaderUseCases,
-        MongoDatabaseConnection,
-        {
-            provide: ONLINE_BUSINESS_PORT,
-            useClass: MongoOnlineBusinessAdapter,
-        },
-        {
-            provide: ONLINE_BUSINESS_VIEW_PORT,
-            useClass: MongoOnlineBusinessViewAdapter,
-        },
-        {
-            provide: PHYSICAL_BUSINESS_PORT,
-            useClass: MongoPhysicalBusinessAdapter,
-        },
-        {
-            provide: REVIEW_REPOSITORY_PORT,
-            useClass: MongoReviewAdapter,
-        },
-        {
-            provide: COMMAND_BUS_PORT,
-            useClass: InMemoryCommandBus,
-        },
-        {
-            provide: EVENT_BUS_PORT,
-            useClass: InMemoryEventBus,
-        },
+        ...Repositories,
+        ...Buses,
     ],
 })
 export class AppModule {}

@@ -1,22 +1,24 @@
 import {
     Controller,
     Get,
+    Inject,
     InternalServerErrorException,
     NotFoundException,
     Query,
 } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
 import { Type } from 'class-transformer';
 import { IsString, IsOptional, IsInt, Max, Min } from 'class-validator';
 import {
-    FilterOnlineBusinessesResult,
     GetOnlineBusinessesQuery,
-    OnlineBusinessReaderResultStatus,
+    GetOnlineBusinessesQueryResponse,
 } from 'src/modules/online-business/application';
+import { GetViewResultStatus } from 'src/modules/online-business/domain';
 import {
     PAGE_NUMBER_MIN_VALUE,
     PAGE_SIZE_MAX_VALUE,
     PAGE_SIZE_MIN_VALUE,
+    QUERY_BUS_PORT,
+    QueryBus,
 } from 'src/modules/shared/domain';
 
 export class FilterOnlineBusinessesQuery {
@@ -38,24 +40,26 @@ export class FilterOnlineBusinessesQuery {
 
 @Controller('business/online')
 export class GetOnlineBusinessesController {
-    constructor(private queryBus: QueryBus) {}
+    constructor(@Inject(QUERY_BUS_PORT) private queryBus: QueryBus) {}
 
     @Get()
     async execute(@Query() query: FilterOnlineBusinessesQuery) {
-        const result: FilterOnlineBusinessesResult =
-            await this.queryBus.execute(
-                new GetOnlineBusinessesQuery(
-                    query.filter,
-                    query.pageNumber,
-                    query.pageSize,
-                ),
-            );
+        const result = await this.queryBus.ask<
+            GetOnlineBusinessesQuery,
+            GetOnlineBusinessesQueryResponse
+        >(
+            new GetOnlineBusinessesQuery(
+                query.filter,
+                query.pageNumber,
+                query.pageSize,
+            ),
+        );
 
-        if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
+        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetViewResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 'No online businesses found with the given filters',
             );

@@ -1,15 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-    ReviewRepository,
-    REVIEW_REPOSITORY_PORT,
-} from 'src/modules/reviews/domain';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     OnlineBusinessViewRepository,
-    ONLINE_BUSINESS_PORT,
     GetViewResult,
     GetViewResultStatus,
-    OnlineBusinessView,
+    ONLINE_BUSINESS_VIEW_PORT,
 } from '../domain';
 
 export interface ReaderOnlineBusiness {
@@ -25,28 +20,20 @@ export interface ReaderOnlineBusinessById extends ReaderOnlineBusiness {
 }
 
 export interface FilterOnlineBusinessesResult {
-    status: OnlineBusinessReaderResultStatus;
+    status: GetViewResultStatus;
     onlineBusinesses?: ReaderOnlineBusiness[];
 }
 
 export interface GetOnlineBusinessByIdResult {
-    status: OnlineBusinessReaderResultStatus;
+    status: GetViewResultStatus;
     onlineBusiness?: ReaderOnlineBusinessById;
-}
-
-export enum OnlineBusinessReaderResultStatus {
-    OK,
-    NOT_FOUND,
-    GENERIC_ERROR,
 }
 
 @Injectable()
 export class OnlineBusinessReader {
     constructor(
-        @Inject(ONLINE_BUSINESS_PORT)
+        @Inject(ONLINE_BUSINESS_VIEW_PORT)
         private onlineBusinessViewRepository: OnlineBusinessViewRepository,
-        @Inject(REVIEW_REPOSITORY_PORT)
-        private reviewRepository: ReviewRepository,
     ) {}
 
     async filter(
@@ -67,65 +54,24 @@ export class OnlineBusinessReader {
                 pageSize,
             );
         }
-        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
-            return {
-                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-        if (result.status === GetViewResultStatus.NOT_FOUND) {
-            return {
-                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
-            };
-        }
         return {
-            status: OnlineBusinessReaderResultStatus.OK,
-            onlineBusinesses: this.domainToResultDtoMapper(
-                result.onlineBusinessViews,
-            ),
+            status: result.status,
+            onlineBusinesses: result.onlineBusinessViews?.map((business) => ({
+                id: business.id,
+                name: business.name,
+                website: business.website,
+                email: business.email,
+                reviewsAmount: business.reviewAmount,
+            })),
         };
     }
 
     async getById(id: Id): Promise<GetOnlineBusinessByIdResult> {
         const result = await this.onlineBusinessViewRepository.getById(id);
 
-        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
-            return {
-                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-
-        if (result.status === GetViewResultStatus.NOT_FOUND) {
-            return {
-                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
-            };
-        }
-
-        const business = result.onlineBusinessView;
-        const averageRating =
-            await this.reviewRepository.getAverageRatingByBusinessId(id);
-
         return {
-            status: OnlineBusinessReaderResultStatus.OK,
-            onlineBusiness: {
-                id: business.id,
-                name: business.name,
-                email: business.email,
-                website: business.website,
-                reviewsAmount: 0, // TODO: reviewsAmount will be moved to Read Model
-                averageRating,
-            },
+            status: result.status,
+            onlineBusiness: result.onlineBusinessView?.toPrimitives(),
         };
-    }
-
-    private domainToResultDtoMapper(
-        onlineBusinesses: OnlineBusinessView[],
-    ): ReaderOnlineBusiness[] {
-        return onlineBusinesses.map((business) => ({
-            id: business.id,
-            name: business.name,
-            website: business.website,
-            email: business.email,
-            reviewsAmount: 0, // TODO: reviewsAmount will be moved to Read Model
-        }));
     }
 }
