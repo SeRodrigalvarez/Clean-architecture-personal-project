@@ -9,6 +9,6 @@ export class CreateOnlineBusinessCommand extends Command {
         readonly website: string,
         readonly email: string,
     ) {
-        super(CreateOnlineBusinessCommand.COMMAND_NAME);
+        super({ commandName: CreateOnlineBusinessCommand.COMMAND_NAME });
     }
 }

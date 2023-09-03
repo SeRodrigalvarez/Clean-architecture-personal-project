@@ -1,7 +1,9 @@
-import { Command, CommandHandler } from '.';
+import { Command, CommandHandler, CommandResponse } from '.';
 
 export interface CommandBus {
-    execute(command: Command);
+    execute<C extends Command, R extends CommandResponse>(
+        command: C,
+    ): Promise<R>;
     addHandler(commandName: string, commandHandler: CommandHandler);
 }
 

@@ -9,6 +9,7 @@ export * from './page-size';
 export * from './page-number';
 
 export * from './command';
+export * from './command-response';
 export * from './command-handler';
 export * from './command-bus';
 

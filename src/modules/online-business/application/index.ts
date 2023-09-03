@@ -5,6 +5,7 @@ export * from './online-business-view-creator';
 
 export * from './create-online-business-command-handler';
 export * from './create-online-business-command';
+export * from './create-online-business-command-response';
 
 export * from './get-online-businesses-query-handler';
 export * from './get-online-businesses-query';

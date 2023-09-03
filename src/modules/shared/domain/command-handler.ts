@@ -1,5 +1,8 @@
-import { Command } from '.';
+import { Command, CommandResponse } from '.';
 
-export interface CommandHandler<C extends Command = Command> {
-    execute(command: C): Promise<void>;
+export interface CommandHandler<
+    C extends Command = Command,
+    R extends CommandResponse = CommandResponse,
+> {
+    execute(command: C): Promise<R>;
 }
