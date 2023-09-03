@@ -53,20 +53,6 @@ export class MongoOnlineBusinessViewAdapter
         onlineBusinessView: OnlineBusinessView,
     ): Promise<SaveViewResult> {
         try {
-            // TODO: Use query bus
-            // TODO: Ignore collision with same Id
-            const collisionResult = await this.businessCollisionCheck(
-                onlineBusinessView.name,
-                onlineBusinessView.website,
-            );
-            if (collisionResult.isCollision) {
-                return {
-                    status: SaveViewResultStatus.BUSINESS_ALREADY_EXISTS,
-                    isNameCollision: collisionResult.isNameCollision,
-                    isWebsiteCollision: collisionResult.isWebsiteCollision,
-                };
-            }
-
             await this.collection.replaceOne(
                 { id: onlineBusinessView.id },
                 onlineBusinessView.toPrimitives(),
@@ -163,19 +149,6 @@ export class MongoOnlineBusinessViewAdapter
                 status: GetViewResultStatus.GENERIC_ERROR,
             };
         }
-    }
-
-    private async businessCollisionCheck(name: string, website: string) {
-        const isNameCollision = !!(await this.collection.findOne({ name }));
-        const isWebsiteCollision = !!(await this.collection.findOne({
-            website,
-        }));
-
-        return {
-            isCollision: isNameCollision || isWebsiteCollision,
-            isNameCollision,
-            isWebsiteCollision,
-        };
     }
 
     private documentToDomain(

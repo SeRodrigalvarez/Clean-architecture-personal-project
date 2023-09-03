@@ -3,13 +3,10 @@ import { OnlineBusinessView } from '.';
 
 export interface SaveViewResult {
     status: SaveViewResultStatus;
-    isNameCollision?: boolean;
-    isWebsiteCollision?: boolean;
 }
 
 export enum SaveViewResultStatus {
     OK,
-    BUSINESS_ALREADY_EXISTS,
     GENERIC_ERROR,
 }
 
