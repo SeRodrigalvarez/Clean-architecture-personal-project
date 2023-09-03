@@ -34,9 +34,9 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
 
     async save(onlineBusiness: OnlineBusiness): Promise<SaveResult> {
         try {
-            // TODO: Use query bus
-            // TODO: Ignore collision with same Id
+            // TODO: Use reservation pattern or unique index to avoid race condition bugs
             const collisionResult = await this.businessCollisionCheck(
+                onlineBusiness.id,
                 onlineBusiness.name,
                 onlineBusiness.website,
             );
@@ -63,10 +63,18 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
         }
     }
 
-    private async businessCollisionCheck(name: string, website: string) {
-        const isNameCollision = !!(await this.collection.findOne({ name }));
+    private async businessCollisionCheck(
+        id: string,
+        name: string,
+        website: string,
+    ) {
+        const isNameCollision = !!(await this.collection.findOne({
+            name,
+            id: { $ne: id },
+        }));
         const isWebsiteCollision = !!(await this.collection.findOne({
             website,
+            id: { $ne: id },
         }));
 
         return {
