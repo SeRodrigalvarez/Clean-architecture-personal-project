@@ -4,15 +4,15 @@ export class CreatePhysicalBusinessCommand extends Command {
     static readonly COMMAND_NAME = 'CreatePhysicalBusinessCommand';
 
     constructor(
-        public readonly id: string,
-        public readonly name: string,
-        public readonly street: string,
-        public readonly city: string,
-        public readonly postalCode: string,
-        public readonly country: string,
-        public readonly phone: string,
-        public readonly email: string,
+        readonly id: string,
+        readonly name: string,
+        readonly street: string,
+        readonly city: string,
+        readonly postalCode: string,
+        readonly country: string,
+        readonly phone: string,
+        readonly email: string,
     ) {
-        super(CreatePhysicalBusinessCommand.COMMAND_NAME);
+        super({ commandName: CreatePhysicalBusinessCommand.COMMAND_NAME });
     }
 }

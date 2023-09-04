@@ -1,7 +1,7 @@
 export class GetPhysicalBusinessesQuery {
     constructor(
-        public readonly filter: string,
-        public readonly pageNumber: string,
-        public readonly pageSize: string,
+        readonly filter: string,
+        readonly pageNumber: string,
+        readonly pageSize: string,
     ) {}
 }
