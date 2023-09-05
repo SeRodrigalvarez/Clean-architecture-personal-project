@@ -3,10 +3,8 @@ import {
     GetSingleViewResult,
     GetViewResult,
     GetViewResultStatus,
-    OnlineBusinessName,
     OnlineBusinessView,
     OnlineBusinessViewRepository,
-    OnlineBusinessWebsite,
     SaveViewResult,
     SaveViewResultStatus,
 } from '../domain';
@@ -19,17 +17,6 @@ export class InMemoryOnlineBusinessViewAdapter
     async save(
         onlineBusinessView: OnlineBusinessView,
     ): Promise<SaveViewResult> {
-        const collisionResult = await this.businessCollisionCheck(
-            onlineBusinessView.name,
-            onlineBusinessView.website,
-        );
-        if (collisionResult.isCollision) {
-            return {
-                status: SaveViewResultStatus.BUSINESS_ALREADY_EXISTS,
-                isNameCollision: collisionResult.isNameCollision,
-                isWebsiteCollision: collisionResult.isWebsiteCollision,
-            };
-        }
         this.businesses.push(onlineBusinessView);
         return {
             status: SaveViewResultStatus.OK,
@@ -89,21 +76,6 @@ export class InMemoryOnlineBusinessViewAdapter
         return {
             status: GetViewResultStatus.OK,
             onlineBusinessViews: result,
-        };
-    }
-
-    private async businessCollisionCheck(name: string, website: string) {
-        const isNameCollision = this.businesses.some((business) =>
-            business.hasName(new OnlineBusinessName(name)),
-        );
-        const isWebsiteCollision = this.businesses.some((business) =>
-            business.hasWebsite(new OnlineBusinessWebsite(website)),
-        );
-
-        return {
-            isCollision: isNameCollision || isWebsiteCollision,
-            isNameCollision,
-            isWebsiteCollision,
         };
     }
 }
