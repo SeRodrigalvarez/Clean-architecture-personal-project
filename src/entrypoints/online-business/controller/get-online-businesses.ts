@@ -44,16 +44,14 @@ export class GetOnlineBusinessesController {
 
     @Get()
     async execute(@Query() query: FilterOnlineBusinessesQuery) {
-        const result = await this.queryBus.ask<
-            GetOnlineBusinessesQuery,
-            GetOnlineBusinessesQueryResponse
-        >(
-            new GetOnlineBusinessesQuery(
-                query.filter,
-                query.pageNumber,
-                query.pageSize,
-            ),
-        );
+        const result: GetOnlineBusinessesQueryResponse =
+            await this.queryBus.ask(
+                new GetOnlineBusinessesQuery(
+                    query.filter,
+                    query.pageNumber,
+                    query.pageSize,
+                ),
+            );
 
         if (result.status === GetViewResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();

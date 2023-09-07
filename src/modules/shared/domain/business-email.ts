@@ -13,7 +13,7 @@ export class BusinessEmail {
         const result = validateSync(this);
         if (result.length != 0) {
             throw new Error(
-                `Invalid online business email: ${this.email}. Email must be a valid email address`,
+                `Invalid business email: ${this.email}. Email must be a valid email address`,
             );
         }
     }
