@@ -26,18 +26,7 @@ export class OnlineBusinessViewCreator {
     ) {
         const business = OnlineBusinessView.createNew(id, name, website, email);
         const result = await this.repository.save(business);
-        if (result.status === SaveViewResultStatus.BUSINESS_ALREADY_EXISTS) {
-            if (result.isNameCollision) {
-                this.logger.error(
-                    `An online business view with name ${name.value} already exists`,
-                );
-            }
-            if (result.isWebsiteCollision) {
-                this.logger.error(
-                    `An online business view with website ${website.value} already exists`,
-                );
-            }
-        }
+
         if (result.status === SaveViewResultStatus.GENERIC_ERROR) {
             this.logger.error(`Error at online business view repository level`);
         }
