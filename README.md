@@ -1,5 +1,10 @@
 # Clean Architecture Personal Project
 
+> **IMPORTANT: Please, note that CQRS implementation is still work in progress** :exclamation: :exclamation:
+
+> [!NOTE]
+> This is a note
+
 ## Description
 
 This project started as [NoFakes Code Challenge](https://nofakes.notion.site/NoFakes-Backend-Challenge-c64335c58e934680996e45072e9b6894) with [Nest](https://github.com/nestjs/nest) using Hexagonal Architecture and SOLID Principles. I decided to use it as personal project to apply CQRS to the existing code base (still WIP).
