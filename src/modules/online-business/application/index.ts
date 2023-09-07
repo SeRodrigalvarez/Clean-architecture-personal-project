@@ -16,4 +16,3 @@ export * from './get-online-business-by-id-query';
 export * from './get-online-business-by-id-query-response';
 
 export * from './online-business-created-event-subscriber';
-export * from './online-business-created-event';

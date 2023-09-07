@@ -1,6 +1,9 @@
 import { BusinessEmail, Id, AggregateRoot } from 'src/modules/shared/domain';
-import { OnlineBusinessName, OnlineBusinessWebsite } from '.';
-import { OnlineBusinessCreatedEvent } from '../application';
+import {
+    OnlineBusinessCreatedEvent,
+    OnlineBusinessName,
+    OnlineBusinessWebsite,
+} from '.';
 
 export class OnlineBusiness extends AggregateRoot {
     private constructor(
