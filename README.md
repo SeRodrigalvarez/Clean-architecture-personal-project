@@ -1,7 +1,7 @@
 # Clean Architecture Personal Project
 
 > [!IMPORTANT]
-> Please, note that CQRS implementation is still work in progress**
+> **Please, note that CQRS implementation is still work in progress**
 
 ## Description
 
