@@ -1,9 +1,7 @@
 # Clean Architecture Personal Project
 
-> **IMPORTANT: Please, note that CQRS implementation is still work in progress** :exclamation: :exclamation:
-
-> [!NOTE]
-> This is a note
+> [!IMPORTANT]
+> Please, note that CQRS implementation is still work in progress**
 
 ## Description
 
