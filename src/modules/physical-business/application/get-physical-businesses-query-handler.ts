@@ -1,30 +1,50 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import {
-    FilterPhysicalBusinessesResult,
     GetPhysicalBusinessesQuery,
+    GetPhysicalBusinessesQueryResponse,
     PhysicalBusinessReader,
 } from '.';
-import { PageNumber, PageSize } from 'src/modules/shared/domain';
+import {
+    PageNumber,
+    PageSize,
+    QUERY_BUS_PORT,
+    QueryBus,
+    QueryHandler,
+} from 'src/modules/shared/domain';
+import { Inject, Injectable } from '@nestjs/common';
 
-@QueryHandler(GetPhysicalBusinessesQuery)
+@Injectable()
 export class GetPhysicalBusinessesQueryHandler
-    implements IQueryHandler<GetPhysicalBusinessesQuery>
+    implements
+        QueryHandler<
+            GetPhysicalBusinessesQuery,
+            GetPhysicalBusinessesQueryResponse
+        >
 {
-    constructor(private physicalBusinessReader: PhysicalBusinessReader) {}
+    constructor(
+        private physicalBusinessReader: PhysicalBusinessReader,
+        @Inject(QUERY_BUS_PORT) private queryBus: QueryBus,
+    ) {
+        this.queryBus.addHanlder(GetPhysicalBusinessesQuery.QUERY_NAME, this);
+    }
 
     async execute(
         query: GetPhysicalBusinessesQuery,
-    ): Promise<FilterPhysicalBusinessesResult> {
+    ): Promise<GetPhysicalBusinessesQueryResponse> {
         const pageNumber = query.pageNumber
             ? PageNumber.createFrom(Number(query.pageNumber))
             : PageNumber.createMinPageNumber();
         const pageSize = query.pageSize
             ? PageSize.createFrom(Number(query.pageSize))
             : PageSize.createMaxPageSize();
-        return await this.physicalBusinessReader.filter(
+        const result = await this.physicalBusinessReader.filter(
             pageNumber,
             pageSize,
             query.filter,
+        );
+
+        return new GetPhysicalBusinessesQueryResponse(
+            result.status,
+            result.physicalBusinesses,
         );
     }
 }

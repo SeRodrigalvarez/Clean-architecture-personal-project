@@ -13,11 +13,11 @@ import {
     Username,
 } from '../domain';
 import { GetViewResultStatus as GetOnlineViewResultStatus } from 'src/modules/online-business/domain';
-import { GetResultStatus as GetPhysicalResultStatus } from 'src/modules/physical-business/domain';
 import {
-    PHYSICAL_BUSINESS_PORT,
-    PhysicalBusinessRepository,
+    GetViewResultStatus as GetPhysicaViewlResultStatus,
+    PhysicalBusinessViewRepository,
 } from 'src/modules/physical-business/domain';
+import { PHYSICAL_BUSINESS_PORT } from 'src/modules/physical-business/domain';
 
 export interface BusinessReviewCreatorResult {
     status: BusinessReviewCreatorResultStatus;
@@ -39,7 +39,7 @@ export class BusinessReviewCreator {
         @Inject(ONLINE_BUSINESS_PORT)
         private onlineBusinessViewRepository: OnlineBusinessViewRepository,
         @Inject(PHYSICAL_BUSINESS_PORT)
-        private physicalBusinessRepository: PhysicalBusinessRepository,
+        private physicalBusinessViewRepository: PhysicalBusinessViewRepository,
     ) {}
 
     async execute(
@@ -51,13 +51,13 @@ export class BusinessReviewCreator {
         const getOnlineResult = await this.onlineBusinessViewRepository.getById(
             businessId,
         );
-        const getPhysicalResult = await this.physicalBusinessRepository.getById(
-            businessId,
-        );
+        const getPhysicalResult =
+            await this.physicalBusinessViewRepository.getById(businessId);
         if (
             getOnlineResult.status ===
                 GetOnlineViewResultStatus.GENERIC_ERROR ||
-            getPhysicalResult.status === GetPhysicalResultStatus.GENERIC_ERROR
+            getPhysicalResult.status ===
+                GetPhysicaViewlResultStatus.GENERIC_ERROR
         ) {
             return {
                 status: BusinessReviewCreatorResultStatus.GENERIC_ERROR,
@@ -65,7 +65,7 @@ export class BusinessReviewCreator {
         }
         if (
             getOnlineResult.status === GetOnlineViewResultStatus.NOT_FOUND &&
-            getPhysicalResult.status === GetPhysicalResultStatus.NOT_FOUND
+            getPhysicalResult.status === GetPhysicaViewlResultStatus.NOT_FOUND
         ) {
             return {
                 status: BusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID,

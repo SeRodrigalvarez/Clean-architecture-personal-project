@@ -1,17 +1,18 @@
 import {
     Controller,
     Get,
+    Inject,
     InternalServerErrorException,
     NotFoundException,
     Param,
 } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
 import { IsUUID } from 'class-validator';
 import {
     GetPhysicalBusinessByIdQuery,
-    GetPhysicalBusinessByIdResult,
-    PhysicalBusinessReaderResultStatus,
+    GetPhysicalBusinessByIdQueryResponse,
 } from 'src/modules/physical-business/application';
+import { GetViewResultStatus } from 'src/modules/physical-business/domain';
+import { QUERY_BUS_PORT, QueryBus } from 'src/modules/shared/domain';
 
 export class GetPhysicalBusinesssParam {
     @IsUUID()
@@ -20,22 +21,18 @@ export class GetPhysicalBusinesssParam {
 
 @Controller('business/physical')
 export class GetPhysicalBusinessByIdController {
-    constructor(private queryBus: QueryBus) {}
+    constructor(@Inject(QUERY_BUS_PORT) private queryBus: QueryBus) {}
 
     @Get(':id')
     async execute(@Param() param: GetPhysicalBusinesssParam) {
-        const result: GetPhysicalBusinessByIdResult =
-            await this.queryBus.execute(
-                new GetPhysicalBusinessByIdQuery(param.id),
-            );
+        const result: GetPhysicalBusinessByIdQueryResponse =
+            await this.queryBus.ask(new GetPhysicalBusinessByIdQuery(param.id));
 
-        if (
-            result.status === PhysicalBusinessReaderResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === GetViewResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === PhysicalBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetViewResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No physical business with id: ${param.id}`,
             );

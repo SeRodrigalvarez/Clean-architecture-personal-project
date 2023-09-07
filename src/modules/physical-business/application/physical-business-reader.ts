@@ -1,20 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-    ReviewRepository,
-    REVIEW_REPOSITORY_PORT,
-} from 'src/modules/reviews/domain';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
-    GetResultStatus,
-    PhysicalBusiness,
-    PhysicalBusinessRepository,
-    PHYSICAL_BUSINESS_PORT,
+    PhysicalBusinessViewRepository,
+    GetViewResult,
+    GetViewResultStatus,
+    PHYSICAL_BUSINESS_VIEW_PORT,
 } from '../domain';
 
 export interface ReaderPhysicalBusiness {
     id: string;
     name: string;
-    address: string;
+    address: {
+        street: string;
+        city: string;
+        postalCode: string;
+        country: string;
+    };
     phone: string;
     email: string;
     reviewsAmount: number;
@@ -25,28 +26,20 @@ export interface ReaderPhysicalBusinessById extends ReaderPhysicalBusiness {
 }
 
 export interface FilterPhysicalBusinessesResult {
-    status: PhysicalBusinessReaderResultStatus;
+    status: GetViewResultStatus;
     physicalBusinesses?: ReaderPhysicalBusiness[];
 }
 
 export interface GetPhysicalBusinessByIdResult {
-    status: PhysicalBusinessReaderResultStatus;
+    status: GetViewResultStatus;
     physicalBusiness?: ReaderPhysicalBusinessById;
-}
-
-export enum PhysicalBusinessReaderResultStatus {
-    OK,
-    NOT_FOUND,
-    GENERIC_ERROR,
 }
 
 @Injectable()
 export class PhysicalBusinessReader {
     constructor(
-        @Inject(PHYSICAL_BUSINESS_PORT)
-        private onlineBusinessRepository: PhysicalBusinessRepository,
-        @Inject(REVIEW_REPOSITORY_PORT)
-        private reviewRepository: ReviewRepository,
+        @Inject(PHYSICAL_BUSINESS_VIEW_PORT)
+        private physicalBusinessViewRepository: PhysicalBusinessViewRepository,
     ) {}
 
     async filter(
@@ -54,80 +47,41 @@ export class PhysicalBusinessReader {
         pageSize: PageSize,
         value?: string,
     ): Promise<FilterPhysicalBusinessesResult> {
-        let result;
+        let result: GetViewResult;
         if (value) {
-            result = await this.onlineBusinessRepository.getByNameOrAddress(
-                value,
-                pageNumber,
-                pageSize,
-            );
+            result =
+                await this.physicalBusinessViewRepository.getByNameOrAddress(
+                    value,
+                    pageNumber,
+                    pageSize,
+                );
         } else {
-            result = await this.onlineBusinessRepository.getAll(
+            result = await this.physicalBusinessViewRepository.getAll(
                 pageNumber,
                 pageSize,
             );
-        }
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
-            return {
-                status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-        if (result.status === GetResultStatus.NOT_FOUND) {
-            return {
-                status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
-            };
         }
         return {
-            status: PhysicalBusinessReaderResultStatus.OK,
-            physicalBusinesses: this.domainToResultDtoMapper(
-                result.physicalBusinesses,
+            status: result.status,
+            physicalBusinesses: result.physicalBusinessViews?.map(
+                (business) => ({
+                    id: business.id,
+                    name: business.name,
+                    address: business.address,
+                    email: business.email,
+                    phone: business.phone,
+                    reviewsAmount: business.reviewsAmount,
+                }),
             ),
         };
     }
 
     async getById(id: Id): Promise<GetPhysicalBusinessByIdResult> {
-        const result = await this.onlineBusinessRepository.getById(id);
-
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
-            return {
-                status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-
-        if (result.status === GetResultStatus.NOT_FOUND) {
-            return {
-                status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
-            };
-        }
-
-        const business = result.physicalBusiness;
-        const averageRating =
-            await this.reviewRepository.getAverageRatingByBusinessId(id);
+        const result = await this.physicalBusinessViewRepository.getById(id);
 
         return {
-            status: PhysicalBusinessReaderResultStatus.OK,
-            physicalBusiness: {
-                id: business.id,
-                name: business.name,
-                address: business.addressString,
-                email: business.email,
-                phone: business.phone,
-                reviewsAmount: business.reviewsAmount,
-                averageRating,
-            },
+            status: result.status,
+            physicalBusiness: result.physicalBusinessView?.toPrimitives(),
         };
-    }
-
-    private domainToResultDtoMapper(
-        physicalBusinesses: PhysicalBusiness[],
-    ): ReaderPhysicalBusiness[] {
-        return physicalBusinesses.map((business) => ({
-            id: business.id,
-            name: business.name,
-            address: business.addressString,
-            email: business.email,
-            phone: business.phone,
-            reviewsAmount: business.reviewsAmount,
-        }));
     }
 }

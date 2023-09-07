@@ -1,13 +1,19 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { BusinessEmail, Id } from 'src/modules/shared/domain';
 import {
-    CreateResultStatus,
+    BusinessEmail,
+    EVENT_BUS_PORT,
+    EventBus,
+    Id,
+} from 'src/modules/shared/domain';
+import {
     PhysicalBusiness,
     PhysicalBusinessAddress,
     PhysicalBusinessName,
     PhysicalBusinessPhone,
     PhysicalBusinessRepository,
     PHYSICAL_BUSINESS_PORT,
+    SaveResultStatus,
+    SaveResult,
 } from '../domain';
 
 @Injectable()
@@ -17,6 +23,8 @@ export class PhysicalBusinessCreator {
     constructor(
         @Inject(PHYSICAL_BUSINESS_PORT)
         private repository: PhysicalBusinessRepository,
+        @Inject(EVENT_BUS_PORT)
+        private eventBus: EventBus,
     ) {}
 
     async execute(
@@ -25,29 +33,22 @@ export class PhysicalBusinessCreator {
         address: PhysicalBusinessAddress,
         phone: PhysicalBusinessPhone,
         email: BusinessEmail,
-    ): Promise<void> {
-        const business = PhysicalBusiness.createNew(
+    ): Promise<SaveResult> {
+        const business = PhysicalBusiness.create(
             id,
             name,
             address,
             phone,
             email,
         );
-        const result = await this.repository.create(business);
-        if (result.status === CreateResultStatus.BUSINESS_ALREADY_EXISTS) {
-            if (result.isNameCollision) {
-                this.logger.error(
-                    `A physical business with name ${name.value} already exists`,
-                );
-            }
-            if (result.isPhoneCollision) {
-                this.logger.error(
-                    `A physical business with phone ${phone.value} already exists`,
-                );
-            }
+        const result = await this.repository.save(business);
+
+        if (result.status === SaveResultStatus.OK) {
+            business
+                .pullDomainEvents()
+                .forEach((event) => this.eventBus.publish(event));
         }
-        if (result.status === CreateResultStatus.GENERIC_ERROR) {
-            this.logger.error(`Error at physical business repository level`);
-        }
+
+        return result;
     }
 }

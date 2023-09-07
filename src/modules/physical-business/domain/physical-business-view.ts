@@ -1,40 +1,62 @@
-import { AggregateRoot, BusinessEmail, Id } from 'src/modules/shared/domain';
+import {
+    BusinessAverageRating,
+    BusinessEmail,
+    BusinessReviewsAmount,
+    Id,
+} from 'src/modules/shared/domain';
 import {
     PhysicalBusinessAddress,
-    PhysicalBusinessCreatedEvent,
     PhysicalBusinessName,
     PhysicalBusinessPhone,
 } from '.';
 
-export class PhysicalBusiness extends AggregateRoot {
+export class PhysicalBusinessView {
     private constructor(
         private bId: Id,
         private bName: PhysicalBusinessName,
         private bAddress: PhysicalBusinessAddress,
         private bPhone: PhysicalBusinessPhone,
         private bEmail: BusinessEmail,
-    ) {
-        super();
-    }
+        private bReviewsAmount: BusinessReviewsAmount,
+        private bAverageRating: BusinessAverageRating,
+    ) {}
 
-    static create(
+    static createNew(
         bId: Id,
         bName: PhysicalBusinessName,
         bAddress: PhysicalBusinessAddress,
         bPhone: PhysicalBusinessPhone,
         bEmail: BusinessEmail,
     ) {
-        const physicalBusiness = new this(bId, bName, bAddress, bPhone, bEmail);
-        physicalBusiness.record(
-            new PhysicalBusinessCreatedEvent({
-                aggregateId: bId.value,
-                name: bName.value,
-                address: bAddress.values,
-                phone: bPhone.value,
-                email: bEmail.value,
-            }),
+        return new this(
+            bId,
+            bName,
+            bAddress,
+            bPhone,
+            bEmail,
+            BusinessReviewsAmount.createNew(),
+            BusinessAverageRating.createNew(),
         );
-        return physicalBusiness;
+    }
+
+    static createFrom(
+        bId: Id,
+        bName: PhysicalBusinessName,
+        bAddress: PhysicalBusinessAddress,
+        bPhone: PhysicalBusinessPhone,
+        bEmail: BusinessEmail,
+        bReviewsAmount: BusinessReviewsAmount,
+        bAverageRating: BusinessAverageRating,
+    ) {
+        return new this(
+            bId,
+            bName,
+            bAddress,
+            bPhone,
+            bEmail,
+            bReviewsAmount,
+            bAverageRating,
+        );
     }
 
     toPrimitives() {
@@ -44,6 +66,8 @@ export class PhysicalBusiness extends AggregateRoot {
             address: this.bAddress.values,
             phone: this.bPhone.value,
             email: this.bEmail.value,
+            reviewsAmount: this.bReviewsAmount.value,
+            averageRating: this.bAverageRating.value,
         };
     }
 
@@ -72,6 +96,14 @@ export class PhysicalBusiness extends AggregateRoot {
         return this.bEmail.value;
     }
 
+    get reviewsAmount() {
+        return this.bReviewsAmount.value;
+    }
+
+    get averageRating() {
+        return this.bAverageRating.value;
+    }
+
     includesName(value: string) {
         return this.bName.includes(value);
     }
@@ -90,5 +122,13 @@ export class PhysicalBusiness extends AggregateRoot {
 
     hasId(id: Id) {
         return this.bId.equals(id);
+    }
+
+    increaseReviewAmount() {
+        this.bReviewsAmount.increase();
+    }
+
+    decreaseReviewAmount() {
+        this.bReviewsAmount.decrease();
     }
 }

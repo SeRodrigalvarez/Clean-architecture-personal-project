@@ -1,4 +1,8 @@
-import { PhysicalBusinessCreator } from '.';
+import {
+    CreatePhysicalBusinessCommand,
+    CreatePhysicalBusinessCommandResponse,
+    PhysicalBusinessCreator,
+} from '.';
 import {
     BusinessEmail,
     Id,
@@ -10,29 +14,31 @@ import {
     PhysicalBusinessName,
     PhysicalBusinessAddress,
     PhysicalBusinessPhone,
-    CreatePhysicalBusinessCommand,
 } from '../domain';
 import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
-// TODO: Adapt to command hanlder with return value
 export class CreatePhysicalBusinessCommandHanlder
-    implements CommandHandler<CreatePhysicalBusinessCommand, any>
+    implements
+        CommandHandler<
+            CreatePhysicalBusinessCommand,
+            CreatePhysicalBusinessCommandResponse
+        >
 {
     constructor(
         private physicalBusinessCreator: PhysicalBusinessCreator,
         @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,
     ) {
-        /*
         this.commandBus.addHandler(
             CreatePhysicalBusinessCommand.COMMAND_NAME,
             this,
         );
-        */
     }
 
-    async execute(command: CreatePhysicalBusinessCommand): Promise<void> {
-        await this.physicalBusinessCreator.execute(
+    async execute(
+        command: CreatePhysicalBusinessCommand,
+    ): Promise<CreatePhysicalBusinessCommandResponse> {
+        const result = await this.physicalBusinessCreator.execute(
             Id.createFrom(command.id),
             new PhysicalBusinessName(command.name),
             new PhysicalBusinessAddress(
@@ -43,6 +49,12 @@ export class CreatePhysicalBusinessCommandHanlder
             ),
             new PhysicalBusinessPhone(command.phone),
             new BusinessEmail(command.email),
+        );
+
+        return new CreatePhysicalBusinessCommandResponse(
+            result.status,
+            result.isNameCollision,
+            result.isPhoneCollision,
         );
     }
 }

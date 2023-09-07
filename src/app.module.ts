@@ -36,11 +36,19 @@ import {
     CreatePhysicalBusinessCommandHanlder,
     GetPhysicalBusinessByIdQueryHanlder,
     GetPhysicalBusinessesQueryHandler,
+    PhysicalBusinessCreatedEventSubscriber,
     PhysicalBusinessCreator,
     PhysicalBusinessReader,
+    PhysicalBusinessViewCreator,
 } from './modules/physical-business/application';
-import { PHYSICAL_BUSINESS_PORT } from './modules/physical-business/domain';
-import { MongoPhysicalBusinessAdapter } from './modules/physical-business/infrastructure';
+import {
+    PHYSICAL_BUSINESS_PORT,
+    PHYSICAL_BUSINESS_VIEW_PORT,
+} from './modules/physical-business/domain';
+import {
+    MongoPhysicalBusinessAdapter,
+    MongoPhysicalBusinessViewAdapter,
+} from './modules/physical-business/infrastructure';
 import {
     BusinessReviewCreator,
     BusinessReviewReader,
@@ -64,6 +72,7 @@ const CreateControllers = [
     CreatePhysicalBusinessController,
     CreateBusinessReviewController,
 ];
+
 const GetControllers = [
     GetOnlineBusinessesController,
     GetOnlineBusinessByIdController,
@@ -77,7 +86,10 @@ const CommandHandlers = [
     CreatePhysicalBusinessCommandHanlder,
 ];
 
-const EventSubscribers = [OnlineBusinessCreatedEventSubscriber];
+const EventSubscribers = [
+    OnlineBusinessCreatedEventSubscriber,
+    PhysicalBusinessCreatedEventSubscriber,
+];
 
 const QueryHandlers = [
     GetOnlineBusinessesQueryHandler,
@@ -90,6 +102,7 @@ const CreatorUseCases = [
     OnlineBusinessCreator,
     OnlineBusinessViewCreator,
     PhysicalBusinessCreator,
+    PhysicalBusinessViewCreator,
     BusinessReviewCreator,
 ];
 
@@ -127,6 +140,10 @@ const Repositories = [
     {
         provide: PHYSICAL_BUSINESS_PORT,
         useClass: MongoPhysicalBusinessAdapter,
+    },
+    {
+        provide: PHYSICAL_BUSINESS_VIEW_PORT,
+        useClass: MongoPhysicalBusinessViewAdapter,
     },
     {
         provide: REVIEW_REPOSITORY_PORT,
