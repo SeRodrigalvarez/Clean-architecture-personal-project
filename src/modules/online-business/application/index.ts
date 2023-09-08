@@ -15,4 +15,4 @@ export * from './get-online-business-by-id-query-handler';
 export * from './get-online-business-by-id-query';
 export * from './get-online-business-by-id-query-response';
 
-export * from './online-business-created-event-subscriber';
+export * from './create-online-business-view-on-online-business-created';

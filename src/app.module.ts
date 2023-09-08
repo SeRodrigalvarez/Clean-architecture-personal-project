@@ -19,7 +19,7 @@ import {
     CreateOnlineBusinessCommandHandler,
     GetOnlineBusinessByIdQueryHandler,
     GetOnlineBusinessesQueryHandler,
-    OnlineBusinessCreatedEventSubscriber,
+    CreateOnlineBusinessViewOnOnlineBusinessCreated,
     OnlineBusinessCreator,
     OnlineBusinessReader,
     OnlineBusinessViewCreator,
@@ -36,7 +36,7 @@ import {
     CreatePhysicalBusinessCommandHanlder,
     GetPhysicalBusinessByIdQueryHanlder,
     GetPhysicalBusinessesQueryHandler,
-    PhysicalBusinessCreatedEventSubscriber,
+    CreatePhysicalBusinessViewOnPhysicalBusinessCreated,
     PhysicalBusinessCreator,
     PhysicalBusinessReader,
     PhysicalBusinessViewCreator,
@@ -87,8 +87,8 @@ const CommandHandlers = [
 ];
 
 const EventSubscribers = [
-    OnlineBusinessCreatedEventSubscriber,
-    PhysicalBusinessCreatedEventSubscriber,
+    CreateOnlineBusinessViewOnOnlineBusinessCreated,
+    CreatePhysicalBusinessViewOnPhysicalBusinessCreated,
 ];
 
 const QueryHandlers = [

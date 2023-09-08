@@ -15,7 +15,7 @@ import { PhysicalBusinessViewCreator } from '.';
 import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class PhysicalBusinessCreatedEventSubscriber
+export class CreatePhysicalBusinessViewOnPhysicalBusinessCreated
     implements DomainEventSubscriber<PhysicalBusinessCreatedEvent>
 {
     constructor(

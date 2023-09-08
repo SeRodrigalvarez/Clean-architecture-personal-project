@@ -15,4 +15,4 @@ export * from './get-physical-businesses-query-handler';
 export * from './get-physical-businesses-query';
 export * from './get-physical-businesses-query-response';
 
-export * from './physical-business-created-event-subscriber';
+export * from './create-physical-business-view-on-physical-business-created';

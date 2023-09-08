@@ -14,7 +14,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { OnlineBusinessViewCreator } from '.';
 
 @Injectable()
-export class OnlineBusinessCreatedEventSubscriber
+export class CreateOnlineBusinessViewOnOnlineBusinessCreated
     implements DomainEventSubscriber<OnlineBusinessCreatedEvent>
 {
     constructor(
