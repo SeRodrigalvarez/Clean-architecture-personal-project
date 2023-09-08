@@ -22,10 +22,7 @@ export class CreateOnlineBusinessViewOnOnlineBusinessCreated
         @Inject(EVENT_BUS_PORT)
         private eventBus: EventBus,
     ) {
-        this.eventBus.addSubscriber(
-            OnlineBusinessCreatedEvent.EVENT_NAME,
-            this,
-        );
+        this.eventBus.addSubscriber(OnlineBusinessCreatedEvent.name, this);
     }
 
     async on(domainEvent: OnlineBusinessCreatedEvent): Promise<void> {

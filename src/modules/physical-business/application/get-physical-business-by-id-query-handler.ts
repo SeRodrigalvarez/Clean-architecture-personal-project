@@ -23,7 +23,7 @@ export class GetPhysicalBusinessByIdQueryHanlder
         private physicalBusinessReader: PhysicalBusinessReader,
         @Inject(QUERY_BUS_PORT) private queryBus: QueryBus,
     ) {
-        this.queryBus.addHanlder(GetPhysicalBusinessByIdQuery.QUERY_NAME, this);
+        this.queryBus.addHanlder(GetPhysicalBusinessByIdQuery.name, this);
     }
 
     async execute(

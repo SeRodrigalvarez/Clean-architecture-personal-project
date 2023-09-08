@@ -23,10 +23,7 @@ export class CreatePhysicalBusinessViewOnPhysicalBusinessCreated
         @Inject(EVENT_BUS_PORT)
         private eventBus: EventBus,
     ) {
-        this.eventBus.addSubscriber(
-            PhysicalBusinessCreatedEvent.EVENT_NAME,
-            this,
-        );
+        this.eventBus.addSubscriber(PhysicalBusinessCreatedEvent.name, this);
     }
     async on(domainEvent: PhysicalBusinessCreatedEvent): Promise<void> {
         this.physicalBusinessViewCreator.execute(

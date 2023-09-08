@@ -8,6 +8,6 @@ export class CreatePhysicalBusinessCommandResponse extends CommandResponse {
         readonly isNameCollision?: boolean,
         readonly isPhoneCollision?: boolean,
     ) {
-        super({ commandName: CreatePhysicalBusinessCommand.COMMAND_NAME });
+        super({ commandName: CreatePhysicalBusinessCommand.name });
     }
 }

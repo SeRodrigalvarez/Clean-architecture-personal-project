@@ -1,8 +1,6 @@
 import { DomainEvent } from 'src/modules/shared/domain';
 
 export class OnlineBusinessCreatedEvent extends DomainEvent {
-    static readonly EVENT_NAME = 'online-business.created';
-
     readonly name: string;
     readonly website: string;
     readonly email: string;
@@ -15,7 +13,7 @@ export class OnlineBusinessCreatedEvent extends DomainEvent {
     }) {
         super({
             aggregateId: params.aggregateId,
-            eventName: OnlineBusinessCreatedEvent.EVENT_NAME,
+            eventName: OnlineBusinessCreatedEvent.name,
         });
         this.name = params.name;
         this.website = params.website;

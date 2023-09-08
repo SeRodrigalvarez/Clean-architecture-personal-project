@@ -1,8 +1,6 @@
 import { Command } from 'src/modules/shared/domain';
 
 export class CreatePhysicalBusinessCommand extends Command {
-    static readonly COMMAND_NAME = 'CreatePhysicalBusinessCommand';
-
     constructor(
         readonly id: string,
         readonly name: string,
@@ -13,6 +11,6 @@ export class CreatePhysicalBusinessCommand extends Command {
         readonly phone: string,
         readonly email: string,
     ) {
-        super({ commandName: CreatePhysicalBusinessCommand.COMMAND_NAME });
+        super({ commandName: CreatePhysicalBusinessCommand.name });
     }
 }

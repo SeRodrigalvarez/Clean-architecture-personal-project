@@ -29,10 +29,7 @@ export class CreatePhysicalBusinessCommandHanlder
         private physicalBusinessCreator: PhysicalBusinessCreator,
         @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,
     ) {
-        this.commandBus.addHandler(
-            CreatePhysicalBusinessCommand.COMMAND_NAME,
-            this,
-        );
+        this.commandBus.addHandler(CreatePhysicalBusinessCommand.name, this);
     }
 
     async execute(

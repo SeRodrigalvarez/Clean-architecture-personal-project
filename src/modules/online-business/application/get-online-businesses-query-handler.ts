@@ -24,7 +24,7 @@ export class GetOnlineBusinessesQueryHandler
         private onlineBusinessReader: OnlineBusinessReader,
         @Inject(QUERY_BUS_PORT) private queryBus: QueryBus,
     ) {
-        this.queryBus.addHanlder(GetOnlineBusinessesQuery.QUERY_NAME, this);
+        this.queryBus.addHanlder(GetOnlineBusinessesQuery.name, this);
     }
 
     async execute(

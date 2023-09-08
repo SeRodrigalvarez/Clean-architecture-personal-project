@@ -22,7 +22,7 @@ export class GetOnlineBusinessByIdQueryHandler
         private onlineBusinessReader: OnlineBusinessReader,
         @Inject(QUERY_BUS_PORT) private queryBus: QueryBus,
     ) {
-        this.queryBus.addHanlder(GetOnlineBusinessByIdQuery.QUERY_NAME, this);
+        this.queryBus.addHanlder(GetOnlineBusinessByIdQuery.name, this);
     }
 
     async execute(

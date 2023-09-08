@@ -24,7 +24,7 @@ export class GetPhysicalBusinessesQueryHandler
         private physicalBusinessReader: PhysicalBusinessReader,
         @Inject(QUERY_BUS_PORT) private queryBus: QueryBus,
     ) {
-        this.queryBus.addHanlder(GetPhysicalBusinessesQuery.QUERY_NAME, this);
+        this.queryBus.addHanlder(GetPhysicalBusinessesQuery.name, this);
     }
 
     async execute(

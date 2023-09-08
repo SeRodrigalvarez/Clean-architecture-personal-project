@@ -7,6 +7,6 @@ export class GetPhysicalBusinessesQueryResponse extends QueryResponse {
         readonly status: GetViewResultStatus,
         readonly physicalBusinesses: ReaderPhysicalBusiness[],
     ) {
-        super({ queryName: GetPhysicalBusinessesQuery.QUERY_NAME });
+        super({ queryName: GetPhysicalBusinessesQuery.name });
     }
 }

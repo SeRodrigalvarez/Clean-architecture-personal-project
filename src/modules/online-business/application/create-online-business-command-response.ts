@@ -8,6 +8,6 @@ export class CreateOnlineBusinessCommandResponse extends Command {
         readonly isNameCollision?: boolean,
         readonly isWebsiteCollision?: boolean,
     ) {
-        super({ commandName: CreateOnlineBusinessCommand.COMMAND_NAME });
+        super({ commandName: CreateOnlineBusinessCommand.name });
     }
 }

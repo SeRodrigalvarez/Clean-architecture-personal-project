@@ -25,10 +25,7 @@ export class CreateOnlineBusinessCommandHandler
         private onlineBusinessCreator: OnlineBusinessCreator,
         @Inject(COMMAND_BUS_PORT) private commandBus: CommandBus,
     ) {
-        this.commandBus.addHandler(
-            CreateOnlineBusinessCommand.COMMAND_NAME,
-            this,
-        );
+        this.commandBus.addHandler(CreateOnlineBusinessCommand.name, this);
     }
     async execute(
         command: CreateOnlineBusinessCommand,

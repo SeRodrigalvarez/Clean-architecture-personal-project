@@ -7,6 +7,6 @@ export class GetOnlineBusinessesQueryResponse extends QueryResponse {
         readonly status: GetViewResultStatus,
         readonly onlineBusinesses: ReaderOnlineBusiness[],
     ) {
-        super({ queryName: GetOnlineBusinessesQuery.QUERY_NAME });
+        super({ queryName: GetOnlineBusinessesQuery.name });
     }
 }
