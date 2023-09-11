@@ -27,11 +27,11 @@ export class PhysicalBusiness extends AggregateRoot {
         const physicalBusiness = new this(bId, bName, bAddress, bPhone, bEmail);
         physicalBusiness.record(
             new PhysicalBusinessCreatedEvent({
-                aggregateId: bId.value,
-                name: bName.value,
-                address: bAddress.values,
-                phone: bPhone.value,
-                email: bEmail.value,
+                aggregateId: physicalBusiness.id,
+                name: physicalBusiness.name,
+                address: physicalBusiness.address,
+                phone: physicalBusiness.phone,
+                email: physicalBusiness.email,
             }),
         );
         return physicalBusiness;
@@ -39,11 +39,11 @@ export class PhysicalBusiness extends AggregateRoot {
 
     toPrimitives() {
         return {
-            id: this.bId.value,
-            name: this.bName.value,
-            address: this.bAddress.values,
-            phone: this.bPhone.value,
-            email: this.bEmail.value,
+            id: this.id,
+            name: this.name,
+            address: this.address,
+            phone: this.phone,
+            email: this.email,
         };
     }
 
@@ -59,11 +59,6 @@ export class PhysicalBusiness extends AggregateRoot {
         return this.bAddress.values;
     }
 
-    // NOTE: Not used
-    get addressString() {
-        return this.bAddress.toString();
-    }
-
     get phone() {
         return this.bPhone.value;
     }
@@ -72,23 +67,11 @@ export class PhysicalBusiness extends AggregateRoot {
         return this.bEmail.value;
     }
 
-    includesName(value: string) {
-        return this.bName.includes(value);
-    }
-
-    includesAddress(value: string) {
-        return this.bAddress.includes(value);
-    }
-
     hasName(name: PhysicalBusinessName) {
         return this.bName.equals(name);
     }
 
     hasPhone(phone: PhysicalBusinessPhone) {
         return this.bPhone.equals(phone);
-    }
-
-    hasId(id: Id) {
-        return this.bId.equals(id);
     }
 }

@@ -61,13 +61,13 @@ export class PhysicalBusinessView {
 
     toPrimitives() {
         return {
-            id: this.bId.value,
-            name: this.bName.value,
-            address: this.bAddress.values,
-            phone: this.bPhone.value,
-            email: this.bEmail.value,
-            reviewsAmount: this.bReviewsAmount.value,
-            averageRating: this.bAverageRating.value,
+            id: this.id,
+            name: this.name,
+            address: this.address,
+            phone: this.phone,
+            email: this.email,
+            reviewsAmount: this.reviewsAmount,
+            averageRating: this.averageRating,
         };
     }
 
@@ -81,11 +81,6 @@ export class PhysicalBusinessView {
 
     get address() {
         return this.bAddress.values;
-    }
-
-    // NOTE: Not used
-    get addressString() {
-        return this.bAddress.toString();
     }
 
     get phone() {
@@ -112,14 +107,6 @@ export class PhysicalBusinessView {
         return this.bAddress.includes(value);
     }
 
-    hasName(name: PhysicalBusinessName) {
-        return this.bName.equals(name);
-    }
-
-    hasPhone(phone: PhysicalBusinessPhone) {
-        return this.bPhone.equals(phone);
-    }
-
     hasId(id: Id) {
         return this.bId.equals(id);
     }
@@ -130,5 +117,9 @@ export class PhysicalBusinessView {
 
     decreaseReviewAmount() {
         this.bReviewsAmount.decrease();
+    }
+
+    setAverageRating(avgRating: BusinessAverageRating) {
+        this.bAverageRating = avgRating;
     }
 }

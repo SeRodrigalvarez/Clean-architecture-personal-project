@@ -24,10 +24,10 @@ export class OnlineBusiness extends AggregateRoot {
         const onlineBusiness = new this(bId, bName, bWebsite, bEmail);
         onlineBusiness.record(
             new OnlineBusinessCreatedEvent({
-                aggregateId: bId.value,
-                name: bName.value,
-                website: bWebsite.value,
-                email: bEmail.value,
+                aggregateId: onlineBusiness.id,
+                name: onlineBusiness.name,
+                website: onlineBusiness.website,
+                email: onlineBusiness.email,
             }),
         );
         return onlineBusiness;
@@ -35,10 +35,10 @@ export class OnlineBusiness extends AggregateRoot {
 
     toPrimitives() {
         return {
-            id: this.bId.value,
-            name: this.bName.value,
-            website: this.bWebsite.value,
-            email: this.bEmail.value,
+            id: this.id,
+            name: this.name,
+            website: this.website,
+            email: this.email,
         };
     }
 
@@ -58,23 +58,11 @@ export class OnlineBusiness extends AggregateRoot {
         return this.bEmail.value;
     }
 
-    includesName(value: string) {
-        return this.bName.includes(value);
-    }
-
-    includesWebsite(value: string) {
-        return this.bWebsite.includes(value);
-    }
-
     hasName(name: OnlineBusinessName) {
         return this.bName.equals(name);
     }
 
     hasWebsite(website: OnlineBusinessWebsite) {
         return this.bWebsite.equals(website);
-    }
-
-    hasId(id: Id) {
-        return this.bId.equals(id);
     }
 }

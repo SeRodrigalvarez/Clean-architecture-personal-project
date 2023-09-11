@@ -52,12 +52,12 @@ export class OnlineBusinessView {
 
     toPrimitives() {
         return {
-            id: this.bId.value,
-            name: this.bName.value,
-            website: this.bWebsite.value,
-            email: this.bEmail.value,
-            reviewsAmount: this.bReviewAmount.value,
-            averageRating: this.bAverageRating.value,
+            id: this.id,
+            name: this.name,
+            website: this.website,
+            email: this.email,
+            reviewsAmount: this.reviewAmount,
+            averageRating: this.averageRating,
         };
     }
 
@@ -93,14 +93,6 @@ export class OnlineBusinessView {
         return this.bWebsite.includes(value);
     }
 
-    hasName(name: OnlineBusinessName) {
-        return this.bName.equals(name);
-    }
-
-    hasWebsite(website: OnlineBusinessWebsite) {
-        return this.bWebsite.equals(website);
-    }
-
     hasId(id: Id) {
         return this.bId.equals(id);
     }
@@ -111,5 +103,9 @@ export class OnlineBusinessView {
 
     decreaseReviewAmount() {
         this.bReviewAmount.decrease();
+    }
+
+    setAverageRating(avgRating: BusinessAverageRating) {
+        this.bAverageRating = avgRating;
     }
 }
