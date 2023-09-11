@@ -12,8 +12,9 @@ import {
     GetPhysicalBusinessesController,
 } from './entrypoints/physical-business/controller';
 import {
-    CreateBusinessReviewController,
-    GetBusinessReviewController,
+    CreateReviewController,
+    GetReviewByIdController,
+    GetReviewsByBusinessIdController,
 } from './entrypoints/reviews/controller';
 import {
     CreateOnlineBusinessCommandHandler,
@@ -23,6 +24,8 @@ import {
     OnlineBusinessCreator,
     OnlineBusinessReader,
     OnlineBusinessViewCreator,
+    OnlineBusinessViewUpdater,
+    UpdateOnlineBusinessRatingOnReviewCreated,
 } from './modules/online-business/application';
 import {
     ONLINE_BUSINESS_PORT,
@@ -40,6 +43,8 @@ import {
     PhysicalBusinessCreator,
     PhysicalBusinessReader,
     PhysicalBusinessViewCreator,
+    PhysicalBusinessViewUpdater,
+    UpdatePhysicalBusinessRatingOnReviewCreated,
 } from './modules/physical-business/application';
 import {
     PHYSICAL_BUSINESS_PORT,
@@ -50,11 +55,23 @@ import {
     MongoPhysicalBusinessViewAdapter,
 } from './modules/physical-business/infrastructure';
 import {
-    BusinessReviewCreator,
-    BusinessReviewReader,
+    CreateReviewCommandHandler,
+    CreateReviewViewOnReviewCreated,
+    GetAverageRatingByBusinessIdQueryHandler,
+    GetReviewByIdQueryHandler,
+    GetReviewsByBusinessIdQueryHandler,
+    ReviewCreator,
+    ReviewReader,
+    ReviewViewCreator,
 } from './modules/reviews/application';
-import { REVIEW_REPOSITORY_PORT } from './modules/reviews/domain';
-import { MongoReviewAdapter } from './modules/reviews/infrastructure';
+import {
+    REVIEW_REPOSITORY_PORT,
+    REVIEW_REPOSITORY_VIEW_PORT,
+} from './modules/reviews/domain';
+import {
+    MongoReviewAdapter,
+    MongoReviewViewAdapter,
+} from './modules/reviews/infrastructure';
 import {
     InMemoryCommandBus,
     InMemoryQueryBus,
@@ -70,7 +87,7 @@ import {
 const CreateControllers = [
     CreateOnlineBusinessController,
     CreatePhysicalBusinessController,
-    CreateBusinessReviewController,
+    CreateReviewController,
 ];
 
 const GetControllers = [
@@ -78,17 +95,22 @@ const GetControllers = [
     GetOnlineBusinessByIdController,
     GetPhysicalBusinessesController,
     GetPhysicalBusinessByIdController,
-    GetBusinessReviewController,
+    GetReviewByIdController,
+    GetReviewsByBusinessIdController,
 ];
 
 const CommandHandlers = [
     CreateOnlineBusinessCommandHandler,
     CreatePhysicalBusinessCommandHanlder,
+    CreateReviewCommandHandler,
 ];
 
 const EventSubscribers = [
     CreateOnlineBusinessViewOnOnlineBusinessCreated,
     CreatePhysicalBusinessViewOnPhysicalBusinessCreated,
+    CreateReviewViewOnReviewCreated,
+    UpdateOnlineBusinessRatingOnReviewCreated,
+    UpdatePhysicalBusinessRatingOnReviewCreated,
 ];
 
 const QueryHandlers = [
@@ -96,6 +118,9 @@ const QueryHandlers = [
     GetOnlineBusinessByIdQueryHandler,
     GetPhysicalBusinessesQueryHandler,
     GetPhysicalBusinessByIdQueryHanlder,
+    GetReviewByIdQueryHandler,
+    GetReviewsByBusinessIdQueryHandler,
+    GetAverageRatingByBusinessIdQueryHandler,
 ];
 
 const CreatorUseCases = [
@@ -103,13 +128,19 @@ const CreatorUseCases = [
     OnlineBusinessViewCreator,
     PhysicalBusinessCreator,
     PhysicalBusinessViewCreator,
-    BusinessReviewCreator,
+    ReviewCreator,
+    ReviewViewCreator,
+];
+
+const UpdaterUseCases = [
+    OnlineBusinessViewUpdater,
+    PhysicalBusinessViewUpdater,
 ];
 
 const ReaderUseCases = [
     OnlineBusinessReader,
     PhysicalBusinessReader,
-    BusinessReviewReader,
+    ReviewReader,
 ];
 
 const Buses = [
@@ -149,6 +180,10 @@ const Repositories = [
         provide: REVIEW_REPOSITORY_PORT,
         useClass: MongoReviewAdapter,
     },
+    {
+        provide: REVIEW_REPOSITORY_VIEW_PORT,
+        useClass: MongoReviewViewAdapter,
+    },
 ];
 
 @Module({
@@ -159,6 +194,7 @@ const Repositories = [
         ...EventSubscribers,
         ...QueryHandlers,
         ...CreatorUseCases,
+        ...UpdaterUseCases,
         ...ReaderUseCases,
         ...Repositories,
         ...Buses,

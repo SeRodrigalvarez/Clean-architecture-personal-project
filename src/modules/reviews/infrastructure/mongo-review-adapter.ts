@@ -1,23 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Collection } from 'mongodb';
+import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure';
 import {
-    Id,
-    PageNumber,
-    PageSize,
-    ReviewRating,
-} from 'src/modules/shared/domain';
-import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
-import {
-    CreateResult,
-    CreateResultStatus,
-    GetResult,
-    GetResultStatus,
-    GetSingleResult,
     Review,
     ReviewRepository,
-    ReviewText,
-    Username,
+    SaveResult,
+    SaveResultStatus,
 } from '../domain';
 
 interface ReviewDocument {
@@ -30,6 +19,8 @@ interface ReviewDocument {
 
 @Injectable()
 export class MongoReviewAdapter implements ReviewRepository {
+    private readonly logger = new Logger(MongoReviewAdapter.name);
+
     private collection: Collection<ReviewDocument>;
 
     constructor(
@@ -41,117 +32,27 @@ export class MongoReviewAdapter implements ReviewRepository {
         );
     }
 
-    async create(review: Review): Promise<CreateResult> {
+    async save(review: Review): Promise<SaveResult> {
         try {
             if (await this.isDuplicatedReview(review)) {
                 return {
-                    status: CreateResultStatus.DUPLICATED_REVIEW,
+                    status: SaveResultStatus.DUPLICATED_REVIEW,
                 };
             }
-            await this.collection.insertOne(this.domainToDocument(review));
+            await this.collection.replaceOne(
+                { id: review.id },
+                review.toPrimitives(),
+                { upsert: true },
+            );
             return {
-                status: CreateResultStatus.OK,
+                status: SaveResultStatus.OK,
             };
         } catch (error) {
-            console.log(error); //TODO: use logger
+            this.logger.error(error);
             return {
-                status: CreateResultStatus.GENERIC_ERROR,
+                status: SaveResultStatus.GENERIC_ERROR,
             };
         }
-    }
-
-    async getByBusinessId(
-        id: Id,
-        pageNumber: PageNumber,
-        pageSize: PageSize,
-    ): Promise<GetResult> {
-        try {
-            const cursor = await this.collection
-                .find({ businessId: id.value })
-                .skip(pageNumber.value * pageSize.value)
-                .limit(pageSize.value);
-            const array = await cursor.toArray();
-            const result = await array.map(this.documentToDomain);
-            if (result.length === 0) {
-                return {
-                    status: GetResultStatus.NOT_FOUND,
-                };
-            }
-            return {
-                status: GetResultStatus.OK,
-                reviews: result,
-            };
-        } catch (error) {
-            return {
-                status: GetResultStatus.GENERIC_ERROR,
-            };
-        }
-    }
-
-    async getById(id: Id): Promise<GetSingleResult> {
-        try {
-            const result = await this.collection.findOne({ id: id.value });
-            if (!result) {
-                return {
-                    status: GetResultStatus.NOT_FOUND,
-                };
-            }
-            return {
-                status: GetResultStatus.OK,
-                review: this.documentToDomain(result),
-            };
-        } catch (error) {
-            console.log(error); //TODO: use logger
-            return {
-                status: GetResultStatus.GENERIC_ERROR,
-            };
-        }
-    }
-
-    async getAverageRatingByBusinessId(id: Id): Promise<number> {
-        const cursor = this.collection.aggregate([
-            {
-                $match: { businessId: id.value },
-            },
-            {
-                $group: {
-                    _id: 'averageRating',
-                    averageRating: { $avg: '$rating' },
-                },
-            },
-            {
-                $project: {
-                    averageRating: {
-                        $round: ['$averageRating', 1],
-                    },
-                },
-            },
-        ]);
-        if (await cursor.hasNext()) {
-            const result = await cursor.next();
-            return result.averageRating;
-        }
-        return 0.0;
-    }
-
-    private domainToDocument(review: Review): ReviewDocument {
-        return {
-            id: review.id,
-            businessId: review.businessId,
-            text: review.text,
-            rating: review.rating,
-            username: review.username,
-        };
-    }
-
-    private documentToDomain(document: ReviewDocument): Review {
-        return Review.createFrom(
-            Id.createFrom(document.id),
-            Id.createFrom(document.businessId),
-            new ReviewText(document.text),
-            new ReviewRating(document.rating),
-            new Username(document.username),
-        );
     }
 
     private async isDuplicatedReview(review: Review) {

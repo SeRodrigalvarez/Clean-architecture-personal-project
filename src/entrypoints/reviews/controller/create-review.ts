@@ -2,36 +2,39 @@ import {
     BadRequestException,
     Body,
     Controller,
+    Inject,
     InternalServerErrorException,
     Param,
     Post,
 } from '@nestjs/common';
 import { IsInt, IsString, IsUUID, Length, Max, Min } from 'class-validator';
 import {
-    BusinessReviewCreator,
-    BusinessReviewCreatorResultStatus,
+    CreateReviewCommand,
+    CreateReviewCommandResponse,
+    ReviewCreatorResultStatus,
 } from 'src/modules/reviews/application';
 import {
-    ReviewText,
     TEXT_MAX_LENGTH,
     TEXT_MIN_LENGTH,
-    Username,
     USERNAME_MAX_LENGTH,
     USERNAME_MIN_LENGTH,
 } from 'src/modules/reviews/domain';
 import {
-    Id,
+    COMMAND_BUS_PORT,
+    CommandBus,
     RATING_MAX_VALUE,
     RATING_MIN_VALUE,
-    ReviewRating,
 } from 'src/modules/shared/domain';
 
-export class CreateBusinessReviewParam {
+export class CreateReviewParam {
     @IsUUID()
     businessId: string;
 }
 
-export class CreateBusinessReviewBody {
+export class CreateReviewBody {
+    @IsUUID()
+    id: string;
+
     @IsString()
     @Length(TEXT_MIN_LENGTH, TEXT_MAX_LENGTH)
     text: string;
@@ -47,43 +50,40 @@ export class CreateBusinessReviewBody {
 }
 
 @Controller('business')
-export class CreateBusinessReviewController {
-    constructor(private reviewCreator: BusinessReviewCreator) {}
+export class CreateReviewController {
+    constructor(@Inject(COMMAND_BUS_PORT) private commandBus: CommandBus) {}
 
     @Post(':businessId/review')
     async execute(
-        @Param() param: CreateBusinessReviewParam,
-        @Body() body: CreateBusinessReviewBody,
+        @Param() param: CreateReviewParam,
+        @Body() body: CreateReviewBody,
     ) {
-        const result = await this.reviewCreator.execute(
-            Id.createFrom(param.businessId),
-            new ReviewText(body.text),
-            new ReviewRating(body.rating),
-            new Username(body.username),
-        );
+        const result: CreateReviewCommandResponse =
+            await this.commandBus.execute(
+                new CreateReviewCommand(
+                    body.id,
+                    param.businessId,
+                    body.text,
+                    body.rating,
+                    body.username,
+                ),
+            );
 
-        if (result.status === BusinessReviewCreatorResultStatus.GENERIC_ERROR) {
+        if (result.status === ReviewCreatorResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
         if (
-            result.status ===
-            BusinessReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
+            result.status === ReviewCreatorResultStatus.NON_EXISTANT_BUSINESS_ID
         ) {
             throw new BadRequestException(
                 `There is no business with id ${param.businessId}`,
             );
         }
-        if (
-            result.status ===
-            BusinessReviewCreatorResultStatus.DUPLICATED_REVIEW
-        ) {
+        if (result.status === ReviewCreatorResultStatus.DUPLICATED_REVIEW) {
             throw new BadRequestException(
                 `There is already a review from user ${body.username} for the business with id ${param.businessId}`,
             );
         }
-        return {
-            id: result.id,
-        };
     }
 }

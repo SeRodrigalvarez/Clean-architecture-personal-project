@@ -5,6 +5,7 @@ export * from './business-email';
 export * from './business-reviews-amount';
 export * from './review-rating';
 export * from './business-average-rating';
+export * from './business-type';
 export * from './page-size';
 export * from './page-number';
 

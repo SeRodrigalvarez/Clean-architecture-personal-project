@@ -1,32 +1,60 @@
-import { Id, ReviewRating } from 'src/modules/shared/domain';
-import { ReviewText, Username } from '.';
+import {
+    AggregateRoot,
+    BusinessType,
+    Id,
+    ReviewRating,
+} from 'src/modules/shared/domain';
+import { ReviewCreatedEvent, ReviewText, Username } from '.';
 
-export class Review {
+export class Review extends AggregateRoot {
     private constructor(
         private rId: Id,
         private rBusinessId: Id,
         private rText: ReviewText,
         private rRating: ReviewRating,
         private rUsername: Username,
-    ) {}
-
-    static createNew(
-        rBusinessId: Id,
-        rText: ReviewText,
-        rRating: ReviewRating,
-        rUsername: Username,
+        private rBusinessType: BusinessType,
     ) {
-        return new this(Id.createNew(), rBusinessId, rText, rRating, rUsername);
+        super();
     }
 
-    static createFrom(
+    static create(
         rId: Id,
         rBusinessId: Id,
         rText: ReviewText,
         rRating: ReviewRating,
         rUsername: Username,
+        rBusinessType: BusinessType,
     ) {
-        return new this(rId, rBusinessId, rText, rRating, rUsername);
+        const review = new this(
+            rId,
+            rBusinessId,
+            rText,
+            rRating,
+            rUsername,
+            rBusinessType,
+        );
+        review.record(
+            new ReviewCreatedEvent({
+                aggregateId: review.id,
+                businessId: review.businessId,
+                text: review.text,
+                rating: review.rating,
+                username: review.username,
+                type: review.businessType,
+            }),
+        );
+        return review;
+    }
+
+    toPrimitives() {
+        return {
+            id: this.id,
+            businessId: this.businessId,
+            text: this.text,
+            rating: this.rating,
+            username: this.username,
+        };
     }
 
     get id() {
@@ -49,18 +77,14 @@ export class Review {
         return this.rUsername.value;
     }
 
+    get businessType() {
+        return this.rBusinessType;
+    }
+
     equals(review: Review) {
         return (
             this.rBusinessId.equals(review.rBusinessId) &&
             this.rUsername.equals(review.rUsername)
         );
-    }
-
-    hasId(id: Id) {
-        return this.rId.equals(id);
-    }
-
-    hasBusinessId(id: Id) {
-        return this.rBusinessId.equals(id);
     }
 }
