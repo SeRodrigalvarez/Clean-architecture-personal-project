@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ReviewCreatedEvent } from 'src/modules/reviews/domain';
+import { ReviewViewCreatedEvent } from 'src/modules/reviews/domain';
 import {
     BusinessAverageRating,
     BusinessType,
@@ -17,8 +17,8 @@ import {
 import { OnlineBusinessViewUpdater } from '.';
 
 @Injectable()
-export class UpdateOnlineBusinessRatingOnReviewCreated
-    implements DomainEventSubscriber<ReviewCreatedEvent>
+export class UpdateOnlineBusinessRatingOnReviewViewCreated
+    implements DomainEventSubscriber<ReviewViewCreatedEvent>
 {
     constructor(
         private onlineBusinessViewUpdater: OnlineBusinessViewUpdater,
@@ -27,17 +27,18 @@ export class UpdateOnlineBusinessRatingOnReviewCreated
         @Inject(EVENT_BUS_PORT)
         private eventBus: EventBus,
     ) {
-        this.eventBus.addSubscriber(ReviewCreatedEvent.name, this);
+        this.eventBus.addSubscriber(ReviewViewCreatedEvent.name, this);
     }
 
-    async on(domainEvent: ReviewCreatedEvent): Promise<void> {
-        if (domainEvent.type === BusinessType.ONLINE) {
+    async on(domainEvent: ReviewViewCreatedEvent): Promise<void> {
+        if (domainEvent.businessType === BusinessType.ONLINE) {
             const getAverageRatingResult: GetAverageRatingByBusinessIdQueryResponse =
                 await this.queryBus.ask(
                     new GetAverageRatingByBusinessIdQuery(
                         domainEvent.businessId,
                     ),
                 );
+
             this.onlineBusinessViewUpdater.updateRatingData(
                 Id.createFrom(domainEvent.businessId),
                 BusinessAverageRating.createFrom(

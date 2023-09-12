@@ -1,14 +1,22 @@
-import { Id, ReviewRating } from 'src/modules/shared/domain';
-import { ReviewText, Username } from '.';
+import {
+    AggregateRoot,
+    BusinessType,
+    Id,
+    ReviewRating,
+} from 'src/modules/shared/domain';
+import { ReviewText, ReviewViewCreatedEvent, Username } from '.';
 
-export class ReviewView {
+export class ReviewView extends AggregateRoot {
     private constructor(
         private rId: Id,
         private rBusinessId: Id,
         private rText: ReviewText,
         private rRating: ReviewRating,
         private rUsername: Username,
-    ) {}
+        private rBusinessType: BusinessType,
+    ) {
+        super();
+    }
 
     static create(
         rId: Id,
@@ -16,8 +24,27 @@ export class ReviewView {
         rText: ReviewText,
         rRating: ReviewRating,
         rUsername: Username,
+        rBusinessType: BusinessType,
     ) {
-        return new this(rId, rBusinessId, rText, rRating, rUsername);
+        const review = new this(
+            rId,
+            rBusinessId,
+            rText,
+            rRating,
+            rUsername,
+            rBusinessType,
+        );
+        review.record(
+            new ReviewViewCreatedEvent({
+                aggregateId: review.id,
+                businessId: review.businessId,
+                text: review.text,
+                rating: review.rating,
+                username: review.username,
+                businessType: review.businessType,
+            }),
+        );
+        return review;
     }
 
     toPrimitives() {
@@ -27,6 +54,7 @@ export class ReviewView {
             text: this.text,
             rating: this.rating,
             username: this.username,
+            businessType: this.businessType,
         };
     }
 
@@ -48,6 +76,10 @@ export class ReviewView {
 
     get username() {
         return this.rUsername.value;
+    }
+
+    get businessType() {
+        return this.rBusinessType;
     }
 
     hasId(id: Id) {

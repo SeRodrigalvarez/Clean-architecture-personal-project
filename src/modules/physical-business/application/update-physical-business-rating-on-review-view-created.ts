@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ReviewCreatedEvent } from 'src/modules/reviews/domain';
+import { ReviewViewCreatedEvent } from 'src/modules/reviews/domain';
 import {
     BusinessAverageRating,
     BusinessType,
@@ -17,8 +17,8 @@ import {
 import { PhysicalBusinessViewUpdater } from '.';
 
 @Injectable()
-export class UpdatePhysicalBusinessRatingOnReviewCreated
-    implements DomainEventSubscriber<ReviewCreatedEvent>
+export class UpdatePhysicalBusinessRatingOnReviewViewCreated
+    implements DomainEventSubscriber<ReviewViewCreatedEvent>
 {
     constructor(
         private physicalBusinessViewUpdater: PhysicalBusinessViewUpdater,
@@ -27,11 +27,11 @@ export class UpdatePhysicalBusinessRatingOnReviewCreated
         @Inject(EVENT_BUS_PORT)
         private eventBus: EventBus,
     ) {
-        this.eventBus.addSubscriber(ReviewCreatedEvent.name, this);
+        this.eventBus.addSubscriber(ReviewViewCreatedEvent.name, this);
     }
 
-    async on(domainEvent: ReviewCreatedEvent): Promise<void> {
-        if (domainEvent.type === BusinessType.PHYSICAL) {
+    async on(domainEvent: ReviewViewCreatedEvent): Promise<void> {
+        if (domainEvent.businessType === BusinessType.PHYSICAL) {
             const getAverageRatingResult: GetAverageRatingByBusinessIdQueryResponse =
                 await this.queryBus.ask(
                     new GetAverageRatingByBusinessIdQuery(

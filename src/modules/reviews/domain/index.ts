@@ -8,3 +8,4 @@ export * from './review-view';
 export * from './review-view-repository';
 
 export * from './review-created-event';
+export * from './review-view-created-event';

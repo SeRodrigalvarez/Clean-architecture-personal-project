@@ -1,5 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Id, ReviewRating } from 'src/modules/shared/domain';
+import {
+    BusinessType,
+    EVENT_BUS_PORT,
+    EventBus,
+    Id,
+    ReviewRating,
+} from 'src/modules/shared/domain';
 import {
     ReviewText,
     Username,
@@ -16,6 +22,8 @@ export class ReviewViewCreator {
     constructor(
         @Inject(REVIEW_REPOSITORY_VIEW_PORT)
         private reviewViewRepository: ReviewViewRepository,
+        @Inject(EVENT_BUS_PORT)
+        private eventBus: EventBus,
     ) {}
 
     async execute(
@@ -24,6 +32,7 @@ export class ReviewViewCreator {
         text: ReviewText,
         rating: ReviewRating,
         username: Username,
+        businessType: BusinessType,
     ): Promise<void> {
         const reviewView = ReviewView.create(
             id,
@@ -31,10 +40,16 @@ export class ReviewViewCreator {
             text,
             rating,
             username,
+            businessType,
         );
-        const createResult = await this.reviewViewRepository.save(reviewView);
-        if (createResult.status === SaveViewResultStatus.GENERIC_ERROR) {
+        const saveResult = await this.reviewViewRepository.save(reviewView);
+        if (saveResult.status === SaveViewResultStatus.GENERIC_ERROR) {
             this.logger.error(`Error at review business view repository level`);
+        }
+        if (saveResult.status === SaveViewResultStatus.OK) {
+            reviewView
+                .pullDomainEvents()
+                .forEach((event) => this.eventBus.publish(event));
         }
     }
 }

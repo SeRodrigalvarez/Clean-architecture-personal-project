@@ -17,4 +17,4 @@ export * from './get-online-business-by-id-query';
 export * from './get-online-business-by-id-query-response';
 
 export * from './create-online-business-view-on-online-business-created';
-export * from './update-online-business-rating-on-review-created';
+export * from './update-online-business-rating-on-review-view-created';

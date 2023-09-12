@@ -26,6 +26,7 @@ interface ReviewViewDocument {
     text: string;
     rating: number;
     username: string;
+    businessType: number;
 }
 
 @Injectable()
@@ -143,6 +144,7 @@ export class MongoReviewViewAdapter implements ReviewViewRepository {
             new ReviewText(document.text),
             new ReviewRating(document.rating),
             new Username(document.username),
+            document.businessType,
         );
     }
 }

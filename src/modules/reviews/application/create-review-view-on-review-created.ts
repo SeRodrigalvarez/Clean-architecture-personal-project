@@ -27,6 +27,7 @@ export class CreateReviewViewOnReviewCreated
             new ReviewText(domainEvent.text),
             new ReviewRating(domainEvent.rating),
             new Username(domainEvent.username),
+            domainEvent.businessType,
         );
     }
 }

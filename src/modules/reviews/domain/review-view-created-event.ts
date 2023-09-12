@@ -1,6 +1,6 @@
 import { DomainEvent } from 'src/modules/shared/domain';
 
-export class ReviewCreatedEvent extends DomainEvent {
+export class ReviewViewCreatedEvent extends DomainEvent {
     readonly businessId: string;
     readonly text: string;
     readonly rating: number;
@@ -17,7 +17,7 @@ export class ReviewCreatedEvent extends DomainEvent {
     }) {
         super({
             aggregateId: params.aggregateId,
-            eventName: ReviewCreatedEvent.name,
+            eventName: ReviewViewCreatedEvent.name,
         });
         this.businessId = params.businessId;
         this.text = params.text;

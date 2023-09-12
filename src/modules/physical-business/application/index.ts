@@ -17,4 +17,4 @@ export * from './get-physical-businesses-query';
 export * from './get-physical-businesses-query-response';
 
 export * from './create-physical-business-view-on-physical-business-created';
-export * from './update-physical-business-rating-on-review-created';
+export * from './update-physical-business-rating-on-review-view-created';

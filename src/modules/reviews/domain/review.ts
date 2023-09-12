@@ -41,7 +41,7 @@ export class Review extends AggregateRoot {
                 text: review.text,
                 rating: review.rating,
                 username: review.username,
-                type: review.businessType,
+                businessType: review.businessType,
             }),
         );
         return review;
@@ -54,6 +54,7 @@ export class Review extends AggregateRoot {
             text: this.text,
             rating: this.rating,
             username: this.username,
+            businessType: this.businessType,
         };
     }
 

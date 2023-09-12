@@ -25,7 +25,7 @@ import {
     OnlineBusinessReader,
     OnlineBusinessViewCreator,
     OnlineBusinessViewUpdater,
-    UpdateOnlineBusinessRatingOnReviewCreated,
+    UpdateOnlineBusinessRatingOnReviewViewCreated,
 } from './modules/online-business/application';
 import {
     ONLINE_BUSINESS_PORT,
@@ -44,7 +44,7 @@ import {
     PhysicalBusinessReader,
     PhysicalBusinessViewCreator,
     PhysicalBusinessViewUpdater,
-    UpdatePhysicalBusinessRatingOnReviewCreated,
+    UpdatePhysicalBusinessRatingOnReviewViewCreated,
 } from './modules/physical-business/application';
 import {
     PHYSICAL_BUSINESS_PORT,
@@ -109,8 +109,8 @@ const EventSubscribers = [
     CreateOnlineBusinessViewOnOnlineBusinessCreated,
     CreatePhysicalBusinessViewOnPhysicalBusinessCreated,
     CreateReviewViewOnReviewCreated,
-    UpdateOnlineBusinessRatingOnReviewCreated,
-    UpdatePhysicalBusinessRatingOnReviewCreated,
+    UpdateOnlineBusinessRatingOnReviewViewCreated,
+    UpdatePhysicalBusinessRatingOnReviewViewCreated,
 ];
 
 const QueryHandlers = [
