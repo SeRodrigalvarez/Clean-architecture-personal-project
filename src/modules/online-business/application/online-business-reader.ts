@@ -61,7 +61,7 @@ export class OnlineBusinessReader {
                 name: business.name,
                 website: business.website,
                 email: business.email,
-                reviewsAmount: business.reviewAmount,
+                reviewsAmount: business.reviewsAmount,
             })),
         };
     }

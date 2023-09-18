@@ -111,11 +111,11 @@ export class PhysicalBusinessView {
         return this.bId.equals(id);
     }
 
-    increaseReviewAmount() {
+    increaseReviewsAmount() {
         this.bReviewsAmount.increase();
     }
 
-    decreaseReviewAmount() {
+    decreaseReviewsAmount() {
         this.bReviewsAmount.decrease();
     }
 

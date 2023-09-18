@@ -30,7 +30,7 @@ export class OnlineBusinessViewUpdater {
 
         const business = getBusinessResult.onlineBusinessView;
         business.setAverageRating(averageRating);
-        business.increaseReviewAmount();
+        business.increaseReviewsAmount();
         const saveBusinessResult = await this.repository.save(business);
 
         if (saveBusinessResult.status === SaveViewResultStatus.GENERIC_ERROR) {

@@ -12,7 +12,7 @@ export class OnlineBusinessView {
         private bName: OnlineBusinessName,
         private bWebsite: OnlineBusinessWebsite,
         private bEmail: BusinessEmail,
-        private bReviewAmount: BusinessReviewsAmount,
+        private bReviewsAmount: BusinessReviewsAmount,
         private bAverageRating: BusinessAverageRating,
     ) {}
 
@@ -56,7 +56,7 @@ export class OnlineBusinessView {
             name: this.name,
             website: this.website,
             email: this.email,
-            reviewsAmount: this.reviewAmount,
+            reviewsAmount: this.reviewsAmount,
             averageRating: this.averageRating,
         };
     }
@@ -77,8 +77,8 @@ export class OnlineBusinessView {
         return this.bEmail.value;
     }
 
-    get reviewAmount() {
-        return this.bReviewAmount.value;
+    get reviewsAmount() {
+        return this.bReviewsAmount.value;
     }
 
     get averageRating() {
@@ -97,12 +97,12 @@ export class OnlineBusinessView {
         return this.bId.equals(id);
     }
 
-    increaseReviewAmount() {
-        this.bReviewAmount.increase();
+    increaseReviewsAmount() {
+        this.bReviewsAmount.increase();
     }
 
-    decreaseReviewAmount() {
-        this.bReviewAmount.decrease();
+    decreaseReviewsAmount() {
+        this.bReviewsAmount.decrease();
     }
 
     setAverageRating(avgRating: BusinessAverageRating) {
