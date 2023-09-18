@@ -1,7 +1,7 @@
 # Clean Architecture Personal Project
 
 > [!IMPORTANT]
-> **Please, note that CQRS implementation is still work in progress**
+> **Please, note that this repository is work in progress**
 
 ## Description
 
@@ -11,9 +11,9 @@ One interesting detail to notice in this project: As typescript type exception c
 
 ## Branches
 
-Hexagonal Architecture: [00-hexagonal-architecture](/../../tree/00-hexagonal-architecture) or [main](/../../tree/main)
+Hexagonal Architecture: [00-hexagonal-architecture](/../../tree/00-hexagonal-architecture)
 
-CQRS: [01-cqrs](/../../tree/01-cqrs) (WIP)
+CQRS: [01-cqrs](/../../tree/01-cqrs)
 
 ## Installation
 
