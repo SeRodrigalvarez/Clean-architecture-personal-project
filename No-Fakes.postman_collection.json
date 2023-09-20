@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3ce704a4-419b-4b21-90ee-96dd79f692d4",
+		"_postman_id": "b4f27a4c-ad3f-4455-8e5d-317170800014",
 		"name": "No-Fakes",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,11 +15,19 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var id = pm.response.json().id;",
-									"if (id) {",
-									"    pm.collectionVariables.set(\"businessId\", id);",
-									"}",
 									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const uuid_gen = require(\"uuid\");",
+									"const uuid = uuid_gen.v4();",
+									"",
+									"pm.collectionVariables.set(\"businessId\", uuid);"
 								],
 								"type": "text/javascript"
 							}
@@ -30,7 +38,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"someweb\",\n    \"website\": \"mysomeweb.com\",\n    \"email\": \"some@gmail.com\"\n}",
+							"raw": "{\n    \"id\": \"{{businessId}}\",\n    \"name\": \"bestweb1\",\n    \"website\": \"bestweb1.com\",\n    \"email\": \"some@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -79,7 +87,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/business/online?pageNumber=0&pageSize=5&filter=some",
+							"raw": "http://localhost:3000/business/online?pageNumber=0&pageSize=5&filter=best",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -100,7 +108,7 @@
 								},
 								{
 									"key": "filter",
-									"value": "some"
+									"value": "best"
 								}
 							]
 						}
@@ -119,11 +127,19 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var id = pm.response.json().id;",
-									"if (id) {",
-									"    pm.collectionVariables.set(\"businessId\", id);",
-									"}",
 									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const uuid_gen = require(\"uuid\");",
+									"const uuid = uuid_gen.v4();",
+									"",
+									"pm.collectionVariables.set(\"businessId\", uuid);"
 								],
 								"type": "text/javascript"
 							}
@@ -134,7 +150,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"somephysical\",\n    \"street\": \"Calle falsa, 123\",\n    \"city\": \"Madrid\",\n    \"postalCode\": \"28045\",\n    \"country\": \"ESP\",\n    \"phone\": \"123456789\",\n    \"email\": \"some@email.com\"\n}",
+							"raw": "{\n    \"id\": \"{{businessId}}\",\n    \"name\": \"somephysical2\",\n    \"street\": \"Calle falsa, 123\",\n    \"city\": \"Madrid\",\n    \"postalCode\": \"28045\",\n    \"country\": \"ESP\",\n    \"phone\": \"1234567899\",\n    \"email\": \"some@email.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -223,11 +239,19 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var id = pm.response.json().id;",
-									"if (id) {",
-									"    pm.collectionVariables.set(\"businessReviewId\", id);",
-									"}",
 									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const uuid_gen = require(\"uuid\");",
+									"const uuid = uuid_gen.v4();",
+									"",
+									"pm.collectionVariables.set(\"reviewId\", uuid);"
 								],
 								"type": "text/javascript"
 							}
@@ -238,7 +262,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"text\": \"some random review here for testing\",\n    \"rating\": 3,\n    \"username\": \"Sergio\"\n}",
+							"raw": "{\n    \"id\": \"{{reviewId}}\",\n    \"text\": \"some random review here for testing\",\n    \"rating\": 4,\n    \"username\": \"Sergio1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -267,7 +291,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/business/review/{{businessReviewId}}",
+							"raw": "http://localhost:3000/business/review/{{reviewId}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -276,7 +300,7 @@
 							"path": [
 								"business",
 								"review",
-								"{{businessReviewId}}"
+								"{{reviewId}}"
 							]
 						}
 					},
@@ -288,7 +312,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/business/{{businessId}}/review?pageNumber=0&pageSize=5",
+							"raw": "http://localhost:3000/business/{{businessId}}/review?pageNumber=0&pageSize=20",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -306,7 +330,7 @@
 								},
 								{
 									"key": "pageSize",
-									"value": "5"
+									"value": "20"
 								}
 							]
 						}
@@ -323,6 +347,10 @@
 		},
 		{
 			"key": "businessReviewId",
+			"value": ""
+		},
+		{
+			"key": "reviewId",
 			"value": ""
 		}
 	]
