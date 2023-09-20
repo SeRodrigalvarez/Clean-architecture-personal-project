@@ -15,12 +15,13 @@ export class OnlineBusiness {
     ) {}
 
     static createNew(
+        bId: Id,
         bName: OnlineBusinessName,
         bWebsite: OnlineBusinessWebsite,
         bEmail: BusinessEmail,
     ) {
         return new this(
-            Id.createNew(),
+            bId,
             bName,
             bWebsite,
             bEmail,

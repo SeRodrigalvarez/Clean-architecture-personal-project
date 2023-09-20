@@ -11,12 +11,13 @@ export class Review {
     ) {}
 
     static createNew(
+        rId: Id,
         rBusinessId: Id,
         rText: ReviewText,
         rRating: ReviewRating,
         rUsername: Username,
     ) {
-        return new this(Id.createNew(), rBusinessId, rText, rRating, rUsername);
+        return new this(rId, rBusinessId, rText, rRating, rUsername);
     }
 
     static createFrom(

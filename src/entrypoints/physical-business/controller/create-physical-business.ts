@@ -5,7 +5,13 @@ import {
     BadRequestException,
     InternalServerErrorException,
 } from '@nestjs/common';
-import { IsEmail, IsISO31661Alpha3, IsString, Length } from 'class-validator';
+import {
+    IsEmail,
+    IsISO31661Alpha3,
+    IsString,
+    IsUUID,
+    Length,
+} from 'class-validator';
 import {
     PhysicalBusinessCreator,
     PhysicalBusinessCreatorResultStatus,
@@ -25,9 +31,12 @@ import {
     PhysicalBusinessAddress,
     PhysicalBusinessPhone,
 } from 'src/modules/physical-business/domain';
-import { BusinessEmail } from 'src/modules/shared/domain';
+import { BusinessEmail, Id } from 'src/modules/shared/domain';
 
 export class CreatePhysicalBusinessBody {
+    @IsUUID()
+    id: string;
+
     @IsString()
     @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
     name: string;
@@ -62,6 +71,7 @@ export class CreatePhysicalBusinessController {
     @Post()
     async execute(@Body() body: CreatePhysicalBusinessBody) {
         const result = await this.physicalBusinessCreator.execute(
+            Id.createFrom(body.id),
             new PhysicalBusinessName(body.name),
             new PhysicalBusinessAddress(
                 body.street,
@@ -86,8 +96,6 @@ export class CreatePhysicalBusinessController {
         ) {
             throw new InternalServerErrorException();
         }
-        return {
-            id: result.id,
-        };
+        return;
     }
 }

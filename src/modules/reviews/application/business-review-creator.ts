@@ -44,6 +44,7 @@ export class BusinessReviewCreator {
     ) {}
 
     async execute(
+        id: Id,
         businessId: Id,
         text: ReviewText,
         rating: ReviewRating,
@@ -73,7 +74,7 @@ export class BusinessReviewCreator {
         }
         const isOnline = getOnlineResult.status === GetOnlineResultStatus.OK;
 
-        const review = Review.createNew(businessId, text, rating, username);
+        const review = Review.createNew(id, businessId, text, rating, username);
         const createResult = await this.reviewRepository.create(review);
         if (createResult.status === CreateResultStatus.DUPLICATED_REVIEW) {
             return {

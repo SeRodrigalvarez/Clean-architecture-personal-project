@@ -20,13 +20,14 @@ export class PhysicalBusiness {
     ) {}
 
     static createNew(
+        bId: Id,
         bName: PhysicalBusinessName,
         bAddress: PhysicalBusinessAddress,
         bPhone: PhysicalBusinessPhone,
         bEmail: BusinessEmail,
     ) {
         return new this(
-            Id.createNew(),
+            bId,
             bName,
             bAddress,
             bPhone,

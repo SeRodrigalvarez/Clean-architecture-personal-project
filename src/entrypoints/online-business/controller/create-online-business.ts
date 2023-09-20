@@ -5,7 +5,7 @@ import {
     BadRequestException,
     InternalServerErrorException,
 } from '@nestjs/common';
-import { IsEmail, IsString, IsUrl, Length } from 'class-validator';
+import { IsEmail, IsString, IsUUID, IsUrl, Length } from 'class-validator';
 import {
     OnlineBusinessCreator,
     OnlineBusinessCreatorResultStatus,
@@ -16,9 +16,12 @@ import {
     OnlineBusinessName,
     OnlineBusinessWebsite,
 } from 'src/modules/online-business/domain';
-import { BusinessEmail } from 'src/modules/shared/domain';
+import { BusinessEmail, Id } from 'src/modules/shared/domain';
 
 export class CreateOnlineBusinessBody {
+    @IsUUID()
+    id: string;
+
     @IsString()
     @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
     name: string;
@@ -37,6 +40,7 @@ export class CreateOnlineBusinessController {
     @Post()
     async execute(@Body() body: CreateOnlineBusinessBody) {
         const result = await this.onlineBusinessCreator.execute(
+            Id.createFrom(body.id),
             new OnlineBusinessName(body.name),
             new OnlineBusinessWebsite(body.website),
             new BusinessEmail(body.email),
@@ -53,8 +57,6 @@ export class CreateOnlineBusinessController {
         if (result.status === OnlineBusinessCreatorResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
-        return {
-            id: result.id,
-        };
+        return;
     }
 }

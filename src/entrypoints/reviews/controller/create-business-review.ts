@@ -30,6 +30,9 @@ export class CreateBusinessReviewParam {
 }
 
 export class CreateBusinessReviewBody {
+    @IsUUID()
+    id: string;
+
     @IsString()
     @Length(TEXT_MIN_LENGTH, TEXT_MAX_LENGTH)
     text: string;
@@ -54,6 +57,7 @@ export class CreateBusinessReviewController {
         @Body() body: CreateBusinessReviewBody,
     ) {
         const result = await this.reviewCreator.execute(
+            Id.createFrom(body.id),
             Id.createFrom(param.businessId),
             new ReviewText(body.text),
             new ReviewRating(body.rating),
@@ -80,8 +84,6 @@ export class CreateBusinessReviewController {
                 `There is already a review from user ${body.username} for the business with id ${param.businessId}`,
             );
         }
-        return {
-            id: result.id,
-        };
+        return;
     }
 }

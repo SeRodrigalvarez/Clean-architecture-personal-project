@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BusinessEmail } from 'src/modules/shared/domain';
+import { BusinessEmail, Id } from 'src/modules/shared/domain';
 import {
     CreateResultStatus,
     PhysicalBusiness,
@@ -29,12 +29,14 @@ export class PhysicalBusinessCreator {
     ) {}
 
     async execute(
+        id: Id,
         name: PhysicalBusinessName,
         address: PhysicalBusinessAddress,
         phone: PhysicalBusinessPhone,
         email: BusinessEmail,
     ): Promise<PhysicalBusinessCreatorResult> {
         const business = PhysicalBusiness.createNew(
+            id,
             name,
             address,
             phone,
