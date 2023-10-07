@@ -39,6 +39,16 @@ export class OnlineBusiness {
         return new this(bId, bName, bWebsite, bEmail, bReviewsAmount);
     }
 
+    toPrimitives() {
+        return {
+            id: this.id,
+            name: this.name,
+            website: this.website,
+            email: this.email,
+            reviewsAmount: this.reviewsAmount,
+        };
+    }
+
     get id() {
         return this.bId.value;
     }
@@ -77,6 +87,10 @@ export class OnlineBusiness {
 
     hasName(name: OnlineBusinessName) {
         return this.bName.equals(name);
+    }
+
+    hasWebsite(website: OnlineBusinessWebsite) {
+        return this.bWebsite.equals(website);
     }
 
     hasId(id: Id) {

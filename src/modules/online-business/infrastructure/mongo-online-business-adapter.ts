@@ -10,8 +10,6 @@ import {
 } from 'src/modules/shared/domain';
 import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
 import {
-    CreateResult,
-    CreateResultStatus,
     GetResult,
     GetResultStatus,
     GetSingleResult,
@@ -19,6 +17,8 @@ import {
     OnlineBusinessName,
     OnlineBusinessRepository,
     OnlineBusinessWebsite,
+    SaveResult,
+    SaveResultStatus,
     UpdateResult,
     UpdateResultStatus,
 } from '../domain';
@@ -45,23 +45,33 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
             );
     }
 
-    async create(onlineBusiness: OnlineBusiness): Promise<CreateResult> {
+    async save(onlineBusiness: OnlineBusiness): Promise<SaveResult> {
         try {
-            if (await this.doesNameAlreadyExists(onlineBusiness.name)) {
+            // TODO: Use reservation pattern or unique index to avoid race condition bugs
+            const collisionResult = await this.businessCollisionCheck(
+                onlineBusiness.id,
+                onlineBusiness.name,
+                onlineBusiness.website,
+            );
+            if (collisionResult.isCollision) {
                 return {
-                    status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+                    status: SaveResultStatus.BUSINESS_ALREADY_EXISTS,
+                    isNameCollision: collisionResult.isNameCollision,
+                    isWebsiteCollision: collisionResult.isWebsiteCollision,
                 };
             }
-            await this.collection.insertOne(
-                this.domainToDocument(onlineBusiness),
+            await this.collection.replaceOne(
+                { id: onlineBusiness.id },
+                onlineBusiness.toPrimitives(),
+                { upsert: true },
             );
             return {
-                status: CreateResultStatus.OK,
+                status: SaveResultStatus.OK,
             };
         } catch (error) {
             console.log(error); //TODO: use logger
             return {
-                status: CreateResultStatus.GENERIC_ERROR,
+                status: SaveResultStatus.GENERIC_ERROR,
             };
         }
     }
@@ -170,17 +180,24 @@ export class MongoOnlineBusinessAdapter implements OnlineBusinessRepository {
         }
     }
 
-    private async doesNameAlreadyExists(name: string) {
-        return !!(await this.collection.findOne({ name }));
-    }
+    private async businessCollisionCheck(
+        id: string,
+        name: string,
+        website: string,
+    ) {
+        const isNameCollision = !!(await this.collection.findOne({
+            name,
+            id: { $ne: id },
+        }));
+        const isWebsiteCollision = !!(await this.collection.findOne({
+            website,
+            id: { $ne: id },
+        }));
 
-    private domainToDocument(business: OnlineBusiness): OnlineBusinessDocument {
         return {
-            id: business.id,
-            name: business.name,
-            website: business.website,
-            email: business.email,
-            reviewsAmount: business.reviewsAmount,
+            isCollision: isNameCollision || isWebsiteCollision,
+            isNameCollision,
+            isWebsiteCollision,
         };
     }
 

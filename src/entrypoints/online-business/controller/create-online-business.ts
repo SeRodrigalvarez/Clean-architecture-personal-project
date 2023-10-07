@@ -6,15 +6,13 @@ import {
     InternalServerErrorException,
 } from '@nestjs/common';
 import { IsEmail, IsString, IsUUID, IsUrl, Length } from 'class-validator';
-import {
-    OnlineBusinessCreator,
-    OnlineBusinessCreatorResultStatus,
-} from 'src/modules/online-business/application';
+import { OnlineBusinessCreator } from 'src/modules/online-business/application';
 import {
     NAME_MAX_LENGTH,
     NAME_MIN_LENGTH,
     OnlineBusinessName,
     OnlineBusinessWebsite,
+    SaveResultStatus,
 } from 'src/modules/online-business/domain';
 import { BusinessEmail, Id } from 'src/modules/shared/domain';
 
@@ -46,17 +44,22 @@ export class CreateOnlineBusinessController {
             new BusinessEmail(body.email),
         );
 
-        if (
-            result.status ===
-            OnlineBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS
-        ) {
+        if (result.status === SaveResultStatus.BUSINESS_ALREADY_EXISTS) {
             throw new BadRequestException(
-                `Business name ${body.name} already exists`,
+                `Business with${
+                    result.isNameCollision ? ` name ${body.name}` : ''
+                }${
+                    result.isNameCollision && result.isWebsiteCollision
+                        ? ' and'
+                        : ''
+                }${
+                    result.isWebsiteCollision ? ` website ${body.website}` : ''
+                } already exists`,
             );
         }
-        if (result.status === OnlineBusinessCreatorResultStatus.GENERIC_ERROR) {
+
+        if (result.status === SaveResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
-        return;
     }
 }
