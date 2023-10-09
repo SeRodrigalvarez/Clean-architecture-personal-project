@@ -7,7 +7,6 @@ import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     GetResult,
     GetResultStatus,
-    OnlineBusiness,
     OnlineBusinessRepository,
     ONLINE_BUSINESS_PORT,
 } from '../domain';
@@ -18,23 +17,20 @@ export interface ReaderOnlineBusiness {
     website: string;
     email: string;
     reviewsAmount: number;
+}
+
+export interface ReaderOnlineBusinessById extends ReaderOnlineBusiness {
     averageRating: number;
 }
 
 export interface FilterOnlineBusinessesResult {
-    status: OnlineBusinessReaderResultStatus;
-    onlineBusinesses?: OnlineBusiness[];
+    status: GetResultStatus;
+    onlineBusinesses?: ReaderOnlineBusiness[];
 }
 
 export interface GetOnlineBusinessByIdResult {
-    status: OnlineBusinessReaderResultStatus;
-    onlineBusiness?: ReaderOnlineBusiness;
-}
-
-export enum OnlineBusinessReaderResultStatus {
-    OK,
-    NOT_FOUND,
-    GENERIC_ERROR,
+    status: GetResultStatus;
+    onlineBusiness?: ReaderOnlineBusinessById;
 }
 
 @Injectable()
@@ -64,43 +60,35 @@ export class OnlineBusinessReader {
                 pageSize,
             );
         }
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        if (result.status !== GetResultStatus.OK) {
             return {
-                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-        if (result.status === GetResultStatus.NOT_FOUND) {
-            return {
-                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+                status: result.status,
             };
         }
         return {
-            status: OnlineBusinessReaderResultStatus.OK,
-            onlineBusinesses: result.onlineBusinesses,
+            status: GetResultStatus.OK,
+            onlineBusinesses: result.onlineBusinesses?.map((business) =>
+                business.toPrimitives(),
+            ),
         };
     }
 
     async getById(id: Id): Promise<GetOnlineBusinessByIdResult> {
         const result = await this.onlineBusinessRepository.getById(id);
 
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        if (result.status !== GetResultStatus.OK) {
             return {
-                status: OnlineBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-
-        if (result.status === GetResultStatus.NOT_FOUND) {
-            return {
-                status: OnlineBusinessReaderResultStatus.NOT_FOUND,
+                status: result.status,
             };
         }
 
         const business = result.onlineBusiness;
+        // TODO: Switch to eager calculation when a new review is created
         const averageRating =
             await this.reviewRepository.getAverageRatingByBusinessId(id);
 
         return {
-            status: OnlineBusinessReaderResultStatus.OK,
+            status: GetResultStatus.OK,
             onlineBusiness: {
                 id: business.id,
                 name: business.name,

@@ -8,11 +8,8 @@ import {
 } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import { IsString, IsOptional, IsUUID, IsInt, Max, Min } from 'class-validator';
-import {
-    OnlineBusinessReader,
-    OnlineBusinessReaderResultStatus,
-} from 'src/modules/online-business/application';
-import { OnlineBusiness } from 'src/modules/online-business/domain';
+import { OnlineBusinessReader } from 'src/modules/online-business/application';
+import { GetResultStatus } from 'src/modules/online-business/domain';
 import {
     Id,
     PageSize,
@@ -62,16 +59,16 @@ export class GetOnlineBusinessController {
             query.filter,
         );
 
-        if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 'No online businesses found with the given filters',
             );
         }
-        return this.domainToJsonMapper(result.onlineBusinesses);
+        return result.onlineBusinesses;
     }
 
     @Get(':id')
@@ -80,11 +77,11 @@ export class GetOnlineBusinessController {
             Id.createFrom(param.id),
         );
 
-        if (result.status === OnlineBusinessReaderResultStatus.GENERIC_ERROR) {
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === OnlineBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No online business with id: ${param.id}`,
             );
@@ -100,15 +97,5 @@ export class GetOnlineBusinessController {
             reviewAmount: business.reviewsAmount,
             averageRating: business.averageRating,
         };
-    }
-
-    private domainToJsonMapper(onlineBusinesses: OnlineBusiness[]) {
-        return onlineBusinesses.map((business) => ({
-            id: business.id,
-            name: business.name,
-            website: business.website,
-            email: business.email,
-            reviewAmount: business.reviewsAmount,
-        }));
     }
 }
