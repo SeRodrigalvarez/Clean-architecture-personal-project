@@ -23,6 +23,6 @@ export class OnlineBusinessCreator {
         email: BusinessEmail,
     ): Promise<SaveResult> {
         const business = OnlineBusiness.createNew(id, name, website, email);
-        return await this.repository.save(business);
+        return this.repository.save(business);
     }
 }
