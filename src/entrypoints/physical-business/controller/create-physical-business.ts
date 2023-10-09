@@ -12,10 +12,7 @@ import {
     IsUUID,
     Length,
 } from 'class-validator';
-import {
-    PhysicalBusinessCreator,
-    PhysicalBusinessCreatorResultStatus,
-} from 'src/modules/physical-business/application';
+import { PhysicalBusinessCreator } from 'src/modules/physical-business/application';
 import {
     PhysicalBusinessName,
     CITY_MAX_LENGTH,
@@ -30,6 +27,7 @@ import {
     PHONE_MIN_LENGTH,
     PhysicalBusinessAddress,
     PhysicalBusinessPhone,
+    SaveResultStatus,
 } from 'src/modules/physical-business/domain';
 import { BusinessEmail, Id } from 'src/modules/shared/domain';
 
@@ -83,19 +81,22 @@ export class CreatePhysicalBusinessController {
             new BusinessEmail(body.email),
         );
 
-        if (
-            result.status ===
-            PhysicalBusinessCreatorResultStatus.BUSINESS_NAME_ALREADY_EXISTS
-        ) {
+        if (result.status === SaveResultStatus.BUSINESS_ALREADY_EXISTS) {
             throw new BadRequestException(
-                `Business name ${body.name} already exists`,
+                `Business with${
+                    result.isNameCollision ? ` name ${body.name}` : ''
+                }${
+                    result.isNameCollision && result.isPhoneCollision
+                        ? ' and'
+                        : ''
+                }${
+                    result.isPhoneCollision ? ` phone ${body.phone}` : ''
+                } already exists`,
             );
         }
-        if (
-            result.status === PhysicalBusinessCreatorResultStatus.GENERIC_ERROR
-        ) {
+
+        if (result.status === SaveResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
-        return;
     }
 }

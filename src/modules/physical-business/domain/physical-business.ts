@@ -47,6 +47,17 @@ export class PhysicalBusiness {
         return new this(bId, bName, bAddress, bPhone, bEmail, bReviewsAmount);
     }
 
+    toPrimitives() {
+        return {
+            id: this.id,
+            name: this.name,
+            address: this.address,
+            phone: this.phone,
+            email: this.email,
+            reviewsAmount: this.reviewsAmount,
+        };
+    }
+
     get id() {
         return this.bId.value;
     }
@@ -57,10 +68,6 @@ export class PhysicalBusiness {
 
     get address() {
         return this.bAddress.values;
-    }
-
-    get addressString() {
-        return this.bAddress.toString();
     }
 
     get phone() {
@@ -93,6 +100,10 @@ export class PhysicalBusiness {
 
     hasName(name: PhysicalBusinessName) {
         return this.bName.equals(name);
+    }
+
+    hasPhone(phone: PhysicalBusinessPhone) {
+        return this.bPhone.equals(phone);
     }
 
     hasId(id: Id) {

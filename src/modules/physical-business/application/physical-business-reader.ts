@@ -6,35 +6,37 @@ import {
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 import {
     GetResultStatus,
-    PhysicalBusiness,
     PhysicalBusinessRepository,
     PHYSICAL_BUSINESS_PORT,
+    GetResult,
 } from '../domain';
 
 export interface ReaderPhysicalBusiness {
     id: string;
     name: string;
-    address: string;
+    address: {
+        street: string;
+        city: string;
+        postalCode: string;
+        country: string;
+    };
     phone: string;
     email: string;
     reviewsAmount: number;
+}
+
+export interface ReaderPhysicalBusinessById extends ReaderPhysicalBusiness {
     averageRating: number;
 }
 
 export interface FilterPhysicalBusinessesResult {
-    status: PhysicalBusinessReaderResultStatus;
-    physicalBusinesses?: PhysicalBusiness[];
+    status: GetResultStatus;
+    physicalBusinesses?: ReaderPhysicalBusiness[];
 }
 
 export interface GetPhysicalBusinessByIdResult {
-    status: PhysicalBusinessReaderResultStatus;
-    physicalBusiness?: ReaderPhysicalBusiness;
-}
-
-export enum PhysicalBusinessReaderResultStatus {
-    OK,
-    NOT_FOUND,
-    GENERIC_ERROR,
+    status: GetResultStatus;
+    physicalBusiness?: ReaderPhysicalBusinessById;
 }
 
 @Injectable()
@@ -51,7 +53,7 @@ export class PhysicalBusinessReader {
         pageSize: PageSize,
         value?: string,
     ): Promise<FilterPhysicalBusinessesResult> {
-        let result;
+        let result: GetResult;
         if (value) {
             result = await this.onlineBusinessRepository.getByNameOrAddress(
                 value,
@@ -64,47 +66,39 @@ export class PhysicalBusinessReader {
                 pageSize,
             );
         }
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        if (result.status !== GetResultStatus.OK) {
             return {
-                status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-        if (result.status === GetResultStatus.NOT_FOUND) {
-            return {
-                status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
+                status: result.status,
             };
         }
         return {
-            status: PhysicalBusinessReaderResultStatus.OK,
-            physicalBusinesses: result.physicalBusinesses,
+            status: GetResultStatus.OK,
+            physicalBusinesses: result.physicalBusinesses?.map((business) =>
+                business.toPrimitives(),
+            ),
         };
     }
 
     async getById(id: Id): Promise<GetPhysicalBusinessByIdResult> {
         const result = await this.onlineBusinessRepository.getById(id);
 
-        if (result.status === GetResultStatus.GENERIC_ERROR) {
+        if (result.status !== GetResultStatus.OK) {
             return {
-                status: PhysicalBusinessReaderResultStatus.GENERIC_ERROR,
-            };
-        }
-
-        if (result.status === GetResultStatus.NOT_FOUND) {
-            return {
-                status: PhysicalBusinessReaderResultStatus.NOT_FOUND,
+                status: result.status,
             };
         }
 
         const business = result.physicalBusiness;
+        // TODO: Switch to eager calculation when a new review is created
         const averageRating =
             await this.reviewRepository.getAverageRatingByBusinessId(id);
 
         return {
-            status: PhysicalBusinessReaderResultStatus.OK,
+            status: GetResultStatus.OK,
             physicalBusiness: {
                 id: business.id,
                 name: business.name,
-                address: business.addressString,
+                address: business.address,
                 email: business.email,
                 phone: business.phone,
                 reviewsAmount: business.reviewsAmount,

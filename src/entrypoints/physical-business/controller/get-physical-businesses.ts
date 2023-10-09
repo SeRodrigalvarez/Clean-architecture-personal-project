@@ -8,11 +8,8 @@ import {
 } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import { IsString, IsOptional, IsUUID, IsInt, Max, Min } from 'class-validator';
-import {
-    PhysicalBusinessReader,
-    PhysicalBusinessReaderResultStatus,
-} from 'src/modules/physical-business/application';
-import { PhysicalBusiness } from 'src/modules/physical-business/domain';
+import { PhysicalBusinessReader } from 'src/modules/physical-business/application';
+import { GetResultStatus } from 'src/modules/physical-business/domain';
 import {
     Id,
     PageSize,
@@ -62,18 +59,16 @@ export class GetPhysicalBusinessController {
             query.filter,
         );
 
-        if (
-            result.status === PhysicalBusinessReaderResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === PhysicalBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 'No physical business found with the given filters',
             );
         }
-        return this.domainToJsonMapper(result.physicalBusinesses);
+        return result.physicalBusinesses;
     }
 
     @Get(':id')
@@ -82,13 +77,11 @@ export class GetPhysicalBusinessController {
             Id.createFrom(param.id),
         );
 
-        if (
-            result.status === PhysicalBusinessReaderResultStatus.GENERIC_ERROR
-        ) {
+        if (result.status === GetResultStatus.GENERIC_ERROR) {
             throw new InternalServerErrorException();
         }
 
-        if (result.status === PhysicalBusinessReaderResultStatus.NOT_FOUND) {
+        if (result.status === GetResultStatus.NOT_FOUND) {
             throw new NotFoundException(
                 `No physical business with id: ${param.id}`,
             );
@@ -105,15 +98,5 @@ export class GetPhysicalBusinessController {
             reviewAmount: business.reviewsAmount,
             averageRating: business.averageRating,
         };
-    }
-
-    private domainToJsonMapper(physicalBusinesses: PhysicalBusiness[]) {
-        return physicalBusinesses.map((business) => ({
-            id: business.id,
-            name: business.name,
-            address: business.addressString,
-            email: business.email,
-            reviewAmount: business.reviewsAmount,
-        }));
     }
 }

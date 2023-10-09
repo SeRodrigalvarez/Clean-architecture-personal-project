@@ -1,13 +1,15 @@
 import { PhysicalBusiness } from './';
 import { Id, PageSize, PageNumber } from 'src/modules/shared/domain';
 
-export interface CreateResult {
-    status: CreateResultStatus;
+export interface SaveResult {
+    status: SaveResultStatus;
+    isNameCollision?: boolean;
+    isPhoneCollision?: boolean;
 }
 
-export enum CreateResultStatus {
+export enum SaveResultStatus {
     OK,
-    BUSINESS_NAME_ALREADY_EXISTS,
+    BUSINESS_ALREADY_EXISTS,
     GENERIC_ERROR,
 }
 
@@ -38,7 +40,7 @@ export enum UpdateResultStatus {
 }
 
 export interface PhysicalBusinessRepository {
-    create(physicalBusiness: PhysicalBusiness): Promise<CreateResult>;
+    save(physicalBusiness: PhysicalBusiness): Promise<SaveResult>;
     getByNameOrAddress(
         value: string,
         pageNumber: PageNumber,

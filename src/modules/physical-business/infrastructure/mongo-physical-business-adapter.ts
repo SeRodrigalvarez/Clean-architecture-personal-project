@@ -10,8 +10,6 @@ import {
 } from 'src/modules/shared/domain';
 import { MongoDatabaseConnection } from 'src/modules/shared/infrastructure/mongo-database-connection';
 import {
-    CreateResult,
-    CreateResultStatus,
     GetResult,
     GetResultStatus,
     GetSingleResult,
@@ -20,6 +18,8 @@ import {
     PhysicalBusinessName,
     PhysicalBusinessPhone,
     PhysicalBusinessRepository,
+    SaveResult,
+    SaveResultStatus,
     UpdateResult,
     UpdateResultStatus,
 } from '../domain';
@@ -54,23 +54,32 @@ export class MongoPhysicalBusinessAdapter
             );
     }
 
-    async create(physicalBusiness: PhysicalBusiness): Promise<CreateResult> {
+    async save(physicalBusiness: PhysicalBusiness): Promise<SaveResult> {
         try {
-            if (await this.doesNameAlreadyExists(physicalBusiness.name)) {
+            // TODO: Use reservation pattern or unique index to avoid race condition bugs
+            const collisionResult = await this.businessCollisionCheck(
+                physicalBusiness.name,
+                physicalBusiness.phone,
+            );
+            if (collisionResult.isCollision) {
                 return {
-                    status: CreateResultStatus.BUSINESS_NAME_ALREADY_EXISTS,
+                    status: SaveResultStatus.BUSINESS_ALREADY_EXISTS,
+                    isNameCollision: collisionResult.isNameCollision,
+                    isPhoneCollision: collisionResult.isPhoneCollision,
                 };
             }
-            await this.collection.insertOne(
-                this.domainToDocument(physicalBusiness),
+            await this.collection.replaceOne(
+                { id: physicalBusiness.id },
+                physicalBusiness.toPrimitives(),
+                { upsert: true },
             );
             return {
-                status: CreateResultStatus.OK,
+                status: SaveResultStatus.OK,
             };
         } catch (error) {
             console.log(error); //TODO: use logger
             return {
-                status: CreateResultStatus.GENERIC_ERROR,
+                status: SaveResultStatus.GENERIC_ERROR,
             };
         }
     }
@@ -181,20 +190,14 @@ export class MongoPhysicalBusinessAdapter
         }
     }
 
-    private async doesNameAlreadyExists(name: string) {
-        return !!(await this.collection.findOne({ name }));
-    }
+    private async businessCollisionCheck(name: string, phone: string) {
+        const isNameCollision = !!(await this.collection.findOne({ name }));
+        const isPhoneCollision = !!(await this.collection.findOne({ phone }));
 
-    private domainToDocument(
-        business: PhysicalBusiness,
-    ): PhysicalBusinessDocument {
         return {
-            id: business.id,
-            name: business.name,
-            address: business.address,
-            phone: business.phone,
-            email: business.email,
-            reviewsAmount: business.reviewsAmount,
+            isCollision: isNameCollision || isPhoneCollision,
+            isNameCollision,
+            isPhoneCollision,
         };
     }
 
