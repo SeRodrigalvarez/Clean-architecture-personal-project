@@ -5,7 +5,7 @@
 
 ## Description
 
-This project started as [NoFakes Code Challenge](https://nofakes.notion.site/NoFakes-Backend-Challenge-c64335c58e934680996e45072e9b6894) with [Nest](https://github.com/nestjs/nest) using Hexagonal Architecture and SOLID Principles. I decided to use it as personal project to apply CQRS to the existing code base (still WIP).
+This project started as [NoFakes Code Challenge](NoFakes-Backend-Challenge.pdf) with [Nest](https://github.com/nestjs/nest) using Hexagonal Architecture and SOLID Principles. I decided to use it as personal project to apply CQRS to the existing code base (still WIP).
 
 One interesting detail to notice in this project: As typescript type exception catching is lacking (instanceof is needed to treat different types of exceptions), I decided to experiment with golang style error handling. You will find that try-catch is only used in infraestructure layer to treat persistence thrown exception while result objects are used in the rest of the code.
 
